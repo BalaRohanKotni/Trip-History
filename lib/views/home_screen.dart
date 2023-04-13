@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import '../constants.dart';
 import '../controllers/graph_layout_delegate.dart';
@@ -79,6 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
         element[1].floor()
       ]);
     }
+    final window = WidgetsBinding.instance.window;
+    window.onPlatformBrightnessChanged = () {
+      setState(() {});
+    };
   }
 
   @override
@@ -187,13 +192,48 @@ class _HomeScreenState extends State<HomeScreen> {
                               "Trips",
                               titleOutsideJustification:
                                   charts.OutsideJustification.start,
+                              titleStyleSpec: (SchedulerBinding
+                                          .instance.window.platformBrightness ==
+                                      Brightness.light)
+                                  ? const charts.TextStyleSpec(
+                                      color: charts.MaterialPalette.black)
+                                  : const charts.TextStyleSpec(
+                                      color: charts.MaterialPalette.white),
                               innerPadding: 24,
                             ),
                             charts.ChartTitle(
                               "km/l",
                               behaviorPosition: charts.BehaviorPosition.start,
+                              titleStyleSpec: (SchedulerBinding
+                                          .instance.window.platformBrightness ==
+                                      Brightness.light)
+                                  ? const charts.TextStyleSpec(
+                                      color: charts.MaterialPalette.black)
+                                  : const charts.TextStyleSpec(
+                                      color: charts.MaterialPalette.white),
                             )
                           ],
+                          primaryMeasureAxis: charts.NumericAxisSpec(
+                              renderSpec: charts.GridlineRendererSpec(
+                            labelStyle: charts.TextStyleSpec(
+                                fontSize: 10,
+                                color: (SchedulerBinding.instance.window
+                                            .platformBrightness ==
+                                        Brightness.light)
+                                    ? charts.MaterialPalette.black
+                                    : charts.MaterialPalette.white),
+                          )),
+                          domainAxis: charts.DateTimeAxisSpec(
+                            renderSpec: charts.GridlineRendererSpec(
+                              labelStyle: charts.TextStyleSpec(
+                                  fontSize: 10,
+                                  color: (SchedulerBinding.instance.window
+                                              .platformBrightness ==
+                                          Brightness.light)
+                                      ? charts.MaterialPalette.black
+                                      : charts.MaterialPalette.white),
+                            ),
+                          ),
                         ),
                       ),
                     ],
