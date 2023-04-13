@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Row(
                   children: [
                     Column(
