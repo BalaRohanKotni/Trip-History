@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: "123jh4k1234",
       name: "Mangolore Trip",
       distanceUnits: DistanceUnits.km,
+      vehicleName: "Amaze",
     ),
     TripDetails(
       dateTime: DateTime(2017).millisecondsSinceEpoch,
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: "123jh4k1234",
       name: "Banglore Trip",
       distanceUnits: DistanceUnits.km,
+      vehicleName: "KTM",
     ),
     TripDetails(
       dateTime: DateTime(2018).millisecondsSinceEpoch,
@@ -42,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: "123jh4k1234",
       name: "Mysore Trip",
       distanceUnits: DistanceUnits.km,
+      vehicleName: "KTM",
     ),
     TripDetails(
       dateTime: DateTime(2019).millisecondsSinceEpoch,
@@ -51,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: "123jh4k1234",
       name: "Pondicherry Trip",
       distanceUnits: DistanceUnits.km,
+      vehicleName: "KTM",
     ),
     TripDetails(
       dateTime: DateTime(2020).millisecondsSinceEpoch,
@@ -60,6 +64,17 @@ class _HomeScreenState extends State<HomeScreen> {
       id: "123jh4k1234",
       name: "Lonovola Trip",
       distanceUnits: DistanceUnits.km,
+      vehicleName: "Amaze",
+    ),
+    TripDetails(
+      dateTime: DateTime(2022).millisecondsSinceEpoch,
+      mileage: 32,
+      dist: 1200,
+      dur: 15,
+      id: "123jh4k1234",
+      name: "Lonovola 2 Trip",
+      distanceUnits: DistanceUnits.km,
+      vehicleName: "XL6",
     ),
     TripDetails(
       dateTime: DateTime(2021).millisecondsSinceEpoch,
@@ -69,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: "123jh4k1234",
       name: "Goa Trip",
       distanceUnits: DistanceUnits.km,
+      vehicleName: "Amaze",
     ),
   ];
 
@@ -86,16 +102,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    vehicleTripsData = [];
     chartData = [];
     for (TripDetails trip in data) {
+      vehicles.add(trip.vehicleName);
+      if (currentVehicle == "") {
+        currentVehicle = vehicles.first;
+      }
+      if (trip.vehicleName == currentVehicle) {
+        vehicleTripsData.add(trip);
+      }
+    }
+
+    vehicleTripsData.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    for (var trip in vehicleTripsData) {
       chartData.add([
         DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
         trip.mileage.floor()
       ]);
     }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Car"),
+        title: Text(currentVehicle),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.menu),
@@ -111,37 +140,74 @@ class _HomeScreenState extends State<HomeScreen> {
                         showModalBottomSheet(
                             context: context,
                             builder: (_) => SettingsDialog(
+                                  vehicleTrips: vehicleTripsData,
+                                  replaceVehicleInTrips:
+                                      (vehicleToBeReplaced, vehicleReplacing) {
+                                    setState(() {
+                                      for (var element in vehicleTripsData) {
+                                        if (element.vehicleName ==
+                                            vehicleToBeReplaced) {
+                                          element.vehicleName =
+                                              vehicleReplacing;
+                                        }
+                                      }
+                                    });
+                                  },
+                                  setSelectedVehicleInHomeScreen:
+                                      (String newVehicle) {
+                                    setState(() {
+                                      currentVehicle = newVehicle;
+                                    });
+                                  },
                                   onChangeDistanceUnits:
                                       (DistanceUnits distanceUnits) {
                                     setState(() {
                                       for (int index = 0;
-                                          index < data.length;
+                                          index < vehicleTripsData.length;
                                           index++) {
                                         DistanceUnits prevDistanceUnits =
-                                            data[index].distanceUnits;
-                                        data[index].distanceUnits =
+                                            vehicleTripsData[index]
+                                                .distanceUnits;
+                                        vehicleTripsData[index].distanceUnits =
                                             distanceUnits;
 
                                         if (distanceUnits == DistanceUnits.km &&
                                             distanceUnits !=
                                                 prevDistanceUnits) {
-                                          data[index].dist = double.parse(
-                                              (data[index].dist * 1.609)
-                                                  .toStringAsFixed(2));
-                                          data[index].mileage = double.parse(
-                                              (data[index].mileage / 2.352)
-                                                  .toStringAsFixed(2));
+                                          vehicleTripsData[index]
+                                              .distanceUnits = DistanceUnits.km;
+                                          vehicleTripsData[index].dist =
+                                              double.parse(
+                                                  (vehicleTripsData[index]
+                                                              .dist *
+                                                          1.609)
+                                                      .toStringAsFixed(2));
+                                          vehicleTripsData[index].mileage =
+                                              double.parse(
+                                                  (vehicleTripsData[index]
+                                                              .mileage /
+                                                          2.352)
+                                                      .toStringAsFixed(2));
                                         }
 
                                         if (distanceUnits == DistanceUnits.mi &&
                                             distanceUnits !=
                                                 prevDistanceUnits) {
-                                          data[index].dist = double.parse(
-                                              (data[index].dist / 1.609)
-                                                  .toStringAsFixed(2));
-                                          data[index].mileage = double.parse(
-                                              (data[index].mileage * 2.352)
-                                                  .toStringAsFixed(2));
+                                          vehicleTripsData[index]
+                                              .distanceUnits = DistanceUnits.mi;
+
+                                          vehicleTripsData[index].dist =
+                                              double.parse(
+                                                  (vehicleTripsData[index]
+                                                              .dist /
+                                                          1.609)
+                                                      .toStringAsFixed(2));
+                                          vehicleTripsData[index].mileage =
+                                              double.parse(
+                                                  (vehicleTripsData[index]
+                                                              .mileage *
+                                                          2.352)
+                                                      .toStringAsFixed(2));
                                         }
                                       }
                                     });
@@ -174,7 +240,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: semiBold18(),
                         ),
                         Text(
-                          "Average ${(data[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}:",
+                          (vehicleTripsData.isNotEmpty)
+                              ? "Average ${(vehicleTripsData[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}:"
+                              : "Average km/l:",
                           style: semiBold18(),
                         ),
                       ],
@@ -183,14 +251,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("${[
-                          for (TripDetails trip in data) trip.dist
-                        ].fold(0, (p, c) => (p + c).toInt())}${(data[0].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
-                        Text((data.isNotEmpty)
+                        Text((vehicleTripsData.isNotEmpty)
+                            ? "${[
+                                for (TripDetails trip in vehicleTripsData)
+                                  trip.dist
+                              ].fold(0, (p, c) => (p + c).toInt())}${(vehicleTripsData[0].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"
+                            : "0km"),
+                        Text((vehicleTripsData.isNotEmpty)
                             ? "${([
-                                  for (TripDetails trip in data) trip.mileage
-                                ].fold(0, (p, c) => (p + c).toInt()) / data.length).toStringAsFixed(2)}${(data[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"
-                            : "0${(data[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
+                                  for (TripDetails trip in vehicleTripsData)
+                                    trip.mileage
+                                ].fold(0, (p, c) => (p + c).toInt()) / vehicleTripsData.length).toStringAsFixed(2)}${(vehicleTripsData[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"
+                            : "0${(distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
                       ],
                     )
                   ],
@@ -223,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             charts.SelectionModelConfig(
                                 type: charts.SelectionModelType.info,
                                 changedListener: (model) {
-                                  TripDetails selectedPoint = data[
+                                  TripDetails selectedPoint = vehicleTripsData[
                                       chartData.indexOf(
                                           model.selectedDatum.first.datum)];
 
@@ -235,7 +307,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .toString();
 
                                   _key.currentState!.setValues(
-                                      mileage, dateTime, data[0].distanceUnits);
+                                      mileage,
+                                      dateTime,
+                                      vehicleTripsData[0].distanceUnits);
                                   _key.currentState!.update();
                                 })
                           ],
@@ -254,9 +328,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               innerPadding: 24,
                             ),
                             charts.ChartTitle(
-                              (data[0].distanceUnits == DistanceUnits.km)
-                                  ? "km/l"
-                                  : "mpg",
+                              (vehicleTripsData.isNotEmpty)
+                                  ? (vehicleTripsData[0].distanceUnits ==
+                                          DistanceUnits.km)
+                                      ? "km/l"
+                                      : "mpg"
+                                  : (distanceUnits == DistanceUnits.km)
+                                      ? "km/l"
+                                      : "mpg",
                               behaviorPosition: charts.BehaviorPosition.start,
                               titleStyleSpec: (SchedulerBinding
                                           .instance.window.platformBrightness ==
@@ -314,7 +393,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Expanded(
                         child: ListView.builder(
-                            itemCount: (data.isNotEmpty) ? data.length : 0,
+                            itemCount: (vehicleTripsData.isNotEmpty)
+                                ? vehicleTripsData.length
+                                : 0,
                             itemBuilder: (bContext, position) {
                               return Column(
                                 children: [
@@ -338,12 +419,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  data[position].name,
+                                                  vehicleTripsData[position]
+                                                      .name,
                                                 ),
                                                 Text(DateFormat.yMMMd().format(
                                                     DateTime
                                                         .fromMillisecondsSinceEpoch(
-                                                            data[position]
+                                                            vehicleTripsData[
+                                                                    position]
                                                                 .dateTime)))
                                               ],
                                             ),
@@ -356,11 +439,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                    "${data[position].dist}${(data[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
+                                                    "${vehicleTripsData[position].dist}${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
                                                 Text(
-                                                    "${data[position].mileage} ${(data[position].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
+                                                    "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
                                                 Text(
-                                                    "${data[position].dur}hrs"),
+                                                    "${vehicleTripsData[position].dur}hrs"),
                                               ],
                                             ),
                                           ],
