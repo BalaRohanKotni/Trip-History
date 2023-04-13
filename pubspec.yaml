@@ -63,7 +63,7 @@ flutter:
     - assets/icons/closed-lock.svg
     - assets/icons/opened-lock.svg
     - assets/icons/mail.svg
-    - assets/icons/btn-google-normal.svg
+    - assets/icons/btn-google.svg
 
 
   # To add assets to your application, add an assets section, like this:
