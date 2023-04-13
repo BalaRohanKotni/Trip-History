@@ -5,8 +5,5 @@ TextStyle semiBold18() {
 }
 
 DistanceUnits distanceUnits = DistanceUnits.km;
-MileageUnits mileageUnits = MileageUnits.kml;
 
 enum DistanceUnits { km, mi }
-
-enum MileageUnits { kml, mpg }
