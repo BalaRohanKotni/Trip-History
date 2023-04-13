@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import '../constants.dart';
 import '../controllers/graph_layout_delegate.dart';
+import '../models/trip_details.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,60 +14,63 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TripDetails tdetails = TripDetails(
+      dateTime: DateTime.now().millisecondsSinceEpoch,
+      mileage: 12.0,
+      dist: 768,
+      dur: 13.6,
+      id: "id",
+      name: "name");
   List data = [
-    [
-      DateTime(2016).millisecondsSinceEpoch,
-      29,
-      "Mangolore Trip",
-      900,
-      /*dist */
-      13,
-      /*dur */
-      "123jh4k1234",
-    ],
-    [
-      DateTime(2017).millisecondsSinceEpoch,
-      30.5,
-      "Banglore Trip",
-      758,
-      11,
-      "123jh4k1234",
-    ],
-    [
-      DateTime(2018).millisecondsSinceEpoch,
-      31,
-      "Mysore Trip",
-      700,
-      10,
-      "123jh4k1234",
-    ],
-    [
-      DateTime(2019).millisecondsSinceEpoch,
-      33,
-      "Pondicherry Trip",
-      800,
-      12,
-      "123jh4k1234",
-    ],
-    [
-      DateTime(2020).millisecondsSinceEpoch,
-      32,
-      "Lonovola Trip",
-      1200,
-      15,
-      "123jh4k1234",
-    ],
-    [
-      DateTime(2021).millisecondsSinceEpoch,
-      34,
-      "Goa Trip",
-      1100,
-      14,
-      "123jh4k1234",
-    ],
+    TripDetails(
+      dateTime: DateTime(2016).millisecondsSinceEpoch,
+      mileage: 29,
+      dist: 900,
+      dur: 13,
+      id: "123jh4k1234",
+      name: "Mangolore Trip",
+    ),
+    TripDetails(
+      dateTime: DateTime(2017).millisecondsSinceEpoch,
+      mileage: 30.5,
+      dist: 758,
+      dur: 11,
+      id: "123jh4k1234",
+      name: "Banglore Trip",
+    ),
+    TripDetails(
+      dateTime: DateTime(2018).millisecondsSinceEpoch,
+      mileage: 31,
+      dist: 700,
+      dur: 10,
+      id: "123jh4k1234",
+      name: "Mysore Trip",
+    ),
+    TripDetails(
+      dateTime: DateTime(2019).millisecondsSinceEpoch,
+      mileage: 33,
+      dist: 800,
+      dur: 12,
+      id: "123jh4k1234",
+      name: "Pondicherry Trip",
+    ),
+    TripDetails(
+      dateTime: DateTime(2020).millisecondsSinceEpoch,
+      mileage: 32,
+      dist: 1200,
+      dur: 15,
+      id: "123jh4k1234",
+      name: "Lonovola Trip",
+    ),
+    TripDetails(
+      dateTime: DateTime(2021).millisecondsSinceEpoch,
+      mileage: 34,
+      dist: 1100,
+      dur: 14,
+      id: "123jh4k1234",
+      name: "Goa Trip",
+    ),
   ];
-
-  String selectedMileage = "", selectedDateString = "";
 
   final GlobalKey<_SelectedGraphTextWidgetState> _key = GlobalKey();
 
@@ -74,10 +78,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    for (var element in data) {
+    for (TripDetails trip in data) {
       chartData.add([
-        DateTime.fromMillisecondsSinceEpoch(element[0]),
-        element[1].floor()
+        DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+        trip.mileage.floor()
       ]);
     }
     final window = WidgetsBinding.instance.window;
@@ -134,11 +138,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("${[
-                          for (var trip in data) trip[3]
+                          for (TripDetails trip in data) trip.dist
                         ].fold(0, (p, c) => (p + c).toInt())}km"),
                         Text((data.isNotEmpty)
                             ? "${([
-                                  for (var trip in data) trip[1]
+                                  for (TripDetails trip in data) trip.mileage
                                 ].fold(0, (p, c) => (p + c).toInt()) / data.length).toStringAsFixed(2)}km/l"
                             : "0km/l"),
                       ],
@@ -173,14 +177,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             charts.SelectionModelConfig(
                                 type: charts.SelectionModelType.info,
                                 changedListener: (model) {
-                                  List selectedPoint = data[chartData.indexOf(
-                                      model.selectedDatum.first.datum)];
+                                  TripDetails selectedPoint = data[
+                                      chartData.indexOf(
+                                          model.selectedDatum.first.datum)];
 
                                   String dateTime =
-                                      "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint[0]))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint[0]))}";
+                                      "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
 
-                                  String mileage =
-                                      selectedPoint[1].toDouble().toString();
+                                  String mileage = selectedPoint.mileage
+                                      .toDouble()
+                                      .toString();
 
                                   _key.currentState!
                                       .setValues(mileage, dateTime);
@@ -284,12 +290,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  data[position][2],
+                                                  data[position].name,
                                                 ),
                                                 Text(DateFormat.yMMMd().format(
                                                     DateTime
                                                         .fromMillisecondsSinceEpoch(
-                                                            data[position][0])))
+                                                            data[position]
+                                                                .dateTime)))
                                               ],
                                             ),
                                             const SizedBox(
@@ -300,10 +307,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text("${data[position][3]}km"),
                                                 Text(
-                                                    "${data[position][1]} km/l"),
-                                                Text("${data[position][4]}hrs"),
+                                                    "${data[position].dist}km"),
+                                                Text(
+                                                    "${data[position].mileage} km/l"),
+                                                Text(
+                                                    "${data[position].dur}hrs"),
                                               ],
                                             ),
                                           ],
