@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
+import '../components/settings_bottom_sheet_dialog.dart';
 import '../constants.dart';
 import '../controllers/graph_layout_delegate.dart';
 import '../models/trip_details.dart';
@@ -104,6 +105,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
+                  onTap: () {
+                    Future.delayed(const Duration(seconds: 0), () {
+                      if (choice == "Settings") {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (_) => const SettingsDialog());
+                      }
+                    });
+                  },
                 );
               }).toList();
             },
