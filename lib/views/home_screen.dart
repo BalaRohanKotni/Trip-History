@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Expanded(
                         child: ListView.builder(
-                            itemCount: (data.isNotEmpty) ? data.length - 1 : 0,
+                            itemCount: (data.isNotEmpty) ? data.length : 0,
                             itemBuilder: (bContext, position) {
                               return Column(
                                 children: [
