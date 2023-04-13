@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:trip_history/constants.dart';
 
 class TripDetails {
   final int dateTime;
-  final double mileage, dist, dur;
+  double mileage, dist, dur;
   final String name, id;
+  DistanceUnits distanceUnits;
   TripDetails({
     required this.dateTime,
     required this.mileage,
@@ -11,5 +12,6 @@ class TripDetails {
     required this.dur,
     required this.id,
     required this.name,
+    required this.distanceUnits,
   });
 }
