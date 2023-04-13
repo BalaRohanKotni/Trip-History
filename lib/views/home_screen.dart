@@ -17,49 +17,50 @@ class _HomeScreenState extends State<HomeScreen> {
       DateTime(2016).millisecondsSinceEpoch,
       29,
       "Mangolore Trip",
-      "900km",
-      "13hrs",
+      900,
+      /*dist */
+      13,
+      /*dur */
       "123jh4k1234",
     ],
     [
       DateTime(2017).millisecondsSinceEpoch,
       30.5,
       "Banglore Trip",
-      "758km",
-      "11hrs",
+      758,
+      11,
       "123jh4k1234",
     ],
     [
       DateTime(2018).millisecondsSinceEpoch,
       31,
       "Mysore Trip",
-      "700km",
-      "10hrs",
+      700,
+      10,
       "123jh4k1234",
     ],
     [
       DateTime(2019).millisecondsSinceEpoch,
       33,
       "Pondicherry Trip",
-      "800km",
-      "12hrs",
+      800,
+      12,
       "123jh4k1234",
     ],
     [
       DateTime(2020).millisecondsSinceEpoch,
       32,
       "Lonovola Trip",
-      "1200km",
-      "15hrs",
+      1200,
+      15,
       "123jh4k1234",
     ],
     [
       DateTime(2021).millisecondsSinceEpoch,
       34,
       "Goa Trip",
-      "1100km",
-      "29km/l",
-      "14hrs",
+      1100,
+      14,
       "123jh4k1234",
     ],
   ];
@@ -125,11 +126,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        /*TODO */
-                        Text("680km"),
-                        /*TODO */
-                        Text("33km/l"),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("${[
+                          for (var trip in data) trip[3]
+                        ].reduce((a, b) => a + b)}km"),
+                        Text(([for (var trip in data) trip[1]]
+                                        .reduce((a, b) => a + b) /
+                                    data.length)
+                                .toStringAsFixed(2) +
+                            "km/l"),
                       ],
                     )
                   ],
@@ -254,10 +260,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text(data[position][3]),
+                                                Text("${data[position][3]}km"),
                                                 Text(
                                                     "${data[position][1]} km/l"),
-                                                Text(data[position][4]),
+                                                Text("${data[position][4]}hrs"),
                                               ],
                                             ),
                                           ],
