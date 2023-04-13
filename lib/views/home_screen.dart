@@ -130,12 +130,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text("${[
                           for (var trip in data) trip[3]
-                        ].reduce((a, b) => a + b)}km"),
-                        Text(([for (var trip in data) trip[1]]
-                                        .reduce((a, b) => a + b) /
-                                    data.length)
-                                .toStringAsFixed(2) +
-                            "km/l"),
+                        ].fold(0, (p, c) => (p + c).toInt())}km"),
+                        Text((data.isNotEmpty)
+                            ? "${([
+                                  for (var trip in data) trip[1]
+                                ].fold(0, (p, c) => (p + c).toInt()) / data.length).toStringAsFixed(2)}km/l"
+                            : "0km/l"),
                       ],
                     )
                   ],
@@ -220,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Expanded(
                         child: ListView.builder(
-                            itemCount: data.length - 1,
+                            itemCount: (data.isNotEmpty) ? data.length - 1 : 0,
                             itemBuilder: (bContext, position) {
                               return Column(
                                 children: [
