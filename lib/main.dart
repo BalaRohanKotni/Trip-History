@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trip_history/Screens/signin_screen.dart';
+import 'package:trip_history/views/signin_screen.dart';
 
 void main() {
   runApp(const App());
