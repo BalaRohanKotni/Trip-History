@@ -28,7 +28,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     distanceUnits = vehicleTripsData.first.distanceUnits;
-    print(vehicles);
     if (editMode) {
       List<Widget> items = [];
       items.add(
