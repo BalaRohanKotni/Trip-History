@@ -10,9 +10,10 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Trip History",
-      home: SigninScreen(),
+      theme: ThemeData(fontFamily: "Inter"),
+      home: const SigninScreen(),
     );
   }
 }
