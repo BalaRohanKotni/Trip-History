@@ -15,6 +15,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         /* light theme settings */
         fontFamily: "Inter",
+        useMaterial3: true,
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontSize: 18),
         ),
@@ -22,6 +23,7 @@ class App extends StatelessWidget {
       darkTheme: ThemeData(
         /* light theme settings */
         brightness: Brightness.dark,
+        useMaterial3: true,
         fontFamily: "Inter",
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontSize: 18),
