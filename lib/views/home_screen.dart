@@ -15,14 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TripDetails tdetails = TripDetails(
-      dateTime: DateTime.now().millisecondsSinceEpoch,
-      mileage: 12.0,
-      dist: 768,
-      dur: 13.6,
-      id: "id",
-      name: "name");
-  List data = [
+  List<TripDetails> data = [
     TripDetails(
       dateTime: DateTime(2016).millisecondsSinceEpoch,
       mileage: 29,
@@ -30,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
       dur: 13,
       id: "123jh4k1234",
       name: "Mangolore Trip",
+      distanceUnits: DistanceUnits.km,
     ),
     TripDetails(
       dateTime: DateTime(2017).millisecondsSinceEpoch,
@@ -38,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       dur: 11,
       id: "123jh4k1234",
       name: "Banglore Trip",
+      distanceUnits: DistanceUnits.km,
     ),
     TripDetails(
       dateTime: DateTime(2018).millisecondsSinceEpoch,
@@ -46,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       dur: 10,
       id: "123jh4k1234",
       name: "Mysore Trip",
+      distanceUnits: DistanceUnits.km,
     ),
     TripDetails(
       dateTime: DateTime(2019).millisecondsSinceEpoch,
@@ -54,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       dur: 12,
       id: "123jh4k1234",
       name: "Pondicherry Trip",
+      distanceUnits: DistanceUnits.km,
     ),
     TripDetails(
       dateTime: DateTime(2020).millisecondsSinceEpoch,
@@ -62,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       dur: 15,
       id: "123jh4k1234",
       name: "Lonovola Trip",
+      distanceUnits: DistanceUnits.km,
     ),
     TripDetails(
       dateTime: DateTime(2021).millisecondsSinceEpoch,
@@ -70,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
       dur: 14,
       id: "123jh4k1234",
       name: "Goa Trip",
+      distanceUnits: DistanceUnits.km,
     ),
   ];
 
@@ -79,12 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    for (TripDetails trip in data) {
-      chartData.add([
-        DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
-        trip.mileage.floor()
-      ]);
-    }
     final window = WidgetsBinding.instance.window;
     window.onPlatformBrightnessChanged = () {
       setState(() {});
@@ -93,6 +86,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    chartData = [];
+    for (TripDetails trip in data) {
+      chartData.add([
+        DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+        trip.mileage.floor()
+      ]);
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text("Car"),
@@ -110,7 +110,43 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (choice == "Settings") {
                         showModalBottomSheet(
                             context: context,
-                            builder: (_) => const SettingsDialog());
+                            builder: (_) => SettingsDialog(
+                                  onChangeDistanceUnits:
+                                      (DistanceUnits distanceUnits) {
+                                    setState(() {
+                                      for (int index = 0;
+                                          index < data.length;
+                                          index++) {
+                                        DistanceUnits prevDistanceUnits =
+                                            data[index].distanceUnits;
+                                        data[index].distanceUnits =
+                                            distanceUnits;
+
+                                        if (distanceUnits == DistanceUnits.km &&
+                                            distanceUnits !=
+                                                prevDistanceUnits) {
+                                          data[index].dist = double.parse(
+                                              (data[index].dist * 1.609)
+                                                  .toStringAsFixed(2));
+                                          data[index].mileage = double.parse(
+                                              (data[index].mileage / 2.352)
+                                                  .toStringAsFixed(2));
+                                        }
+
+                                        if (distanceUnits == DistanceUnits.mi &&
+                                            distanceUnits !=
+                                                prevDistanceUnits) {
+                                          data[index].dist = double.parse(
+                                              (data[index].dist / 1.609)
+                                                  .toStringAsFixed(2));
+                                          data[index].mileage = double.parse(
+                                              (data[index].mileage * 2.352)
+                                                  .toStringAsFixed(2));
+                                        }
+                                      }
+                                    });
+                                  },
+                                ));
                       }
                     });
                   },
@@ -138,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: semiBold18(),
                         ),
                         Text(
-                          "Average km/l:",
+                          "Average ${(data[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}:",
                           style: semiBold18(),
                         ),
                       ],
@@ -149,12 +185,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text("${[
                           for (TripDetails trip in data) trip.dist
-                        ].fold(0, (p, c) => (p + c).toInt())}km"),
+                        ].fold(0, (p, c) => (p + c).toInt())}${(data[0].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
                         Text((data.isNotEmpty)
                             ? "${([
                                   for (TripDetails trip in data) trip.mileage
-                                ].fold(0, (p, c) => (p + c).toInt()) / data.length).toStringAsFixed(2)}km/l"
-                            : "0km/l"),
+                                ].fold(0, (p, c) => (p + c).toInt()) / data.length).toStringAsFixed(2)}${(data[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"
+                            : "0${(data[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
                       ],
                     )
                   ],
@@ -198,8 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .toDouble()
                                       .toString();
 
-                                  _key.currentState!
-                                      .setValues(mileage, dateTime);
+                                  _key.currentState!.setValues(
+                                      mileage, dateTime, data[0].distanceUnits);
                                   _key.currentState!.update();
                                 })
                           ],
@@ -218,7 +254,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               innerPadding: 24,
                             ),
                             charts.ChartTitle(
-                              "km/l",
+                              (data[0].distanceUnits == DistanceUnits.km)
+                                  ? "km/l"
+                                  : "mpg",
                               behaviorPosition: charts.BehaviorPosition.start,
                               titleStyleSpec: (SchedulerBinding
                                           .instance.window.platformBrightness ==
@@ -318,9 +356,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                    "${data[position].dist}km"),
+                                                    "${data[position].dist}${(data[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
                                                 Text(
-                                                    "${data[position].mileage} km/l"),
+                                                    "${data[position].mileage} ${(data[position].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
                                                 Text(
                                                     "${data[position].dur}hrs"),
                                               ],
@@ -359,10 +397,11 @@ class SelectedGraphTextWidget extends StatefulWidget {
 
 class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
   String mileage = "", dateString = "";
-
-  setValues(mil, date) {
+  DistanceUnits distanceUnits = DistanceUnits.km;
+  setValues(mil, date, setDistanceUnits) {
     mileage = mil;
     dateString = date;
+    distanceUnits = setDistanceUnits;
   }
 
   update() {
@@ -372,7 +411,9 @@ class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
   @override
   Widget build(BuildContext context) {
     return Text(
-      mileage != "" ? "$mileage km/l on $dateString" : "",
+      mileage != ""
+          ? "$mileage ${(distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'} on $dateString"
+          : "",
       textAlign: TextAlign.end,
     );
   }
