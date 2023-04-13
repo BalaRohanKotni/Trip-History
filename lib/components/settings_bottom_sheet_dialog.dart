@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class SettingsDialog extends StatefulWidget {
-  const SettingsDialog({super.key});
+  final Function onChangeDistanceUnits;
+  const SettingsDialog({super.key, required this.onChangeDistanceUnits});
 
   @override
   State<SettingsDialog> createState() => _SettingsDialogState();
@@ -33,6 +34,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                               groupValue: distanceUnits,
                               onChanged: (units) => setState(() {
                                     distanceUnits = units!;
+                                    widget.onChangeDistanceUnits(distanceUnits);
                                   })),
                         ),
                       ),
@@ -44,45 +46,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
                               groupValue: distanceUnits,
                               onChanged: (units) => setState(() {
                                     distanceUnits = units!;
+                                    widget.onChangeDistanceUnits(distanceUnits);
                                   })),
                         ),
                       )
                     ],
                   ),
-                  const Text("Economy/Mileage Units"),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ListTile(
-                          title: const Text("km/l"),
-                          leading: Radio(
-                              value: MileageUnits.kml,
-                              groupValue: mileageUnits,
-                              onChanged: (units) => setState(() {
-                                    mileageUnits = units!;
-                                  })),
-                        ),
-                      ),
-                      Expanded(
-                        child: ListTile(
-                          title: const Text("Mi"),
-                          leading: Radio(
-                              value: MileageUnits.mpg,
-                              groupValue: mileageUnits,
-                              onChanged: (units) => setState(() {
-                                    mileageUnits = units!;
-                                  })),
-                        ),
-                      )
-                    ],
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Ok"))
                 ],
-              ),
+              )
             ]),
           ),
         );
