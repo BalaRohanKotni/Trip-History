@@ -21,7 +21,7 @@ class App extends StatelessWidget {
         ),
       ),
       darkTheme: ThemeData(
-        /* light theme settings */
+        /* dark theme settings */
         brightness: Brightness.dark,
         useMaterial3: true,
         fontFamily: "Inter",
