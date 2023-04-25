@@ -31,6 +31,7 @@ class _TripDialogState extends State<TripDialog> {
       distanceController = TextEditingController(),
       durationController = TextEditingController(),
       mileageController = TextEditingController();
+  DateTime tripDateTime = DateTime.now();
 
   @override
   void initState() {
@@ -49,9 +50,12 @@ class _TripDialogState extends State<TripDialog> {
     if (widget.tripDialogMode == TripDialogMode.edit) {
       tripNameController.text = widget.initTripName!;
       distanceController.text = widget.initDist!.toString();
+      durationController.text = widget.initDur!.toString();
       mileageController.text = widget.initMileage!.toString();
       dateController.text = DateFormat.yMMMd().format(
           DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!));
+      tripDateTime =
+          DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!);
     }
   }
 
@@ -73,10 +77,11 @@ class _TripDialogState extends State<TripDialog> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: CalendarDatePicker(
-                      initialDate: DateTime.now(),
+                      initialDate: tripDateTime,
                       firstDate: DateTime(1960),
                       lastDate: DateTime(2901),
                       onDateChanged: (DateTime selectedDate) {
+                        tripDateTime = selectedDate;
                         String formattedDate =
                             DateFormat("yMMMd").format(selectedDate);
                         dateController.text = formattedDate;
