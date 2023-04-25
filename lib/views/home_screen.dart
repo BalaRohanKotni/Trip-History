@@ -400,56 +400,84 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemBuilder: (bContext, position) {
                               return Column(
                                 children: [
-                                  Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(18),
-                                        ),
-                                      ),
-                                      padding: const EdgeInsets.all(10),
-                                      child: Container(
-                                        margin: const EdgeInsets.all(4),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
+                                  GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (buildContext) {
+                                            return TripDialog(
+                                              tripDialogMode:
+                                                  TripDialogMode.edit,
+                                              initTripName:
                                                   vehicleTripsData[position]
                                                       .name,
-                                                ),
-                                                Text(DateFormat.yMMMd().format(
-                                                    DateTime
-                                                        .fromMillisecondsSinceEpoch(
-                                                            vehicleTripsData[
-                                                                    position]
-                                                                .dateTime)))
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 12,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                    "${vehicleTripsData[position].dist}${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
-                                                Text(
-                                                    "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
-                                                Text(
-                                                    "${vehicleTripsData[position].dur}hrs"),
-                                              ],
-                                            ),
-                                          ],
+                                              initDist:
+                                                  vehicleTripsData[position]
+                                                      .dist,
+                                              initDur:
+                                                  vehicleTripsData[position]
+                                                      .dur,
+                                              initDateInMilliSeconds:
+                                                  vehicleTripsData[position]
+                                                      .dateTime,
+                                              initMileage:
+                                                  vehicleTripsData[position]
+                                                      .mileage,
+                                            );
+                                          });
+                                    },
+                                    child: Container(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(18),
+                                          ),
                                         ),
-                                      )),
+                                        padding: const EdgeInsets.all(10),
+                                        child: Container(
+                                          margin: const EdgeInsets.all(4),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    vehicleTripsData[position]
+                                                        .name,
+                                                  ),
+                                                  Text(DateFormat.yMMMd()
+                                                      .format(DateTime
+                                                          .fromMillisecondsSinceEpoch(
+                                                              vehicleTripsData[
+                                                                      position]
+                                                                  .dateTime)))
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 12,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                      "${vehicleTripsData[position].dist}${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
+                                                  Text(
+                                                      "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
+                                                  Text(
+                                                      "${vehicleTripsData[position].dur}hrs"),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        )),
+                                  ),
                                   const SizedBox(
                                     height: 18,
                                   )
@@ -473,7 +501,9 @@ class _HomeScreenState extends State<HomeScreen> {
               context: context,
               isScrollControlled: true,
               builder: (buildContext) {
-                return const TripDialog();
+                return const TripDialog(
+                  tripDialogMode: TripDialogMode.create,
+                );
               });
         },
         backgroundColor: Colors.lightBlueAccent[50],

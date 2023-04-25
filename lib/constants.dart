@@ -9,6 +9,8 @@ DistanceUnits distanceUnits = DistanceUnits.km;
 
 enum DistanceUnits { km, mi }
 
+enum TripDialogMode { create, edit }
+
 Set<String> vehicles = {};
 
 //TODO Sync currentVehicle to firestore

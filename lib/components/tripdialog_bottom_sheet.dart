@@ -4,7 +4,20 @@ import 'package:intl/intl.dart';
 import '../constants.dart';
 
 class TripDialog extends StatefulWidget {
-  const TripDialog({super.key});
+  final TripDialogMode tripDialogMode;
+  final String? initTripName;
+  final double? initDist, initDur, initMileage;
+  final int? initDateInMilliSeconds;
+
+  const TripDialog({
+    super.key,
+    required this.tripDialogMode,
+    this.initTripName,
+    this.initDist,
+    this.initDur,
+    this.initMileage,
+    this.initDateInMilliSeconds,
+  });
 
   @override
   State<TripDialog> createState() => _TripDialogState();
@@ -14,6 +27,10 @@ class _TripDialogState extends State<TripDialog> {
   TextEditingController dateController = TextEditingController();
   FocusNode dateFocusNode = FocusNode();
   bool showCalendarPicker = false;
+  TextEditingController tripNameController = TextEditingController(),
+      distanceController = TextEditingController(),
+      durationController = TextEditingController(),
+      mileageController = TextEditingController();
 
   @override
   void initState() {
@@ -29,6 +46,13 @@ class _TripDialogState extends State<TripDialog> {
         });
       }
     });
+    if (widget.tripDialogMode == TripDialogMode.edit) {
+      tripNameController.text = widget.initTripName!;
+      distanceController.text = widget.initDist!.toString();
+      mileageController.text = widget.initMileage!.toString();
+      dateController.text = DateFormat.yMMMd().format(
+          DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!));
+    }
   }
 
   _funcShowCalendarPicker(
@@ -88,10 +112,11 @@ class _TripDialogState extends State<TripDialog> {
               children: [
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       flex: 6,
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: tripNameController,
+                        decoration: const InputDecoration(
                           hintText: "Trip Name",
                         ),
                         keyboardType: TextInputType.streetAddress,
@@ -124,6 +149,7 @@ class _TripDialogState extends State<TripDialog> {
                     Expanded(
                       flex: 3,
                       child: TextField(
+                        controller: distanceController,
                         textAlign: TextAlign.center,
                         textInputAction: TextInputAction.next,
                         keyboardType: const TextInputType.numberWithOptions(
@@ -138,14 +164,15 @@ class _TripDialogState extends State<TripDialog> {
                       ),
                     ),
                     Expanded(flex: 1, child: Container()),
-                    const Expanded(
+                    Expanded(
                       flex: 3,
                       child: TextField(
+                        controller: durationController,
                         textAlign: TextAlign.center,
                         textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.numberWithOptions(
+                        keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             hintText: "Duration", suffixText: "hrs"),
                       ),
                     ),
@@ -153,6 +180,7 @@ class _TripDialogState extends State<TripDialog> {
                     Expanded(
                       flex: 3,
                       child: TextField(
+                        controller: mileageController,
                         textAlign: TextAlign.center,
                         textInputAction: TextInputAction.next,
                         keyboardType: const TextInputType.numberWithOptions(
