@@ -124,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(currentVehicle),
         actions: [
@@ -283,6 +284,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: charts.TimeSeriesChart(
                           [
                             charts.Series(
+                              colorFn: (__, ___) =>
+                                  charts.ColorUtil.fromDartColor(
+                                      (SchedulerBinding.instance.window
+                                                  .platformBrightness ==
+                                              Brightness.light)
+                                          ? const Color(0xFF4f378b)
+                                          : Colors.white),
                               id: "Mileage",
                               data: chartData,
                               domainFn: (dat, _) => dat[0],
@@ -506,7 +514,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               });
         },
-        backgroundColor: Colors.lightBlueAccent[50],
+        // backgroundColor: Colors.lightBlueAccent[50],
       ),
     );
   }
