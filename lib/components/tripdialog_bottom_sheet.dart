@@ -127,7 +127,7 @@ class _TripDialogState extends State<TripDialog> {
                         textAlign: TextAlign.center,
                         textInputAction: TextInputAction.next,
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                            decimal: true, signed: true),
                         decoration: InputDecoration(
                           hintText: "Distance",
                           suffixText: (vehicleTripsData[0].distanceUnits ==
@@ -143,8 +143,8 @@ class _TripDialogState extends State<TripDialog> {
                       child: TextField(
                         textAlign: TextAlign.center,
                         textInputAction: TextInputAction.next,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: TextInputType.numberWithOptions(
+                            decimal: true, signed: true),
                         decoration: InputDecoration(
                             hintText: "Duration", suffixText: "hrs"),
                       ),
@@ -156,7 +156,7 @@ class _TripDialogState extends State<TripDialog> {
                         textAlign: TextAlign.center,
                         textInputAction: TextInputAction.next,
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
+                            decimal: true),
                         decoration: InputDecoration(
                           hintText: "Average",
                           suffixText: (vehicleTripsData[0].distanceUnits ==
