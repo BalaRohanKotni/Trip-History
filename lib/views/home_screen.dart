@@ -3,6 +3,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import '../components/settings_bottom_sheet_dialog.dart';
+import '../components/tripdialog_bottom_sheet.dart';
 import '../constants.dart';
 import '../controllers/graph_layout_delegate.dart';
 import '../models/trip_details.dart';
@@ -463,6 +464,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: const Text("Add"),
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (buildContext) {
+                return const TripDialog();
+              });
+        },
+        backgroundColor: Colors.lightBlueAccent[50],
       ),
     );
   }
