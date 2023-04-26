@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .platformBrightness ==
                                               Brightness.light)
                                           ? const Color(0xFF4f378b)
-                                          : Colors.white),
+                                          : const Color(0xFFeadeff)),
                               id: "Mileage",
                               data: chartData,
                               domainFn: (dat, _) => dat[0],
