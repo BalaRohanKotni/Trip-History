@@ -289,8 +289,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (SchedulerBinding.instance.window
                                                   .platformBrightness ==
                                               Brightness.light)
-                                          ? const Color(0xFF4f378b)
-                                          : const Color(0xFFeadeff)),
+                                          ? purpleDarkShade
+                                          : purpleLightShade),
                               id: "Mileage",
                               data: chartData,
                               domainFn: (dat, _) => dat[0],
@@ -436,9 +436,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                           });
                                     },
                                     child: Container(
-                                        decoration: const BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius: BorderRadius.all(
+                                        decoration: BoxDecoration(
+                                          color: (SchedulerBinding
+                                                      .instance
+                                                      .window
+                                                      .platformBrightness ==
+                                                  Brightness.light)
+                                              ? purpleLightShade
+                                              : purpleDarkShade,
+                                          borderRadius: const BorderRadius.all(
                                             Radius.circular(18),
                                           ),
                                         ),

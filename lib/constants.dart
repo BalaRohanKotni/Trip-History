@@ -17,3 +17,6 @@ Set<String> vehicles = {};
 String currentVehicle = "";
 
 List vehicleTripsData = [];
+
+const Color purpleDarkShade = Color(0xFF4f378b);
+const Color purpleLightShade = Color.fromARGB(255, 246, 241, 255);
