@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -9,6 +11,14 @@ class SigninScreen extends StatefulWidget {
 }
 
 class _SigninScreenState extends State<SigninScreen> {
+  TextEditingController emailController = TextEditingController(),
+      passwordController = TextEditingController();
+  Future signIn() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,11 +42,12 @@ class _SigninScreenState extends State<SigninScreen> {
                 const SizedBox(
                   width: 16,
                 ),
-                const Expanded(
+                Expanded(
                   child: TextField(
+                    controller: emailController,
                     keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(fontSize: 16),
-                    decoration: InputDecoration(hintText: "Email"),
+                    style: const TextStyle(fontSize: 16),
+                    decoration: const InputDecoration(hintText: "Email"),
                   ),
                 ),
               ],
@@ -54,13 +65,14 @@ class _SigninScreenState extends State<SigninScreen> {
                 const SizedBox(
                   width: 16,
                 ),
-                const Expanded(
+                Expanded(
                   child: TextField(
+                      controller: passwordController,
                       obscureText: true,
                       enableSuggestions: false,
                       autocorrect: false,
-                      style: TextStyle(fontSize: 16),
-                      decoration: InputDecoration(hintText: "Password")),
+                      style: const TextStyle(fontSize: 16),
+                      decoration: const InputDecoration(hintText: "Password")),
                 ),
               ],
             ),
@@ -70,9 +82,7 @@ class _SigninScreenState extends State<SigninScreen> {
             SizedBox(
               height: 50,
               child: TextButton(
-                onPressed: () {
-                  // TODO
-                },
+                onPressed: signIn,
                 style: ButtonStyle(
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(26)))),

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trip_history/views/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -37,7 +38,16 @@ class App extends StatelessWidget {
         ),
       ),
       themeMode: ThemeMode.system,
-      home: const SigninScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return const HomeScreen();
+          } else {
+            return const SigninScreen();
+          }
+        },
+      ),
     );
   }
 }
