@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:trip_history/constants.dart';
@@ -15,9 +14,39 @@ class _SigninScreenState extends State<SigninScreen> {
   TextEditingController emailController = TextEditingController(),
       passwordController = TextEditingController();
   Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim());
+    bool networkStatus = await hasNetwork();
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+    } on FirebaseAuthException catch (e) {
+      String error = "";
+      switch (e.code) {
+        case "invalid-email":
+          error = "Email address is not valid";
+          break;
+        case "user-disabled":
+          error = "Account is disabled";
+          break;
+        case "user-not-found":
+          error =
+              "Account not found, check email address or create a new account";
+          break;
+        case "wrong-password":
+          error = "Incorrect password";
+          break;
+        default:
+          if (!networkStatus) {
+            error = "No internet connection";
+          } else {
+            error = "An unknown error has occurred";
+          }
+        // error = e.code;
+      }
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
+    }
   }
 
   @override
