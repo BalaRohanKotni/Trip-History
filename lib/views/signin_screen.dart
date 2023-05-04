@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:trip_history/constants.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
@@ -24,6 +25,7 @@ class _SigninScreenState extends State<SigninScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sign in"),
+        centerTitle: true,
       ),
       body: SafeArea(
           child: Container(
@@ -72,6 +74,7 @@ class _SigninScreenState extends State<SigninScreen> {
                       enableSuggestions: false,
                       autocorrect: false,
                       style: const TextStyle(fontSize: 16),
+                      onSubmitted: (_) => signIn(),
                       decoration: const InputDecoration(hintText: "Password")),
                 ),
               ],
