@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/scheduler.dart';
@@ -215,6 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     });
                                   },
                                 ));
+                      } else if (choice == "Logout") {
+                        FirebaseAuth.instance.signOut();
                       }
                     });
                   },
