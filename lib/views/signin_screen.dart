@@ -139,32 +139,6 @@ class _SigninScreenState extends State<SigninScreen> {
             const SizedBox(
               height: 16,
             ),
-            TextButton(
-                onPressed: () {
-                  // TODO
-                },
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Sign in with",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    SvgPicture.asset(
-                      "assets/icons/google.svg",
-                      width: 32,
-                    )
-                  ],
-                )),
             const SizedBox(
               height: 32,
             ),
