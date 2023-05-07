@@ -102,6 +102,23 @@ class _SigninScreenState extends State<SigninScreen> {
                       ),
                     ),
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      MaterialButton(
+                        onPressed: () {
+                          // TODO
+                        },
+                        child: Text(
+                          "Forgot password?",
+                          style: semiBold18().copyWith(
+                            color: kPurpleDarkShade,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const Text(
                     "or",
                     style: TextStyle(
