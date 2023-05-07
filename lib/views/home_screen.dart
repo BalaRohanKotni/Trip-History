@@ -293,8 +293,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (SchedulerBinding.instance.window
                                                   .platformBrightness ==
                                               Brightness.light)
-                                          ? purpleDarkShade
-                                          : purpleLightShade),
+                                          ? kPurpleDarkShade
+                                          : kPurpleLightShade),
                               id: "Mileage",
                               data: chartData,
                               domainFn: (dat, _) => dat[0],
@@ -446,8 +446,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .window
                                                       .platformBrightness ==
                                                   Brightness.light)
-                                              ? purpleLightShade
-                                              : purpleDarkShade,
+                                              ? kPurpleLightShade
+                                              : kPurpleDarkShade,
                                           borderRadius: const BorderRadius.all(
                                             Radius.circular(18),
                                           ),

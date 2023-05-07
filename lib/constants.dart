@@ -20,8 +20,8 @@ String currentVehicle = "";
 
 List vehicleTripsData = [];
 
-const Color purpleDarkShade = Color(0xFF4f378b);
-const Color purpleLightShade = Color.fromARGB(255, 246, 241, 255);
+const Color kPurpleDarkShade = Color(0xFF4f378b);
+const Color kPurpleLightShade = Color.fromARGB(255, 246, 241, 255);
 
 Future<bool> hasNetwork() async {
   try {
