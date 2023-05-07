@@ -30,121 +30,112 @@ class _SigninScreenState extends State<SigninScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Sign in"),
-        centerTitle: true,
-      ),
-      body: SafeArea(
+      body: Column(children: [
+        Expanded(
+          flex: 1,
           child: Container(
-        margin: const EdgeInsets.only(left: 36, right: 36),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/icons/mail.svg",
-                  semanticsLabel: "Password",
-                  width: 36,
+            color: kPurpleLightShade,
+            width: double.maxFinite,
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              margin: const EdgeInsets.only(left: 18),
+              child: Text(
+                "Sign in to your Account",
+                style: semiBold18().copyWith(
+                  fontSize: 38,
                 ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Expanded(
-                  child: TextField(
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: SafeArea(
+            child: Container(
+              margin: const EdgeInsets.only(left: 18, right: 18),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  TextField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     style: const TextStyle(fontSize: 16),
-                    decoration: const InputDecoration(hintText: "Email"),
+                    decoration: const InputDecoration(
+                        labelText: "Email", border: OutlineInputBorder()),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/icons/closed-lock.svg",
-                  semanticsLabel: "Password",
-                  width: 36,
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Expanded(
-                  child: TextField(
+                  // const SizedBox(
+                  //   height: 32,
+                  // ),
+                  TextField(
                       controller: passwordController,
                       obscureText: true,
                       enableSuggestions: false,
                       autocorrect: false,
                       style: const TextStyle(fontSize: 16),
                       onSubmitted: (_) => signIn(),
-                      decoration: const InputDecoration(hintText: "Password")),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            SizedBox(
-              height: 50,
-              child: TextButton(
-                onPressed: signIn,
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(26)))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      "Sign in",
-                      style: TextStyle(fontSize: 18),
+                      decoration: const InputDecoration(
+                          labelText: "Password", border: OutlineInputBorder())),
+                  // const SizedBox(
+                  //   height: 32,
+                  // ),
+                  SizedBox(
+                    height: 50,
+                    child: TextButton(
+                      onPressed: signIn,
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(kPurpleDarkShade),
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "Sign in",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  const Text(
+                    "or",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "New?",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      MaterialButton(
+                        padding: const EdgeInsets.only(left: 8),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        enableFeedback: false,
+                        onPressed: () {
+                          // TODO
+                        },
+                        child: const Text(
+                          "Create an account",
+                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                        ),
+                      )
+                    ],
+                  )
+                ],
               ),
             ),
-            const SizedBox(
-              height: 16,
-            ),
-            const Text(
-              "or",
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "New?",
-                  style: TextStyle(fontSize: 16),
-                ),
-                MaterialButton(
-                  padding: const EdgeInsets.only(left: 8),
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  enableFeedback: false,
-                  onPressed: () {
-                    // TODO
-                  },
-                  child: const Text(
-                    "Create an account",
-                    style: TextStyle(color: Colors.blue, fontSize: 16),
-                  ),
-                )
-              ],
-            )
-          ],
+          ),
         ),
-      )),
+      ]),
     );
   }
 }
