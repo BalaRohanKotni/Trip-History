@@ -20,29 +20,7 @@ class _SigninScreenState extends State<SigninScreen> {
           email: emailController.text.trim(),
           password: passwordController.text.trim());
     } on FirebaseAuthException catch (e) {
-      String error = "";
-      switch (e.code) {
-        case "invalid-email":
-          error = "Email address is not valid";
-          break;
-        case "user-disabled":
-          error = "Account is disabled";
-          break;
-        case "user-not-found":
-          error =
-              "Account not found, check email address or create a new account";
-          break;
-        case "wrong-password":
-          error = "Incorrect password";
-          break;
-        default:
-          if (!networkStatus) {
-            error = "No internet connection";
-          } else {
-            error = "An unknown error has occurred";
-          }
-        // error = e.code;
-      }
+      String error = firebaseExceptionHandler(e, networkStatus);
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(error)));
