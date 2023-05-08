@@ -106,6 +106,8 @@ class _SigninScreenState extends State<SigninScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       MaterialButton(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
                         onPressed: () {
                           // TODO
                         },
@@ -142,7 +144,8 @@ class _SigninScreenState extends State<SigninScreen> {
                         },
                         child: const Text(
                           "Create an account",
-                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                          style:
+                              TextStyle(color: kPurpleDarkShade, fontSize: 16),
                         ),
                       )
                     ],
