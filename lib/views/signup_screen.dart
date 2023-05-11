@@ -1,23 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:trip_history/constants.dart';
-import 'package:trip_history/views/signup_screen.dart';
+import 'package:trip_history/views/signin_screen.dart';
 
-class SigninScreen extends StatefulWidget {
-  const SigninScreen({super.key});
+import '../constants.dart';
+
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  State<SigninScreen> createState() => _SigninScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SigninScreenState extends State<SigninScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   TextEditingController emailController = TextEditingController(),
       passwordController = TextEditingController();
-  Future signIn() async {
+  Future signUp() async {
     bool networkStatus = await hasNetwork();
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
     } on FirebaseAuthException catch (e) {
@@ -41,7 +41,7 @@ class _SigninScreenState extends State<SigninScreen> {
             child: Container(
               margin: const EdgeInsets.only(left: 18),
               child: Text(
-                "Sign in to your Account",
+                "Create a new Account",
                 style: semiBold18().copyWith(
                   fontSize: 38,
                 ),
@@ -74,7 +74,7 @@ class _SigninScreenState extends State<SigninScreen> {
                       enableSuggestions: false,
                       autocorrect: false,
                       style: const TextStyle(fontSize: 16),
-                      onSubmitted: (_) => signIn(),
+                      onSubmitted: (_) => signUp(),
                       decoration: const InputDecoration(
                           labelText: "Password", border: OutlineInputBorder())),
                   // const SizedBox(
@@ -83,7 +83,7 @@ class _SigninScreenState extends State<SigninScreen> {
                   SizedBox(
                     height: 50,
                     child: TextButton(
-                      onPressed: signIn,
+                      onPressed: signUp,
                       style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(kPurpleDarkShade),
@@ -96,31 +96,12 @@ class _SigninScreenState extends State<SigninScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
                           Text(
-                            "Sign in",
+                            "Sign up",
                             style: TextStyle(fontSize: 18),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      MaterialButton(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onPressed: () {
-                          // TODO
-                        },
-                        child: Text(
-                          "Forgot password?",
-                          style: semiBold18().copyWith(
-                            color: kPurpleDarkShade,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                   const Text(
                     "or",
@@ -132,11 +113,10 @@ class _SigninScreenState extends State<SigninScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        "New?",
+                        "Already have an account?",
                         style: TextStyle(fontSize: 16),
                       ),
                       MaterialButton(
-                        padding: const EdgeInsets.only(left: 8),
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         enableFeedback: false,
@@ -144,14 +124,14 @@ class _SigninScreenState extends State<SigninScreen> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const SignupScreen()));
+                                  builder: (context) => const SigninScreen()));
                         },
                         child: const Text(
-                          "Create an account",
+                          "Sign in",
                           style:
                               TextStyle(color: kPurpleDarkShade, fontSize: 16),
                         ),
-                      )
+                      ),
                     ],
                   )
                 ],
