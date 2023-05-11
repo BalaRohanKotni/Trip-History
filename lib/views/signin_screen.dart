@@ -1,9 +1,10 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:trip_history/components/forgotpassword_dialog.dart';
 import 'package:trip_history/constants.dart';
 import 'package:trip_history/views/signup_screen.dart';
+
+import 'forgotpassword_screen.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
