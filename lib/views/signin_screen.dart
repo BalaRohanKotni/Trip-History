@@ -23,7 +23,7 @@ class _SigninScreenState extends State<SigninScreen> {
           password: passwordController.text.trim());
 // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Sign in!")));
+          .showSnackBar(const SnackBar(content: Text("Signed in!")));
     } on FirebaseAuthException catch (e) {
       String error = firebaseExceptionHandler(e, networkStatus);
       // ignore: use_build_context_synchronously

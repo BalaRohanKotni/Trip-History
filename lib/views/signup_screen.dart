@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trip_history/views/signin_screen.dart';
@@ -20,6 +21,9 @@ class _SignupScreenState extends State<SignupScreen> {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Signed in!")));
     } on FirebaseAuthException catch (e) {
       String error = firebaseExceptionHandler(e, networkStatus);
       // ignore: use_build_context_synchronously
@@ -58,12 +62,17 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(fontSize: 16),
+                  TextFormField(
                     decoration: const InputDecoration(
-                        labelText: "Email", border: OutlineInputBorder()),
+                      labelText: "Email",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (email) =>
+                        email != "" && !EmailValidator.validate(email!)
+                            ? 'Enter a valid email'
+                            : null,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: emailController,
                   ),
                   // const SizedBox(
                   //   height: 32,
