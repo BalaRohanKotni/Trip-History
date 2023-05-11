@@ -1,6 +1,7 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:trip_history/components/forgotpassword_dialog.dart';
 import 'package:trip_history/constants.dart';
 import 'package:trip_history/views/signup_screen.dart';
 
@@ -20,6 +21,9 @@ class _SigninScreenState extends State<SigninScreen> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
+// ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Sign in!")));
     } on FirebaseAuthException catch (e) {
       String error = firebaseExceptionHandler(e, networkStatus);
       // ignore: use_build_context_synchronously
@@ -58,12 +62,17 @@ class _SigninScreenState extends State<SigninScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(fontSize: 16),
+                  TextFormField(
                     decoration: const InputDecoration(
-                        labelText: "Email", border: OutlineInputBorder()),
+                      labelText: "Email",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (email) =>
+                        email != "" && !EmailValidator.validate(email!)
+                            ? 'Enter a valid email'
+                            : null,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: emailController,
                   ),
                   // const SizedBox(
                   //   height: 32,
@@ -110,7 +119,11 @@ class _SigninScreenState extends State<SigninScreen> {
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onPressed: () {
-                          // TODO
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPassword(
+                                      email: emailController.text)));
                         },
                         child: Text(
                           "Forgot password?",
