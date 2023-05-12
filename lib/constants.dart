@@ -54,7 +54,7 @@ String firebaseExceptionHandler(e, networkStatus) {
       if (!networkStatus) {
         error = "No internet connection";
       } else {
-        error = "An unknown error has occurred";
+        error = e.message;
       }
     // error = e.code;
   }
