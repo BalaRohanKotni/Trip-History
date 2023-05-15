@@ -134,10 +134,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         highlightColor: Colors.transparent,
                         enableFeedback: false,
                         onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SigninScreen()));
+                          Navigator.pop(context);
                         },
                         child: const Text(
                           "Sign in",
