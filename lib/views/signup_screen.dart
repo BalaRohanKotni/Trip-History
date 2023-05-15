@@ -1,9 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:trip_history/views/signin_screen.dart';
+import 'package:trip_history/views/verifyemail_screen.dart';
 
 import '../constants.dart';
 
@@ -23,16 +22,21 @@ class _SignupScreenState extends State<SignupScreen> {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Signed in!")));
-
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       String error = firebaseExceptionHandler(e, networkStatus);
 
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(error)));
+    }
+    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => VerifyEmailScreen(
+                    email: emailController.text.trim(),
+                  )));
+    } else {
+      Navigator.pop(context);
     }
   }
 
