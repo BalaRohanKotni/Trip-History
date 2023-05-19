@@ -16,4 +16,16 @@ class TripDetails {
     required this.distanceUnits,
     required this.vehicleName,
   });
+
+  toMap() {
+    return {
+      'dateTime': dateTime,
+      'mileage': mileage,
+      'distance': distance,
+      'duration': duration,
+      'id': id,
+      'distanceUnits': distanceUnits,
+      'vehicleName': vehicleName
+    };
+  }
 }
