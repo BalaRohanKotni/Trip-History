@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TripDetails(
       dateTime: DateTime(2016).millisecondsSinceEpoch,
       mileage: 29,
-      dist: 900,
+      distance: 900,
       dur: 13,
       id: "123jh4k1234",
       name: "Mangolore Trip",
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TripDetails(
       dateTime: DateTime(2017).millisecondsSinceEpoch,
       mileage: 30.5,
-      dist: 758,
+      distance: 758,
       dur: 11,
       id: "123jh4k1234",
       name: "Banglore Trip",
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TripDetails(
       dateTime: DateTime(2018).millisecondsSinceEpoch,
       mileage: 31,
-      dist: 700,
+      distance: 700,
       dur: 10,
       id: "123jh4k1234",
       name: "Mysore Trip",
@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TripDetails(
       dateTime: DateTime(2019).millisecondsSinceEpoch,
       mileage: 33,
-      dist: 800,
+      distance: 800,
       dur: 12,
       id: "123jh4k1234",
       name: "Pondicherry Trip",
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TripDetails(
       dateTime: DateTime(2020).millisecondsSinceEpoch,
       mileage: 32,
-      dist: 1200,
+      distance: 1200,
       dur: 15,
       id: "123jh4k1234",
       name: "Lonovola Trip",
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TripDetails(
       dateTime: DateTime(2022).millisecondsSinceEpoch,
       mileage: 32,
-      dist: 1200,
+      distance: 1200,
       dur: 15,
       id: "123jh4k1234",
       name: "Lonovola 2 Trip",
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TripDetails(
       dateTime: DateTime(2021).millisecondsSinceEpoch,
       mileage: 34,
-      dist: 1100,
+      distance: 1100,
       dur: 14,
       id: "123jh4k1234",
       name: "Goa Trip",
@@ -260,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text((vehicleTripsData.isNotEmpty)
                             ? "${[
                                 for (TripDetails trip in vehicleTripsData)
-                                  trip.dist
+                                  trip.distance
                               ].fold(0, (p, c) => (p + c).toInt())}${(vehicleTripsData[0].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"
                             : "0km"),
                         Text((vehicleTripsData.isNotEmpty)
