@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:trip_history/models/trip_details.dart';
 
 TextStyle semiBold18() {
   return const TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
@@ -18,7 +19,7 @@ Set<String> vehicles = {};
 //TODO Sync currentVehicle to firestore
 String currentVehicle = "";
 
-List vehicleTripsData = [];
+List<TripDetails> vehicleTripsData = [];
 
 const Color kPurpleDarkShade = Color(0xFF4f378b);
 const Color kPurpleLightShade = Color.fromARGB(255, 246, 241, 255);

@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     final window = WidgetsBinding.instance.window;
+    // TODO: Check with user's choice of theme (light, dark, system)
     window.onPlatformBrightnessChanged = () {
       setState(() {});
     };
@@ -180,10 +181,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 prevDistanceUnits) {
                                           vehicleTripsData[index]
                                               .distanceUnits = DistanceUnits.km;
-                                          vehicleTripsData[index].dist =
+                                          vehicleTripsData[index].distance =
                                               double.parse(
                                                   (vehicleTripsData[index]
-                                                              .dist *
+                                                              .distance *
                                                           1.609)
                                                       .toStringAsFixed(2));
                                           vehicleTripsData[index].mileage =
@@ -200,10 +201,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           vehicleTripsData[index]
                                               .distanceUnits = DistanceUnits.mi;
 
-                                          vehicleTripsData[index].dist =
+                                          vehicleTripsData[index].distance =
                                               double.parse(
                                                   (vehicleTripsData[index]
-                                                              .dist /
+                                                              .distance /
                                                           1.609)
                                                       .toStringAsFixed(2));
                                           vehicleTripsData[index].mileage =
@@ -423,13 +424,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   TripDialogMode.edit,
                                               initTripName:
                                                   vehicleTripsData[position]
-                                                      .name,
+                                                      .tripTitle,
                                               initDist:
                                                   vehicleTripsData[position]
-                                                      .dist,
+                                                      .distance,
                                               initDur:
                                                   vehicleTripsData[position]
-                                                      .dur,
+                                                      .duration,
                                               initDateInMilliSeconds:
                                                   vehicleTripsData[position]
                                                       .dateTime,
@@ -466,7 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 children: [
                                                   Text(
                                                     vehicleTripsData[position]
-                                                        .name,
+                                                        .tripTitle,
                                                   ),
                                                   Text(DateFormat.yMMMd()
                                                       .format(DateTime
@@ -485,11 +486,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .spaceBetween,
                                                 children: [
                                                   Text(
-                                                      "${vehicleTripsData[position].dist}${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
+                                                      "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
                                                   Text(
                                                       "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
                                                   Text(
-                                                      "${vehicleTripsData[position].dur}hrs"),
+                                                      "${vehicleTripsData[position].duration}hrs"),
                                                 ],
                                               ),
                                             ],
