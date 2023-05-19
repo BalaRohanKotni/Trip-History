@@ -3,7 +3,7 @@ import 'package:trip_history/constants.dart';
 class TripDetails {
   final int dateTime;
   double mileage, distance, duration;
-  final String name, id;
+  final String tripTitle, id;
   DistanceUnits distanceUnits;
   String vehicleName;
   TripDetails({
@@ -12,7 +12,7 @@ class TripDetails {
     required this.distance,
     required this.duration,
     required this.id,
-    required this.name,
+    required this.tripTitle,
     required this.distanceUnits,
     required this.vehicleName,
   });
@@ -24,6 +24,7 @@ class TripDetails {
       'distance': distance,
       'duration': duration,
       'id': id,
+      'tripTitle': tripTitle,
       'distanceUnits': distanceUnits,
       'vehicleName': vehicleName
     };
