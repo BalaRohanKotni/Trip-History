@@ -25,7 +25,7 @@ class TripDetails {
       'duration': duration,
       'id': id,
       'tripTitle': tripTitle,
-      'distanceUnits': distanceUnits,
+      'distanceUnits': (distanceUnits == DistanceUnits.km) ? "km" : "mi",
       'vehicleName': vehicleName
     };
   }

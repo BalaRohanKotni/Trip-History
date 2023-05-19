@@ -19,8 +19,8 @@ class SettingsDialog extends StatefulWidget {
 }
 
 class _SettingsDialogState extends State<SettingsDialog> {
-  String _selectedVehicle = vehicles.elementAt(0);
-  String _newVehicleReplacing = vehicles.elementAt(0);
+  String _selectedVehicle = vehiclesList.elementAt(0);
+  String _newVehicleReplacing = vehiclesList.elementAt(0);
   TextEditingController newVehicleController = TextEditingController();
   bool editMode = false;
   List<DropdownMenuItem> items = [];
@@ -46,29 +46,30 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 hintText: "Add"),
             onSubmitted: (value) => setState(() {
               _selectedVehicle = value;
-              vehicles.add(value);
+              vehiclesList.add(value);
               newVehicleController.text = "";
             }),
           ),
         ),
       );
 
-      for (int index = 0; index < vehicles.length; index++) {
+      for (int index = 0; index < vehiclesList.length; index++) {
         items.add(ListTile(
-          title: Text(vehicles.elementAt(index)),
+          title: Text(vehiclesList.elementAt(index)),
           trailing: IconButton(
             onPressed: () {
-              if (vehicles.length > 1) {
+              if (vehiclesList.length > 1) {
                 showDialog(
                     context: context,
                     builder: (bContext) {
-                      Set newVehiclesList = Set.from(vehicles);
-                      newVehiclesList.remove(vehicles.elementAt(index));
+                      Set newVehiclesList = Set.from(vehiclesList);
+                      newVehiclesList.remove(vehiclesList.elementAt(index));
                       _newVehicleReplacing = newVehiclesList.first;
                       var statefulBuilder = StatefulBuilder(
                         builder: (bc, setStateDialog) {
                           return AlertDialog(
-                            title: Text("Delete ${vehicles.elementAt(index)}"),
+                            title:
+                                Text("Delete ${vehiclesList.elementAt(index)}"),
                             actions: [
                               TextButton(
                                 child: const Text("Cancel"),
@@ -82,17 +83,18 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                 ),
                                 onPressed: () {
                                   widget.replaceVehicleInTrips(
-                                    vehicles.elementAt(index),
+                                    vehiclesList.elementAt(index),
                                     _newVehicleReplacing,
                                   );
                                   Navigator.pop(bc);
                                   setState(() {
                                     widget.replaceVehicleInTrips(
-                                        vehicles.elementAt(index),
+                                        vehiclesList.elementAt(index),
                                         _newVehicleReplacing);
                                     currentVehicle = _newVehicleReplacing;
                                     _selectedVehicle = currentVehicle;
-                                    vehicles.remove(vehicles.elementAt(index));
+                                    vehiclesList
+                                        .remove(vehiclesList.elementAt(index));
                                   });
                                 },
                               ),
@@ -101,7 +103,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                      "Select a vehicle to replace for trips made on ${vehicles.elementAt(index)}"),
+                                      "Select a vehicle to replace for trips made on ${vehiclesList.elementAt(index)}"),
                                 ),
                                 DropdownButton(
                                   value: _newVehicleReplacing,
@@ -137,7 +139,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                       return AlertDialog(
                         title: const Text("Atleast one vehicle is needed"),
                         content: Text(
-                            "Atleast one vehicle is required. If you wish to delete ${vehicles.elementAt(index)}, create a new vehicle and then delete ${vehicles.elementAt(index)}."),
+                            "Atleast one vehicle is required. If you wish to delete ${vehiclesList.elementAt(index)}, create a new vehicle and then delete ${vehiclesList.elementAt(index)}."),
                         actions: [
                           TextButton(
                             onPressed: () {
@@ -172,14 +174,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
           });
         },
         items: List.generate(
-          vehicles.length,
+          vehiclesList.length,
           (index) {
             return DropdownMenuItem(
-              value: vehicles.elementAt(index),
+              value: vehiclesList.elementAt(index),
               child: Row(
                 children: [
                   Text(
-                    vehicles.elementAt(index),
+                    vehiclesList.elementAt(index),
                     style: const TextStyle(fontSize: 18),
                   ),
                 ],

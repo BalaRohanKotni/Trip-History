@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
+import 'package:trip_history/controllers/firestore_operations.dart';
 import '../components/settings_bottom_sheet_dialog.dart';
 import '../components/tripdialog_bottom_sheet.dart';
 import '../constants.dart';
@@ -109,9 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
     vehicleTripsData = [];
     chartData = [];
     for (TripDetails trip in data) {
-      vehicles.add(trip.vehicleName);
+      vehiclesList.add(trip.vehicleName);
       if (currentVehicle == "") {
-        currentVehicle = vehicles.first;
+        currentVehicle = vehiclesList.first;
       }
       if (trip.vehicleName == currentVehicle) {
         vehicleTripsData.add(trip);
