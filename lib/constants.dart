@@ -7,7 +7,8 @@ TextStyle semiBold18() {
   return const TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
 }
 
-//TODO Sync distanceUnits to firestore
+Brightness kBrightness = Brightness.light;
+
 DistanceUnits distanceUnits = DistanceUnits.km;
 
 enum DistanceUnits { km, mi }

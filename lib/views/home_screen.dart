@@ -98,10 +98,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     final window = WidgetsBinding.instance.window;
-    // TODO: Check with user's choice of theme (light, dark, system)
-    window.onPlatformBrightnessChanged = () {
-      setState(() {});
+
+    window.onPlatformBrightnessChanged = () async {
+      String firestoreTheme =
+          await firestoreGetTheme(FirebaseAuth.instance.currentUser!);
+      if (firestoreTheme == "system") {
+        kBrightness = window.platformBrightness;
+        // await firestoreSetTheme(FirebaseAuth.instance.currentUser!,
+        //     (kBrightness == Brightness.light) ? "light" : "dark");
+        setState(() {});
+      } else {
+        if (firestoreTheme == "dark") {
+          kBrightness = Brightness.dark;
+        } else {
+          kBrightness = Brightness.light;
+        }
+      }
     };
   }
 
@@ -292,9 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             charts.Series(
                               colorFn: (__, ___) =>
                                   charts.ColorUtil.fromDartColor(
-                                      (SchedulerBinding.instance.window
-                                                  .platformBrightness ==
-                                              Brightness.light)
+                                      (kBrightness == Brightness.light)
                                           ? kPurpleDarkShade
                                           : kPurpleLightShade),
                               id: "Mileage",
@@ -333,9 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               "Trips",
                               titleOutsideJustification:
                                   charts.OutsideJustification.start,
-                              titleStyleSpec: (SchedulerBinding
-                                          .instance.window.platformBrightness ==
-                                      Brightness.light)
+                              titleStyleSpec: (kBrightness == Brightness.light)
                                   ? const charts.TextStyleSpec(
                                       color: charts.MaterialPalette.black)
                                   : const charts.TextStyleSpec(
@@ -352,9 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ? "km/l"
                                       : "mpg",
                               behaviorPosition: charts.BehaviorPosition.start,
-                              titleStyleSpec: (SchedulerBinding
-                                          .instance.window.platformBrightness ==
-                                      Brightness.light)
+                              titleStyleSpec: (kBrightness == Brightness.light)
                                   ? const charts.TextStyleSpec(
                                       color: charts.MaterialPalette.black)
                                   : const charts.TextStyleSpec(
@@ -365,9 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               renderSpec: charts.GridlineRendererSpec(
                             labelStyle: charts.TextStyleSpec(
                                 fontSize: 10,
-                                color: (SchedulerBinding.instance.window
-                                            .platformBrightness ==
-                                        Brightness.light)
+                                color: (kBrightness == Brightness.light)
                                     ? charts.MaterialPalette.black
                                     : charts.MaterialPalette.white),
                           )),
@@ -375,9 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             renderSpec: charts.GridlineRendererSpec(
                               labelStyle: charts.TextStyleSpec(
                                   fontSize: 10,
-                                  color: (SchedulerBinding.instance.window
-                                              .platformBrightness ==
-                                          Brightness.light)
+                                  color: (kBrightness == Brightness.light)
                                       ? charts.MaterialPalette.black
                                       : charts.MaterialPalette.white),
                             ),
@@ -443,13 +447,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     child: Container(
                                         decoration: BoxDecoration(
-                                          color: (SchedulerBinding
-                                                      .instance
-                                                      .window
-                                                      .platformBrightness ==
-                                                  Brightness.light)
-                                              ? kPurpleLightShade
-                                              : kPurpleDarkShade,
+                                          color:
+                                              (kBrightness == Brightness.light)
+                                                  ? kPurpleLightShade
+                                                  : kPurpleDarkShade,
                                           borderRadius: const BorderRadius.all(
                                             Radius.circular(18),
                                           ),
