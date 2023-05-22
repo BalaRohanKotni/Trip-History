@@ -7,7 +7,22 @@ Future firestoreCreateUserCollection(User user) async {
   await FirebaseFirestore.instance
       .collection(firestoreCollection)
       .doc(user.uid)
-      .set({});
+      .set({"theme": "system"});
+}
+
+Future firestoreSetTheme(User user, String theme) async {
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({"theme": theme});
+}
+
+Future firestoreGetTheme(User user) async {
+  return await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .get()
+      .then((value) => value.data()!['theme']);
 }
 
 Future firestoreSetCurrentVehicle({
