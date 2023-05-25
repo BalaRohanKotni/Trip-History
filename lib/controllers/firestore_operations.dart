@@ -35,6 +35,18 @@ Future firestoreSetCurrentVehicle({
       .update({"currentVehicle": currentVehicle});
 }
 
+Future firestoreGetCurrentVehicle({
+  required User user,
+}) async {
+  return await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .get()
+      .then(
+        (value) => value.data()!['currentVehicle'],
+      );
+}
+
 Future firestoreEditVehiclesList({
   required User user,
   required Set<String> vehiclesList,
@@ -43,6 +55,14 @@ Future firestoreEditVehiclesList({
       .collection(firestoreCollection)
       .doc(user.uid)
       .update({"vehiclesList": vehiclesList});
+}
+
+Future firestoreGetVehiclesList({required User user}) async {
+  return await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .get()
+      .then((value) => value.data()!['vehiclesList']);
 }
 
 Future firestoreAddTrip({
