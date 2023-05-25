@@ -11,6 +11,8 @@ Brightness kBrightness = Brightness.light;
 
 DistanceUnits distanceUnits = DistanceUnits.km;
 
+StreamController<bool> isLightThemeModeStreamController = StreamController();
+
 enum DistanceUnits { km, mi }
 
 enum TripDialogMode { create, edit }
