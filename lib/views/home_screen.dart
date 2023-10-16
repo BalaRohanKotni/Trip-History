@@ -99,26 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    User user = FirebaseAuth.instance.currentUser!;
+    Brightness systemTheme =
+        SchedulerBinding.instance.platformDispatcher.platformBrightness;
 
-    final window = WidgetsBinding.instance.window;
-    window.onPlatformBrightnessChanged = () async {
-      String firestoreTheme = await firestoreGetTheme(user);
-      if (firestoreTheme == "system") {
-        kBrightness = window.platformBrightness;
-        // TODO Radio buttons in settings to choose bw themes
-        // await firestoreSetTheme(FirebaseAuth.instance.currentUser!,
-        //     (kBrightness == Brightness.light) ? "light" : "dark");
-        setState(() {});
-      } else {
-        if (firestoreTheme == "dark") {
-          kBrightness = Brightness.dark;
-          isLightThemeModeStreamController.add(false);
-        } else {
-          kBrightness = Brightness.light;
-          isLightThemeModeStreamController.add(true);
-        }
-      }
+    SchedulerBinding.instance.platformDispatcher.onPlatformBrightnessChanged =
+        () async {
+      await firestoreSetTheme(FirebaseAuth.instance.currentUser!,
+          (systemTheme == Brightness.light) ? "light" : "dark");
+      setState(() {});
     };
   }
 
@@ -134,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         currentVehicle = documentSnapshot.data!.get('currentVehicle');
-        vehiclesList = {...documentSnapshot.data!.get('vehiclesList')};
         if (documentSnapshot.data!.get('theme') == "light") {
           kBrightness = Brightness.light;
           isLightThemeModeStreamController.add(true);
@@ -177,8 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             }
+            vehiclesList = {};
             for (TripDetails trip in data) {
-              // vehiclesList.add(trip.vehicleName);
+              vehiclesList.add(trip.vehicleName);
               if (currentVehicle == "") {
                 currentVehicle = vehiclesList.first;
               }
@@ -631,17 +619,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         );
-
-        // return FutureBuilder(
-        //   future: setValues(FirebaseAuth.instance.currentUser!),
-        //   builder: ((context, futureBuilderSnapshot) {
-        //     if (!snapshot.hasData) {
-        //       return Text("LOading");
-        //     }
-        //     // snapshot.data!.docs[0].data()
-
-        //   }),
-        // );
       },
     );
   }
