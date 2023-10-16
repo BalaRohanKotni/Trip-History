@@ -99,11 +99,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    Brightness systemTheme =
-        SchedulerBinding.instance.platformDispatcher.platformBrightness;
-
     SchedulerBinding.instance.platformDispatcher.onPlatformBrightnessChanged =
         () async {
+      Brightness systemTheme =
+          SchedulerBinding.instance.platformDispatcher.platformBrightness;
       await firestoreSetTheme(FirebaseAuth.instance.currentUser!,
           (systemTheme == Brightness.light) ? "light" : "dark");
       setState(() {});
