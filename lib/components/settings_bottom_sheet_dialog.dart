@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:trip_history/controllers/firestore_operations.dart';
 import '../constants.dart';
 
 class SettingsDialog extends StatefulWidget {
@@ -25,9 +27,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
   bool editMode = false;
   List<DropdownMenuItem> items = [];
   Widget vehiclesWidget = Container();
+
   @override
   Widget build(BuildContext context) {
-    kUnits = vehicleTripsData.first.distanceUnits;
     if (editMode) {
       List<Widget> items = [];
       items.add(
@@ -193,71 +195,101 @@ class _SettingsDialogState extends State<SettingsDialog> {
     }
     return BottomSheet(
       builder: (bContext) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height / 3,
-          child: Container(
-            margin: const EdgeInsets.all(28),
-            child: Scrollbar(
-              thumbVisibility: true,
-              child: ListView(children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Distance Units"),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            title: const Text("Km"),
-                            leading: Radio(
-                                value: Units.km,
-                                groupValue: kUnits,
-                                onChanged: (units) => setState(() {
-                                      kUnits = units!;
-                                      widget.onChangeDistanceUnits(kUnits);
-                                    })),
-                          ),
+        return FutureBuilder(
+          future: firestoreGetUnits(FirebaseAuth.instance.currentUser!),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              kUnits = (snapshot.data == "km") ? Units.km : Units.mi;
+              return SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: StatefulBuilder(builder: (context, sheetSetState) {
+                  return Container(
+                    margin: const EdgeInsets.all(28),
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      child: ListView(children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Distance Units"),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ListTile(
+                                      title: const Text("Km"),
+                                      leading: Radio(
+                                          value: Units.km,
+                                          groupValue: kUnits,
+                                          onChanged: (units) {
+                                            sheetSetState(
+                                                (() => kUnits = units!));
+                                            setState(() {
+                                              widget.onChangeDistanceUnits(
+                                                  kUnits);
+                                              firestoreSetUnits(
+                                                  FirebaseAuth
+                                                      .instance.currentUser!,
+                                                  kUnits);
+                                            });
+                                          })),
+                                ),
+                                Expanded(
+                                  child: ListTile(
+                                      title: const Text("Mi"),
+                                      leading: Radio(
+                                          value: Units.mi,
+                                          groupValue: kUnits,
+                                          onChanged: (units) {
+                                            sheetSetState(
+                                                (() => kUnits = units!));
+                                            setState(() {
+                                              widget.onChangeDistanceUnits(
+                                                  kUnits);
+                                              firestoreSetUnits(
+                                                  FirebaseAuth
+                                                      .instance.currentUser!,
+                                                  kUnits);
+                                            });
+                                          })),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 24,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    margin: const EdgeInsets.only(top: 14),
+                                    child: const Text("Vehicle: ")),
+                                vehiclesWidget,
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      (!editMode)
+                                          ? editMode = true
+                                          : editMode = false;
+                                    });
+                                  },
+                                  child: Text((!editMode) ? "Edit" : "Done"),
+                                )
+                              ],
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: ListTile(
-                            title: const Text("Mi"),
-                            leading: Radio(
-                                value: Units.mi,
-                                groupValue: kUnits,
-                                onChanged: (units) => setState(() {
-                                      kUnits = units!;
-                                      widget.onChangeDistanceUnits(kUnits);
-                                    })),
-                          ),
-                        )
-                      ],
+                      ]),
                     ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            margin: const EdgeInsets.only(top: 14),
-                            child: const Text("Vehicle: ")),
-                        vehiclesWidget,
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              (!editMode) ? editMode = true : editMode = false;
-                            });
-                          },
-                          child: Text((!editMode) ? "Edit" : "Done"),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ]),
-            ),
-          ),
+                  );
+                }),
+              );
+            } else {
+              return SizedBox(
+                  height: MediaQuery.of(context).size.height / 3,
+                  child: const Center(child: CircularProgressIndicator()));
+            }
+          },
         );
       },
       onClosing: () {

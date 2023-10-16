@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:trip_history/constants.dart';
 
 const String firestoreCollection = "User Trips";
 
@@ -23,6 +24,21 @@ Future firestoreGetTheme(User user) async {
       .doc(user.uid)
       .get()
       .then((value) => value.data()!['theme']);
+}
+
+Future firestoreSetUnits(User user, Units units) async {
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({"units": (units == Units.km) ? "km" : "mi"});
+}
+
+Future firestoreGetUnits(User user) async {
+  return await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .get()
+      .then((value) => value.data()!['units']);
 }
 
 Future firestoreSetCurrentVehicle({
