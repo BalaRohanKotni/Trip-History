@@ -151,9 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
               data.add(
                 TripDetails(
                   dateTime: element['dateTime'],
-                  mileage: element['mileage'],
-                  distance: element['distance'],
-                  duration: element['duration'],
+                  mileage: element['mileage'].toDouble(),
+                  distance: element['distance'].toDouble(),
+                  duration: element['duration'].toDouble(),
                   id: element['id'],
                   tripTitle: element['tripTitle'],
                   distanceUnits: (element['distanceUnits'] == "km")
