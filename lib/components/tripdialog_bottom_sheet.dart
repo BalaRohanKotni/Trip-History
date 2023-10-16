@@ -161,10 +161,10 @@ class _TripDialogState extends State<TripDialog> {
                             decimal: true, signed: true),
                         decoration: InputDecoration(
                           hintText: "Distance",
-                          suffixText: (vehicleTripsData[0].distanceUnits ==
-                                  DistanceUnits.km)
-                              ? 'km'
-                              : 'mi',
+                          suffixText:
+                              (vehicleTripsData[0].distanceUnits == Units.km)
+                                  ? 'km'
+                                  : 'mi',
                         ),
                       ),
                     ),
@@ -192,10 +192,10 @@ class _TripDialogState extends State<TripDialog> {
                             decimal: true),
                         decoration: InputDecoration(
                           hintText: "Average",
-                          suffixText: (vehicleTripsData[0].distanceUnits ==
-                                  DistanceUnits.km)
-                              ? 'km/l'
-                              : 'mpg',
+                          suffixText:
+                              (vehicleTripsData[0].distanceUnits == Units.km)
+                                  ? 'km/l'
+                                  : 'mpg',
                         ),
                       ),
                     ),

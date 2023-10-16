@@ -9,11 +9,11 @@ TextStyle semiBold18() {
 
 Brightness kBrightness = Brightness.light;
 
-DistanceUnits distanceUnits = DistanceUnits.km;
+Units kUnits = Units.km;
 
 StreamController<bool> isLightThemeModeStreamController = StreamController();
 
-enum DistanceUnits { km, mi }
+enum Units { km, mi }
 
 enum TripDialogMode { create, edit }
 

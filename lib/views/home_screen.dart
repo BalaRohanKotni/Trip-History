@@ -156,9 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   duration: element['duration'].toDouble(),
                   id: element['id'],
                   tripTitle: element['tripTitle'],
-                  distanceUnits: (element['distanceUnits'] == "km")
-                      ? DistanceUnits.km
-                      : DistanceUnits.mi,
+                  distanceUnits:
+                      (element['distanceUnits'] == "km") ? Units.km : Units.mi,
                   vehicleName: element['vehicleName'],
                 ),
               );
@@ -222,27 +221,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                             });
                                           },
                                           onChangeDistanceUnits:
-                                              (DistanceUnits distanceUnits) {
+                                              (Units distanceUnits) {
                                             setState(() {
                                               for (int index = 0;
                                                   index <
                                                       vehicleTripsData.length;
                                                   index++) {
-                                                DistanceUnits
-                                                    prevDistanceUnits =
+                                                Units prevDistanceUnits =
                                                     vehicleTripsData[index]
                                                         .distanceUnits;
                                                 vehicleTripsData[index]
                                                         .distanceUnits =
                                                     distanceUnits;
 
-                                                if (distanceUnits ==
-                                                        DistanceUnits.km &&
+                                                if (distanceUnits == Units.km &&
                                                     distanceUnits !=
                                                         prevDistanceUnits) {
                                                   vehicleTripsData[index]
-                                                          .distanceUnits =
-                                                      DistanceUnits.km;
+                                                      .distanceUnits = Units.km;
                                                   vehicleTripsData[index]
                                                           .distance =
                                                       double.parse(
@@ -263,13 +259,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   2));
                                                 }
 
-                                                if (distanceUnits ==
-                                                        DistanceUnits.mi &&
+                                                if (distanceUnits == Units.mi &&
                                                     distanceUnits !=
                                                         prevDistanceUnits) {
                                                   vehicleTripsData[index]
-                                                          .distanceUnits =
-                                                      DistanceUnits.mi;
+                                                      .distanceUnits = Units.mi;
 
                                                   vehicleTripsData[index]
                                                           .distance =
@@ -324,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Text(
                                   (vehicleTripsData.isNotEmpty)
-                                      ? "Average ${(vehicleTripsData[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}:"
+                                      ? "Average ${(vehicleTripsData[0].distanceUnits == Units.km) ? 'km/l' : 'mpg'}:"
                                       : "Average km/l:",
                                   style: semiBold18(),
                                 ),
@@ -339,15 +333,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         for (TripDetails trip
                                             in vehicleTripsData)
                                           trip.distance
-                                      ].fold(0, (p, c) => (p + c).toInt())}${(vehicleTripsData[0].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"
+                                      ].fold(0, (p, c) => (p + c).toInt())}${(vehicleTripsData[0].distanceUnits == Units.km) ? 'km' : 'mi'}"
                                     : "0km"),
                                 Text((vehicleTripsData.isNotEmpty)
                                     ? "${([
                                           for (TripDetails trip
                                               in vehicleTripsData)
                                             trip.mileage
-                                        ].fold(0, (p, c) => (p + c).toInt()) / vehicleTripsData.length).toStringAsFixed(2)}${(vehicleTripsData[0].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"
-                                    : "0${(distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
+                                        ].fold(0, (p, c) => (p + c).toInt()) / vehicleTripsData.length).toStringAsFixed(2)}${(vehicleTripsData[0].distanceUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                    : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
                               ],
                             )
                           ],
@@ -427,10 +421,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (vehicleTripsData.isNotEmpty)
                                           ? (vehicleTripsData[0]
                                                       .distanceUnits ==
-                                                  DistanceUnits.km)
+                                                  Units.km)
                                               ? "km/l"
                                               : "mpg"
-                                          : (distanceUnits == DistanceUnits.km)
+                                          : (kUnits == Units.km)
                                               ? "km/l"
                                               : "mpg",
                                       behaviorPosition:
@@ -574,9 +568,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .spaceBetween,
                                                         children: [
                                                           Text(
-                                                              "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km' : 'mi'}"),
+                                                              "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
                                                           Text(
-                                                              "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'}"),
+                                                              "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}"),
                                                           Text(
                                                               "${vehicleTripsData[position].duration}hrs"),
                                                         ],
@@ -635,7 +629,7 @@ class SelectedGraphTextWidget extends StatefulWidget {
 
 class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
   String mileage = "", dateString = "";
-  DistanceUnits distanceUnits = DistanceUnits.km;
+  Units distanceUnits = Units.km;
   setValues(mil, date, setDistanceUnits) {
     mileage = mil;
     dateString = date;
@@ -650,7 +644,7 @@ class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
   Widget build(BuildContext context) {
     return Text(
       mileage != ""
-          ? "$mileage ${(distanceUnits == DistanceUnits.km) ? 'km/l' : 'mpg'} on $dateString"
+          ? "$mileage ${(distanceUnits == Units.km) ? 'km/l' : 'mpg'} on $dateString"
           : "",
       textAlign: TextAlign.end,
     );

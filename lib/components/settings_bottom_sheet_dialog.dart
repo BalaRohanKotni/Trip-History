@@ -27,7 +27,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   Widget vehiclesWidget = Container();
   @override
   Widget build(BuildContext context) {
-    distanceUnits = vehicleTripsData.first.distanceUnits;
+    kUnits = vehicleTripsData.first.distanceUnits;
     if (editMode) {
       List<Widget> items = [];
       items.add(
@@ -210,12 +210,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                           child: ListTile(
                             title: const Text("Km"),
                             leading: Radio(
-                                value: DistanceUnits.km,
-                                groupValue: distanceUnits,
+                                value: Units.km,
+                                groupValue: kUnits,
                                 onChanged: (units) => setState(() {
-                                      distanceUnits = units!;
-                                      widget
-                                          .onChangeDistanceUnits(distanceUnits);
+                                      kUnits = units!;
+                                      widget.onChangeDistanceUnits(kUnits);
                                     })),
                           ),
                         ),
@@ -223,12 +222,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                           child: ListTile(
                             title: const Text("Mi"),
                             leading: Radio(
-                                value: DistanceUnits.mi,
-                                groupValue: distanceUnits,
+                                value: Units.mi,
+                                groupValue: kUnits,
                                 onChanged: (units) => setState(() {
-                                      distanceUnits = units!;
-                                      widget
-                                          .onChangeDistanceUnits(distanceUnits);
+                                      kUnits = units!;
+                                      widget.onChangeDistanceUnits(kUnits);
                                     })),
                           ),
                         )
