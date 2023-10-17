@@ -186,6 +186,41 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   kUnits = (snapshot.data == "km") ? Units.km : Units.mi;
+                  if (vehicleTripsData[0].distanceUnits != kUnits) {
+                    for (int index = 0;
+                        index < vehicleTripsData.length;
+                        index++) {
+                      Units prevDistanceUnits =
+                          vehicleTripsData[index].distanceUnits;
+                      vehicleTripsData[index].distanceUnits = kUnits;
+
+                      if (kUnits == Units.km && kUnits != prevDistanceUnits) {
+                        vehicleTripsData[index].distanceUnits = Units.km;
+                        vehicleTripsData[index].distance = double.parse(
+                            (vehicleTripsData[index].distance * 1.609)
+                                .toStringAsFixed(2));
+                        vehicleTripsData[index].mileage = double.parse(
+                            (vehicleTripsData[index].mileage / 2.352)
+                                .toStringAsFixed(2));
+                      }
+
+                      if (kUnits == Units.mi && kUnits != prevDistanceUnits) {
+                        vehicleTripsData[index].distanceUnits = Units.mi;
+
+                        vehicleTripsData[index].distance = double.parse(
+                            (vehicleTripsData[index].distance / 1.609)
+                                .toStringAsFixed(2));
+                        vehicleTripsData[index].mileage = double.parse(
+                            (vehicleTripsData[index].mileage * 2.352)
+                                .toStringAsFixed(2));
+                      }
+                      firestoreUpdateTrip(
+                          user: FirebaseAuth.instance.currentUser!,
+                          updatedData: vehicleTripsData[index].toMap(),
+                          id: vehicleTripsData[index].id);
+                    }
+                    // setState(() {});
+                  }
                   return Scaffold(
                     resizeToAvoidBottomInset: false,
                     appBar: AppBar(
