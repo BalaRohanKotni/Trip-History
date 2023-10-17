@@ -129,7 +129,8 @@ class _HomeScreenState extends State<HomeScreen> {
           isLightThemeModeStreamController.add(false);
         } else {
           {
-            kBrightness = SchedulerBinding.instance.window.platformBrightness;
+            kBrightness =
+                SchedulerBinding.instance.platformDispatcher.platformBrightness;
             isLightThemeModeStreamController
                 .add((kBrightness == Brightness.light) ? true : false);
           }
@@ -260,6 +261,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     (String newVehicle) {
                                                   setState(() {
                                                     currentVehicle = newVehicle;
+                                                  });
+                                                },
+                                                onDeleteOfVehicle: (String
+                                                        deletingVehicle,
+                                                    String
+                                                        newVehicleReplacing) {
+                                                  setState(() {
+                                                    for (int index = 0;
+                                                        index < data.length;
+                                                        index++) {
+                                                      if (data[index]
+                                                              .vehicleName ==
+                                                          deletingVehicle) {
+                                                        TripDetails
+                                                            updatedTrip =
+                                                            data[index];
+                                                        updatedTrip
+                                                                .vehicleName =
+                                                            newVehicleReplacing;
+                                                        firestoreUpdateTrip(
+                                                            user: FirebaseAuth
+                                                                .instance
+                                                                .currentUser!,
+                                                            updatedData:
+                                                                updatedTrip
+                                                                    .toMap(),
+                                                            id: updatedTrip.id);
+                                                      }
+                                                    }
                                                   });
                                                 },
                                                 onChangeDistanceUnits:
