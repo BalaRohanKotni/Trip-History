@@ -2,6 +2,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:trip_history/controllers/firestore_operations.dart';
 import 'package:trip_history/views/verifyemail_screen.dart';
 
 import '../constants.dart';
@@ -19,9 +20,11 @@ class _SignupScreenState extends State<SignupScreen> {
   Future signUp() async {
     bool networkStatus = await hasNetwork();
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim());
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim());
+      firestoreCreateUserCollection(userCredential.user!);
     } on FirebaseAuthException catch (e) {
       String error = firebaseExceptionHandler(e, networkStatus);
 

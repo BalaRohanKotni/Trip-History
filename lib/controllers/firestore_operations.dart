@@ -8,7 +8,13 @@ Future firestoreCreateUserCollection(User user) async {
   await FirebaseFirestore.instance
       .collection(firestoreCollection)
       .doc(user.uid)
-      .set({"theme": "system"});
+      .set({
+    "theme": "system",
+    'units': "km",
+    "vehiclesList": [],
+    'newUser': "true",
+    'currentVehicle': ''
+  });
 }
 
 Future firestoreSetTheme(User user, String theme) async {
