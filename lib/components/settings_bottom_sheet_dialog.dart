@@ -173,6 +173,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
           setState(() {
             _selectedVehicle = value.toString();
             widget.setSelectedVehicleInHomeScreen(_selectedVehicle);
+            firestoreSetCurrentVehicle(
+                user: FirebaseAuth.instance.currentUser!,
+                currentVehicle: _selectedVehicle);
           });
         },
         items: List.generate(
