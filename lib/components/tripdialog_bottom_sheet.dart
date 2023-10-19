@@ -24,7 +24,7 @@ class TripDialog extends StatefulWidget {
 }
 
 class _TripDialogState extends State<TripDialog> {
-  TextEditingController dateController = TextEditingController();
+  late String pickedDate;
   FocusNode dateFocusNode = FocusNode();
   bool showCalendarPicker = false;
   TextEditingController tripNameController = TextEditingController(),
@@ -36,6 +36,7 @@ class _TripDialogState extends State<TripDialog> {
   @override
   void initState() {
     super.initState();
+    pickedDate = "Date";
     dateFocusNode.addListener(() {
       if (dateFocusNode.hasFocus) {
         setState(() {
@@ -52,60 +53,15 @@ class _TripDialogState extends State<TripDialog> {
       distanceController.text = widget.initDist!.toString();
       durationController.text = widget.initDur!.toString();
       mileageController.text = widget.initMileage!.toString();
-      dateController.text = DateFormat.yMMMd().format(
-          DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!));
       tripDateTime =
           DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!);
     }
   }
 
-  _funcShowCalendarPicker(
-      {required BuildContext dialogContext, required bool duringBuild}) {
-    Future.delayed(
-      Duration.zero,
-      () {
-        showDialog(
-          context: dialogContext,
-          builder: (datepickerContext) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  child: Material(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: CalendarDatePicker(
-                      initialDate: tripDateTime,
-                      firstDate: DateTime(1960),
-                      lastDate: DateTime(2901),
-                      onDateChanged: (DateTime selectedDate) {
-                        tripDateTime = selectedDate;
-                        String formattedDate =
-                            DateFormat("yMMMd").format(selectedDate);
-                        dateController.text = formattedDate;
-                        Navigator.pop<DateTime>(dialogContext, selectedDate);
-                        dateFocusNode.nextFocus();
-                        showCalendarPicker = false;
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (showCalendarPicker) {
-      _funcShowCalendarPicker(dialogContext: context, duringBuild: true);
-    }
     return BottomSheet(
+        enableDrag: false,
         onClosing: () {},
         builder: (dialogContext) {
           return Container(
@@ -132,18 +88,25 @@ class _TripDialogState extends State<TripDialog> {
                     Expanded(flex: 1, child: Container()),
                     Expanded(
                       flex: 3,
-                      child: TextField(
-                        focusNode: dateFocusNode,
-                        controller: dateController,
-                        textAlign: TextAlign.center,
-                        readOnly: true,
-                        textInputAction: TextInputAction.next,
-                        decoration: const InputDecoration(
-                          hintText: "Date",
+                      child: TextButton(
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                              const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  side: BorderSide(color: kPurpleDarkShade))),
                         ),
-                        onTap: () {
-                          showCalendarPicker = true;
-                          setState(() {});
+                        child: Text(
+                          pickedDate,
+                        ),
+                        onPressed: () async {
+                          showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime(3000),
+                          ).then((value) => pickedDate =
+                              DateFormat("yMMMd").format(value!).toString());
                         },
                       ),
                     ),
