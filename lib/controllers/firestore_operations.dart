@@ -113,7 +113,7 @@ Future firestoreGetVehiclesList({required User user}) async {
       .then((value) => value.data()!['vehiclesList']);
 }
 
-Future firestoreAddTrip({
+Future firestoreCreateTrip({
   required User user,
   required Map<String, dynamic> tripDetailsMap,
 }) async {
@@ -132,7 +132,7 @@ Future firestoreAddTrip({
   });
 }
 
-Future<Map<String, dynamic>> firestoreGetTrip({
+Future<Map<String, dynamic>> firestoreReadTrip({
   required User user,
   required String id,
 }) async {
