@@ -78,6 +78,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                                     .instance.currentUser!,
                                                 currentVehicle:
                                                     newVehicleController.text);
+                                            Navigator.pop(context);
                                           },
                                           icon: const Icon(Icons.done)),
                                       hintText: "Add"),
@@ -91,6 +92,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                             FirebaseAuth.instance.currentUser!,
                                         currentVehicle:
                                             newVehicleController.text);
+                                    Navigator.pop(context);
                                   }),
                                 ),
                               );
