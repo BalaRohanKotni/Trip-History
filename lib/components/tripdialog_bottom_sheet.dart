@@ -149,6 +149,9 @@ class _TripDialogState extends State<TripDialog> {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 48,
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -202,8 +205,53 @@ class _TripDialogState extends State<TripDialog> {
                   ],
                 ),
                 const SizedBox(
+                  height: 36,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: TextButton(
+                        onPressed: () {
+                          // TODO
+                        },
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                              const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  side: BorderSide(color: kPurpleDarkShade))),
+                        ),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                    Expanded(
+                        flex: 4,
+                        child: TextButton(
+                            onPressed: () {
+                              // TODO
+                            },
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                  const RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      side:
+                                          BorderSide(color: kPurpleDarkShade))),
+                            ),
+                            child: const Text(
+                              "Done",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ))),
+                  ],
+                ),
+                const SizedBox(
                   height: 48,
-                )
+                ),
               ],
             ),
           );
