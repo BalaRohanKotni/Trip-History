@@ -4,17 +4,10 @@ import 'package:trip_history/controllers/firestore_operations.dart';
 import '../constants.dart';
 
 class SettingsDialog extends StatefulWidget {
-  final Function onChangeDistanceUnits,
-      replaceVehicleInTrips,
-      setSelectedVehicleInHomeScreen,
-      onDeleteOfVehicle;
-  final List vehicleTrips;
+  final Function onChangeDistanceUnits, onDeleteOfVehicle;
   const SettingsDialog({
     super.key,
     required this.onChangeDistanceUnits,
-    required this.replaceVehicleInTrips,
-    required this.setSelectedVehicleInHomeScreen,
-    required this.vehicleTrips,
     required this.onDeleteOfVehicle,
   });
 
@@ -25,7 +18,6 @@ class SettingsDialog extends StatefulWidget {
 class _SettingsDialogState extends State<SettingsDialog> {
   late String _selectedVehicle;
   String _newVehicleReplacing = vehiclesList.elementAt(0);
-  TextEditingController newVehicleController = TextEditingController();
   bool editMode = false;
   List<DropdownMenuItem> items = [];
   Widget vehiclesWidget = Container();
@@ -53,22 +45,57 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 items.add(
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 3,
-                    child: TextField(
-                      controller: newVehicleController,
-                      decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  newVehicleController.text = "";
-                                });
-                              },
-                              icon: const Icon(Icons.clear)),
-                          hintText: "Add"),
-                      onSubmitted: (value) => setState(() {
-                        _selectedVehicle = value;
-                        vehiclesList.add(value);
-                        newVehicleController.text = "";
-                      }),
+                    child: TextButton(
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "New Vehicle",
+                            style: semiBold18()
+                                .copyWith(fontWeight: FontWeight.normal),
+                          )),
+                      onPressed: () {
+                        TextEditingController newVehicleController =
+                            TextEditingController();
+
+                        showDialog(
+                            context: context,
+                            builder: (dialogContext) {
+                              return AlertDialog(
+                                title: const Text("New Vehicle"),
+                                content: TextField(
+                                  controller: newVehicleController,
+                                  decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            currentVehicle =
+                                                newVehicleController.text;
+                                            firestoreCreateNewVehicle(
+                                                FirebaseAuth
+                                                    .instance.currentUser!,
+                                                newVehicleController.text);
+                                            firestoreSetCurrentVehicle(
+                                                user: FirebaseAuth
+                                                    .instance.currentUser!,
+                                                currentVehicle:
+                                                    newVehicleController.text);
+                                          },
+                                          icon: const Icon(Icons.done)),
+                                      hintText: "Add"),
+                                  onSubmitted: (value) => setState(() {
+                                    currentVehicle = newVehicleController.text;
+                                    firestoreCreateNewVehicle(
+                                        FirebaseAuth.instance.currentUser!,
+                                        newVehicleController.text);
+                                    firestoreSetCurrentVehicle(
+                                        user:
+                                            FirebaseAuth.instance.currentUser!,
+                                        currentVehicle:
+                                            newVehicleController.text);
+                                  }),
+                                ),
+                              );
+                            });
+                      },
                     ),
                   ),
                 );
@@ -105,6 +132,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                           onPressed: () {
                                             Navigator.pop(bc);
                                             setState(() {
+                                              firestoreDeleteVehicle(
+                                                  FirebaseAuth
+                                                      .instance.currentUser!,
+                                                  vehiclesList
+                                                      .elementAt(index));
                                               widget.onDeleteOfVehicle(
                                                   vehiclesList.elementAt(index),
                                                   _newVehicleReplacing);
@@ -197,7 +229,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   onChanged: (value) {
                     setState(() {
                       _selectedVehicle = value.toString();
-                      widget.setSelectedVehicleInHomeScreen(_selectedVehicle);
                       firestoreSetCurrentVehicle(
                           user: FirebaseAuth.instance.currentUser!,
                           currentVehicle: _selectedVehicle);

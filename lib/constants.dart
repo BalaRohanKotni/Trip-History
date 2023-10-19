@@ -17,7 +17,7 @@ enum Units { km, mi }
 
 enum TripDialogMode { create, edit }
 
-Set<String> vehiclesList = {};
+Set<dynamic> vehiclesList = {};
 
 //TODO Sync currentVehicle to firestore
 String currentVehicle = "";

@@ -17,6 +17,33 @@ Future firestoreCreateUserCollection(User user) async {
   });
 }
 
+Future firestoreCreateNewVehicle(User user, String newVehicle) async {
+  Set vehicles = {...await firestoreGetVehiclesList(user: user)};
+  vehicles.add(newVehicle);
+  print(vehicles);
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({'vehiclesList': []});
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({'vehiclesList': vehicles.toList()});
+}
+
+Future firestoreDeleteVehicle(User user, String deletionVehicle) async {
+  Set vehicles = {...await firestoreGetVehiclesList(user: user)};
+  vehicles.remove(deletionVehicle);
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({'vehiclesList': []});
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({'vehiclesList': vehicles.toList()});
+}
+
 Future firestoreSetTheme(User user, String theme) async {
   await FirebaseFirestore.instance
       .collection(firestoreCollection)
@@ -69,9 +96,9 @@ Future firestoreGetCurrentVehicle({
       );
 }
 
-Future firestoreEditVehiclesList({
+Future firestoreUpdateVehiclesList({
   required User user,
-  required Set<String> vehiclesList,
+  required List vehiclesList,
 }) async {
   await FirebaseFirestore.instance
       .collection(firestoreCollection)
