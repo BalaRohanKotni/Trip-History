@@ -112,9 +112,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)))),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
                             "Sign up",
                             style: TextStyle(fontSize: 18),

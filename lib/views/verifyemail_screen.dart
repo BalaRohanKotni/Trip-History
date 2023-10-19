@@ -116,9 +116,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)))),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
                             "Resend email",
                             style: TextStyle(fontSize: 18),
@@ -142,9 +142,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)))),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
                             "Cancel",
                             style: TextStyle(fontSize: 18),

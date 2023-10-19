@@ -102,9 +102,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)))),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
                               "Reset password",
                               style: TextStyle(fontSize: 18),
