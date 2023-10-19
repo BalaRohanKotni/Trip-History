@@ -176,7 +176,37 @@ class _TripDialogState extends State<TripDialog> {
                       flex: 4,
                       child: TextButton(
                         onPressed: () {
-                          // TODO
+                          if (pickedDate == "Date" &&
+                              tripNameController.text == "" &&
+                              durationController.text == "" &&
+                              distanceController.text == "" &&
+                              mileageController.text == "") {
+                            Navigator.pop(context);
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (cancelDialogContext) {
+                                  return AlertDialog(
+                                    title: const Text("Cancel"),
+                                    content: const Text(
+                                        "Are you sure to delete this trip?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: (() =>
+                                            Navigator.pop(cancelDialogContext)),
+                                        child: const Text("Cancel"),
+                                      ),
+                                      TextButton(
+                                        child: const Text("Ok"),
+                                        onPressed: () {
+                                          Navigator.pop(cancelDialogContext);
+                                          Navigator.pop(dialogContext);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          }
                         },
                         style: ButtonStyle(
                           shape: MaterialStateProperty.all(
