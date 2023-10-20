@@ -820,14 +820,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     for (TripDetails trip
                                                         in vehicleTripsData)
                                                       trip.distance
-                                                  ].sum} ${(kUnits == Units.km) ? 'km' : 'mi'}"
+                                                  ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
                                                 : "0km"),
                                             Text((vehicleTripsData.isNotEmpty)
-                                                ? "${([
+                                                ? "${(([
                                                       for (TripDetails trip
                                                           in vehicleTripsData)
                                                         trip.mileage
-                                                    ].sum / vehicleTripsData.length)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                    ].sum / vehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
                                                 : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
                                           ],
                                         )
