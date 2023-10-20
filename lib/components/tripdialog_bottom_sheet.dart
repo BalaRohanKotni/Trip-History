@@ -261,7 +261,7 @@ class _TripDialogState extends State<TripDialog> {
                                   side: BorderSide(color: kPurpleDarkShade))),
                         ),
                         child: const Text(
-                          "Delete``",
+                          "Delete",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
