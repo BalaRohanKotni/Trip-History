@@ -637,6 +637,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 tripDialogMode:
                                                                     TripDialogMode
                                                                         .edit,
+                                                                id: vehicleTripsData[
+                                                                        position]
+                                                                    .id,
                                                                 initTripName:
                                                                     vehicleTripsData[
                                                                             position]

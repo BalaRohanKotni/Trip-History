@@ -7,10 +7,9 @@ import '../constants.dart';
 
 class TripDialog extends StatefulWidget {
   final TripDialogMode tripDialogMode;
-  final String? initTripName;
+  final String? initTripName, id;
   final double? initDist, initDur, initMileage;
   final int? initDateInMilliSeconds;
-
   const TripDialog({
     super.key,
     required this.tripDialogMode,
@@ -19,6 +18,7 @@ class TripDialog extends StatefulWidget {
     this.initDur,
     this.initMileage,
     this.initDateInMilliSeconds,
+    this.id,
   });
 
   @override
@@ -221,7 +221,7 @@ class _TripDialogState extends State<TripDialog> {
                                 context: context,
                                 builder: (cancelDialogContext) {
                                   return AlertDialog(
-                                    title: const Text("Cancel"),
+                                    title: const Text("Delete"),
                                     content: const Text(
                                         "Are you sure to delete this trip?"),
                                     actions: [
@@ -231,10 +231,21 @@ class _TripDialogState extends State<TripDialog> {
                                         child: const Text("Cancel"),
                                       ),
                                       TextButton(
-                                        child: const Text("Ok"),
-                                        onPressed: () {
-                                          Navigator.pop(cancelDialogContext);
-                                          Navigator.pop(dialogContext);
+                                        child: const Text("Delete"),
+                                        onPressed: () async {
+                                          if (widget.tripDialogMode ==
+                                              TripDialogMode.create) {
+                                            Navigator.pop(cancelDialogContext);
+                                            Navigator.pop(dialogContext);
+                                          } else if (widget.tripDialogMode ==
+                                              TripDialogMode.edit) {
+                                            Navigator.pop(cancelDialogContext);
+                                            Navigator.pop(dialogContext);
+                                            await firestoreDeleteTrip(
+                                                user: FirebaseAuth
+                                                    .instance.currentUser!,
+                                                id: widget.id!);
+                                          }
                                         },
                                       ),
                                     ],
@@ -250,7 +261,7 @@ class _TripDialogState extends State<TripDialog> {
                                   side: BorderSide(color: kPurpleDarkShade))),
                         ),
                         child: const Text(
-                          "Cancel",
+                          "Delete``",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -261,6 +272,7 @@ class _TripDialogState extends State<TripDialog> {
                         child: TextButton(
                             onPressed: () async {
                               if (!anyFieldEmpty) {
+                                Navigator.pop(dialogContext);
                                 firestoreCreateTrip(
                                   user: FirebaseAuth.instance.currentUser!,
                                   tripDetailsMap: {
