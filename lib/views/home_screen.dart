@@ -10,6 +10,7 @@ import '../components/tripdialog_bottom_sheet.dart';
 import '../constants.dart';
 import '../controllers/graph_layout_delegate.dart';
 import '../models/trip_details.dart';
+import 'package:collection/collection.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -433,21 +434,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text((vehicleTripsData.isNotEmpty)
                                               ? "${[
                                                   for (TripDetails trip
                                                       in vehicleTripsData)
                                                     trip.distance
-                                                ].fold(0, (p, c) => (p + c).toInt())}${(kUnits == Units.km) ? 'km' : 'mi'}"
+                                                ].sum} ${(kUnits == Units.km) ? 'km' : 'mi'}"
                                               : "0km"),
                                           Text((vehicleTripsData.isNotEmpty)
                                               ? "${([
                                                     for (TripDetails trip
                                                         in vehicleTripsData)
                                                       trip.mileage
-                                                  ].fold(0, (p, c) => (p + c).toInt()) / vehicleTripsData.length).toStringAsFixed(2)}${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                  ].sum / vehicleTripsData.length)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
                                               : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
                                         ],
                                       )
