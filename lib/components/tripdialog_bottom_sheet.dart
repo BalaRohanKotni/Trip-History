@@ -273,27 +273,53 @@ class _TripDialogState extends State<TripDialog> {
                             onPressed: () async {
                               if (!anyFieldEmpty) {
                                 Navigator.pop(dialogContext);
-                                firestoreCreateTrip(
-                                  user: FirebaseAuth.instance.currentUser!,
-                                  tripDetailsMap: {
-                                    'dateTime':
-                                        tripDateTime.millisecondsSinceEpoch,
-                                    'mileage':
-                                        double.parse(mileageController.text),
-                                    'distance':
-                                        double.parse(distanceController.text),
-                                    'duration':
-                                        double.parse(durationController.text),
-                                    'tripTitle': tripNameController.text,
-                                    'distanceUnits': (await firestoreGetUnits(
-                                                FirebaseAuth
-                                                    .instance.currentUser!) ==
-                                            "km")
-                                        ? "km"
-                                        : "mi",
-                                    'vehicleName': currentVehicle,
-                                  },
-                                );
+                                if (widget.tripDialogMode ==
+                                    TripDialogMode.create) {
+                                  firestoreCreateTrip(
+                                    user: FirebaseAuth.instance.currentUser!,
+                                    tripDetailsMap: {
+                                      'dateTime':
+                                          tripDateTime.millisecondsSinceEpoch,
+                                      'mileage':
+                                          double.parse(mileageController.text),
+                                      'distance':
+                                          double.parse(distanceController.text),
+                                      'duration':
+                                          double.parse(durationController.text),
+                                      'tripTitle': tripNameController.text,
+                                      'distanceUnits': (await firestoreGetUnits(
+                                                  FirebaseAuth
+                                                      .instance.currentUser!) ==
+                                              "km")
+                                          ? "km"
+                                          : "mi",
+                                      'vehicleName': currentVehicle,
+                                    },
+                                  );
+                                } else {
+                                  firestoreUpdateTrip(
+                                    user: FirebaseAuth.instance.currentUser!,
+                                    id: widget.id!,
+                                    updatedData: {
+                                      'dateTime':
+                                          tripDateTime.millisecondsSinceEpoch,
+                                      'mileage':
+                                          double.parse(mileageController.text),
+                                      'distance':
+                                          double.parse(distanceController.text),
+                                      'duration':
+                                          double.parse(durationController.text),
+                                      'tripTitle': tripNameController.text,
+                                      'distanceUnits': (await firestoreGetUnits(
+                                                  FirebaseAuth
+                                                      .instance.currentUser!) ==
+                                              "km")
+                                          ? "km"
+                                          : "mi",
+                                      'vehicleName': currentVehicle,
+                                    },
+                                  );
+                                }
                               } else {
                                 showDialog(
                                     context: context,
