@@ -26,13 +26,15 @@ class TripDialog extends StatefulWidget {
 }
 
 class _TripDialogState extends State<TripDialog> {
-  late String pickedDate;
+  // late String pickedDate;
   TextEditingController tripNameController = TextEditingController(),
       distanceController = TextEditingController(),
       durationController = TextEditingController(),
+      tripDateTimeController = TextEditingController(),
       mileageController = TextEditingController();
   DateTime tripDateTime = DateTime.now();
   bool anyFieldEmpty = true;
+  FocusNode tripDateTimeFocusNode = FocusNode();
 
   void checkFeildsAreEmpty() {
     setState(() {
@@ -50,7 +52,9 @@ class _TripDialogState extends State<TripDialog> {
   @override
   void initState() {
     super.initState();
-    pickedDate = DateFormat("yMMMd").format(tripDateTime).toString();
+    // pickedDate = DateFormat("yMMMd").format(tripDateTime).toString();
+    tripDateTimeController.text =
+        DateFormat("yMMMd").format(tripDateTime).toString();
 
     if (widget.tripDialogMode == TripDialogMode.edit) {
       tripNameController.text = widget.initTripName!;
@@ -59,6 +63,8 @@ class _TripDialogState extends State<TripDialog> {
       mileageController.text = widget.initMileage!.toString();
       tripDateTime =
           DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!);
+      tripDateTimeController.text =
+          DateFormat("yMMMd").format(tripDateTime).toString();
     }
 
     tripNameController.addListener(() {
@@ -72,6 +78,25 @@ class _TripDialogState extends State<TripDialog> {
     });
     mileageController.addListener(() {
       checkFeildsAreEmpty();
+    });
+    tripDateTimeFocusNode.addListener(() async {
+      if (tripDateTimeFocusNode.hasFocus) {
+        await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: DateTime(3000),
+        ).then((value) {
+          if (value != null) {
+            setState(() {
+              tripDateTime = value;
+              tripDateTimeController.text =
+                  DateFormat("yMMMd").format(value).toString();
+            });
+          }
+        });
+        FocusManager.instance.primaryFocus?.unfocus();
+      }
     });
   }
 
@@ -109,31 +134,9 @@ class _TripDialogState extends State<TripDialog> {
                     Expanded(flex: 1, child: Container()),
                     Expanded(
                       flex: 3,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                              const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  side: BorderSide(color: kPurpleDarkShade))),
-                        ),
-                        child: Text(
-                          pickedDate,
-                        ),
-                        onPressed: () async {
-                          showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime(3000),
-                          ).then((value) {
-                            if (value != null) {
-                              pickedDate =
-                                  DateFormat("yMMMd").format(value).toString();
-                              tripDateTime = value;
-                            }
-                          });
-                        },
+                      child: TextField(
+                        controller: tripDateTimeController,
+                        focusNode: tripDateTimeFocusNode,
                       ),
                     ),
                   ],
@@ -210,8 +213,7 @@ class _TripDialogState extends State<TripDialog> {
                       flex: 4,
                       child: TextButton(
                         onPressed: () {
-                          if (pickedDate == "Date" &&
-                              tripNameController.text == "" &&
+                          if (tripNameController.text == "" &&
                               durationController.text == "" &&
                               distanceController.text == "" &&
                               mileageController.text == "") {
