@@ -11,7 +11,7 @@ Future firestoreCreateUserCollection(User user) async {
       .collection(firestoreCollection)
       .doc(user.uid)
       .set({
-    "theme": "system",
+    "theme": "light",
     'units': "km",
     "vehiclesList": [],
     'newUser': true,
