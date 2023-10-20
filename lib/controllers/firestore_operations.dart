@@ -19,6 +19,13 @@ Future firestoreCreateUserCollection(User user) async {
   });
 }
 
+Future firestoreUpdateNewUser(User user, bool newUser) async {
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({'newUser': newUser});
+}
+
 Future firestoreCreateNewVehicle(User user, String newVehicle) async {
   Set vehicles = {...await firestoreGetVehiclesList(user: user)};
   vehicles.add(newVehicle);

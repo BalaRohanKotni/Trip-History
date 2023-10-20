@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/scheduler.dart';
@@ -93,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ];
 
   final GlobalKey<_SelectedGraphTextWidgetState> _key = GlobalKey();
+  TextEditingController newUserVehicle = TextEditingController();
 
   List chartData = [];
   @override
@@ -763,9 +765,73 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             );
           } else {
-            // TODO Handle when a new account is created (currentvehicle and vehicle list)
-            return const Text(
-                "TODO Handle when a new account is created (currentvehicle and vehicle list)");
+            void createNewVehicle(String vehicle) async {
+              if (vehicle != "") {
+                await firestoreSetCurrentVehicle(
+                    user: FirebaseAuth.instance.currentUser!,
+                    currentVehicle: vehicle);
+                await firestoreCreateNewVehicle(
+                    FirebaseAuth.instance.currentUser!, vehicle);
+                await firestoreUpdateNewUser(
+                    FirebaseAuth.instance.currentUser!, false);
+              }
+            }
+
+            newUserVehicle.addListener(
+              () {
+                setState(() {});
+              },
+            );
+            return Scaffold(
+              body: Container(
+                margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Welcome",
+                        style: TextStyle(fontSize: 27, color: kPurpleDarkShade),
+                      ),
+                      const SizedBox(
+                        height: 36,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 24),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: TextField(
+                              controller: newUserVehicle,
+                              decoration: InputDecoration(
+                                  labelText: "Vehicle Name",
+                                  errorText: newUserVehicle.text.isEmpty
+                                      ? ("Required")
+                                      : null,
+                                  suffix: IconButton(
+                                      onPressed: () {
+                                        createNewVehicle(newUserVehicle.text);
+                                      },
+                                      icon: const Icon(Icons.check))),
+                            ))
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 36,
+                      ),
+                      const Text(
+                        "More vehicles can be added later in settings.",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
           }
         });
   }
