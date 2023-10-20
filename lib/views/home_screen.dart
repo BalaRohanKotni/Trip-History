@@ -255,17 +255,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       List<Widget> tabs = [
                         const Tab(
-                          icon: Icon(Icons.local_gas_station_outlined),
+                          // icon: Icon(Icons.local_gas_station_outlined),
                           text: "Mileage",
                           iconMargin: EdgeInsets.only(bottom: 5),
                         ),
                         const Tab(
-                          icon: Icon(Icons.pin_drop_outlined),
+                          // icon: Icon(Icons.pin_drop_outlined),
                           text: "Distance",
                           iconMargin: EdgeInsets.only(bottom: 5),
                         ),
                         const Tab(
-                          icon: Icon(Icons.timer),
+                          // icon: Icon(Icons.timer),
                           text: "Duration",
                           iconMargin: EdgeInsets.only(bottom: 5),
                         ),
