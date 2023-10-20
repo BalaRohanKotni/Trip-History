@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trip_history/constants.dart';
@@ -12,7 +14,7 @@ Future firestoreCreateUserCollection(User user) async {
     "theme": "system",
     'units': "km",
     "vehiclesList": [],
-    'newUser': "true",
+    'newUser': true,
     'currentVehicle': ''
   });
 }
@@ -113,22 +115,26 @@ Future firestoreGetVehiclesList({required User user}) async {
       .then((value) => value.data()!['vehiclesList']);
 }
 
+String generateRandomString(int len) {
+  var r = Random();
+  return String.fromCharCodes(
+      List.generate(len, (index) => r.nextInt(33) + 89));
+}
+
 Future firestoreCreateTrip({
   required User user,
   required Map<String, dynamic> tripDetailsMap,
 }) async {
+  String randId = generateRandomString(18);
+  tripDetailsMap['id'] = randId;
   await FirebaseFirestore.instance
       .collection(firestoreCollection)
       .doc(user.uid)
       .collection("Trips")
       .add(tripDetailsMap)
-      .then((docRef) {
-    FirebaseFirestore.instance
-        .collection(firestoreCollection)
-        .doc(user.uid)
-        .collection("Trips")
-        .doc(docRef.id)
-        .update({"id": docRef.id});
+      .then((value) {
+    tripDetailsMap['id'] = value.id;
+    firestoreUpdateTrip(user: user, updatedData: tripDetailsMap, id: value.id);
   });
 }
 

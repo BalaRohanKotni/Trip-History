@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:trip_history/controllers/firestore_operations.dart';
 
 import '../constants.dart';
 
@@ -25,29 +27,31 @@ class TripDialog extends StatefulWidget {
 
 class _TripDialogState extends State<TripDialog> {
   late String pickedDate;
-  FocusNode dateFocusNode = FocusNode();
-  bool showCalendarPicker = false;
   TextEditingController tripNameController = TextEditingController(),
       distanceController = TextEditingController(),
       durationController = TextEditingController(),
       mileageController = TextEditingController();
   DateTime tripDateTime = DateTime.now();
+  bool anyFieldEmpty = true;
+
+  void checkFeildsAreEmpty() {
+    setState(() {
+      if (tripNameController.text.isEmpty ||
+          distanceController.text.isEmpty ||
+          durationController.text.isEmpty ||
+          mileageController.text.isEmpty) {
+        anyFieldEmpty = true;
+      } else {
+        anyFieldEmpty = false;
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    pickedDate = "Date";
-    dateFocusNode.addListener(() {
-      if (dateFocusNode.hasFocus) {
-        setState(() {
-          showCalendarPicker = true;
-        });
-      } else {
-        setState(() {
-          showCalendarPicker = false;
-        });
-      }
-    });
+    pickedDate = DateFormat("yMMMd").format(tripDateTime).toString();
+
     if (widget.tripDialogMode == TripDialogMode.edit) {
       tripNameController.text = widget.initTripName!;
       distanceController.text = widget.initDist!.toString();
@@ -56,6 +60,19 @@ class _TripDialogState extends State<TripDialog> {
       tripDateTime =
           DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!);
     }
+
+    tripNameController.addListener(() {
+      checkFeildsAreEmpty();
+    });
+    distanceController.addListener(() {
+      checkFeildsAreEmpty();
+    });
+    durationController.addListener(() {
+      checkFeildsAreEmpty();
+    });
+    mileageController.addListener(() {
+      checkFeildsAreEmpty();
+    });
   }
 
   @override
@@ -77,8 +94,12 @@ class _TripDialogState extends State<TripDialog> {
                       flex: 6,
                       child: TextField(
                         controller: tripNameController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: "Trip Name",
+                          errorText:
+                              (anyFieldEmpty && tripNameController.text.isEmpty)
+                                  ? "Required"
+                                  : null,
                         ),
                         keyboardType: TextInputType.streetAddress,
                         autofocus: true,
@@ -105,8 +126,13 @@ class _TripDialogState extends State<TripDialog> {
                             initialDate: DateTime.now(),
                             firstDate: DateTime(1900),
                             lastDate: DateTime(3000),
-                          ).then((value) => pickedDate =
-                              DateFormat("yMMMd").format(value!).toString());
+                          ).then((value) {
+                            if (value != null) {
+                              pickedDate =
+                                  DateFormat("yMMMd").format(value).toString();
+                              tripDateTime = value;
+                            }
+                          });
                         },
                       ),
                     ),
@@ -127,10 +153,11 @@ class _TripDialogState extends State<TripDialog> {
                             decimal: true, signed: true),
                         decoration: InputDecoration(
                           hintText: "Distance",
-                          suffixText:
-                              (vehicleTripsData[0].distanceUnits == Units.km)
-                                  ? 'km'
-                                  : 'mi',
+                          errorText:
+                              (anyFieldEmpty && distanceController.text.isEmpty)
+                                  ? "Required"
+                                  : null,
+                          suffixText: (kUnits == Units.km) ? 'km' : 'mi',
                         ),
                       ),
                     ),
@@ -143,8 +170,14 @@ class _TripDialogState extends State<TripDialog> {
                         textInputAction: TextInputAction.next,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
-                        decoration: const InputDecoration(
-                            hintText: "Duration", suffixText: "hrs"),
+                        decoration: InputDecoration(
+                          hintText: "Duration",
+                          errorText:
+                              (anyFieldEmpty && durationController.text.isEmpty)
+                                  ? "Required"
+                                  : null,
+                          suffixText: "hrs",
+                        ),
                       ),
                     ),
                     Expanded(flex: 1, child: Container()),
@@ -158,10 +191,11 @@ class _TripDialogState extends State<TripDialog> {
                             decimal: true),
                         decoration: InputDecoration(
                           hintText: "Average",
-                          suffixText:
-                              (vehicleTripsData[0].distanceUnits == Units.km)
-                                  ? 'km/l'
-                                  : 'mpg',
+                          errorText:
+                              (anyFieldEmpty && mileageController.text.isEmpty)
+                                  ? "Required"
+                                  : null,
+                          suffixText: (kUnits == Units.km) ? 'km/l' : 'mpg',
                         ),
                       ),
                     ),
@@ -225,8 +259,47 @@ class _TripDialogState extends State<TripDialog> {
                     Expanded(
                         flex: 4,
                         child: TextButton(
-                            onPressed: () {
-                              // TODO
+                            onPressed: () async {
+                              if (!anyFieldEmpty) {
+                                firestoreCreateTrip(
+                                  user: FirebaseAuth.instance.currentUser!,
+                                  tripDetailsMap: {
+                                    'dateTime':
+                                        tripDateTime.millisecondsSinceEpoch,
+                                    'mileage':
+                                        double.parse(mileageController.text),
+                                    'distance':
+                                        double.parse(distanceController.text),
+                                    'duration':
+                                        double.parse(durationController.text),
+                                    'tripTitle': tripNameController.text,
+                                    'distanceUnits': (await firestoreGetUnits(
+                                                FirebaseAuth
+                                                    .instance.currentUser!) ==
+                                            "km")
+                                        ? "km"
+                                        : "mi",
+                                    'vehicleName': currentVehicle,
+                                  },
+                                );
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (doneDialog) {
+                                      return AlertDialog(
+                                        title: const Text("Unable to Save"),
+                                        content: const Text(
+                                            "Required fields should be filled."),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(doneDialog);
+                                              },
+                                              child: const Text("Ok"))
+                                        ],
+                                      );
+                                    });
+                              }
                             },
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(
@@ -237,7 +310,7 @@ class _TripDialogState extends State<TripDialog> {
                                           BorderSide(color: kPurpleDarkShade))),
                             ),
                             child: const Text(
-                              "Done",
+                              "Save",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ))),
                   ],
