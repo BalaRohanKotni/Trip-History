@@ -26,7 +26,6 @@ class TripDialog extends StatefulWidget {
 }
 
 class _TripDialogState extends State<TripDialog> {
-  // late String pickedDate;
   TextEditingController tripNameController = TextEditingController(),
       distanceController = TextEditingController(),
       durationController = TextEditingController(),
@@ -35,6 +34,8 @@ class _TripDialogState extends State<TripDialog> {
   DateTime tripDateTime = DateTime.now();
   bool anyFieldEmpty = true;
   FocusNode tripDateTimeFocusNode = FocusNode();
+
+  String dateFormat = "MMM d, y\nhh:mm a";
 
   void checkFeildsAreEmpty() {
     setState(() {
@@ -52,9 +53,9 @@ class _TripDialogState extends State<TripDialog> {
   @override
   void initState() {
     super.initState();
-    // pickedDate = DateFormat("yMMMd").format(tripDateTime).toString();
+
     tripDateTimeController.text =
-        DateFormat("yMMMd").format(tripDateTime).toString();
+        DateFormat(dateFormat).format(tripDateTime).toString();
 
     if (widget.tripDialogMode == TripDialogMode.edit) {
       tripNameController.text = widget.initTripName!;
@@ -64,7 +65,7 @@ class _TripDialogState extends State<TripDialog> {
       tripDateTime =
           DateTime.fromMillisecondsSinceEpoch(widget.initDateInMilliSeconds!);
       tripDateTimeController.text =
-          DateFormat("yMMMd").format(tripDateTime).toString();
+          DateFormat(dateFormat).format(tripDateTime).toString();
     }
 
     tripNameController.addListener(() {
@@ -81,20 +82,30 @@ class _TripDialogState extends State<TripDialog> {
     });
     tripDateTimeFocusNode.addListener(() async {
       if (tripDateTimeFocusNode.hasFocus) {
-        await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime(3000),
-        ).then((value) {
-          if (value != null) {
-            setState(() {
-              tripDateTime = value;
-              tripDateTimeController.text =
-                  DateFormat("yMMMd").format(value).toString();
-            });
-          }
-        });
+        DateTime? pickedDateTime;
+        if (widget.tripDialogMode == TripDialogMode.create) {
+          pickedDateTime = await showDateTimePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime(3000),
+          );
+        } else {
+          pickedDateTime = await showDateTimePicker(
+            context: context,
+            initialDate: tripDateTime,
+            firstDate: DateTime(1900),
+            lastDate: DateTime(3000),
+          );
+        }
+        if (pickedDateTime != null) {
+          setState(() {
+            tripDateTime = pickedDateTime!;
+            tripDateTimeController.text =
+                DateFormat(dateFormat).format(tripDateTime).toString();
+          });
+        }
+
         FocusManager.instance.primaryFocus?.unfocus();
       }
     });
@@ -114,6 +125,7 @@ class _TripDialogState extends State<TripDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
                       flex: 6,
@@ -137,6 +149,8 @@ class _TripDialogState extends State<TripDialog> {
                       child: TextField(
                         controller: tripDateTimeController,
                         focusNode: tripDateTimeFocusNode,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],
