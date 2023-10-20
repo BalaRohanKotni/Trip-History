@@ -47,9 +47,8 @@ class _SigninScreenState extends State<SigninScreen> {
               margin: const EdgeInsets.only(left: 18),
               child: Text(
                 "Sign in to your Account",
-                style: semiBold18().copyWith(
-                  fontSize: 38,
-                ),
+                style: semiBold18()
+                    .copyWith(fontSize: 38, color: kPurpleDarkShade),
               ),
             ),
           ),

@@ -59,6 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 "Create a new Account",
                 style: semiBold18().copyWith(
                   fontSize: 38,
+                  color: kPurpleDarkShade,
                 ),
               ),
             ),

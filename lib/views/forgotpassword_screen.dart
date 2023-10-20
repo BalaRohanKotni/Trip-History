@@ -58,11 +58,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       "Rest Password",
                       style: semiBold18().copyWith(
                         fontSize: 38,
+                        color: kPurpleDarkShade,
                       ),
                     ),
                     const Text(
                       "Recieve an email to reset password",
-                      // style: semiBold18(),
+                      style: TextStyle(
+                        color: kPurpleDarkShade,
+                      ),
                     ),
                   ],
                 ),
