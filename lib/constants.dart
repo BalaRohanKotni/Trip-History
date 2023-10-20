@@ -17,6 +17,8 @@ enum Units { km, mi }
 
 enum TripDialogMode { create, edit }
 
+enum GraphMode { mileage, distance, duration }
+
 Set<dynamic> vehiclesList = {};
 
 String currentVehicle = "";

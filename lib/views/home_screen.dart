@@ -93,10 +93,14 @@ class _HomeScreenState extends State<HomeScreen> {
   //   ),
   // ];
 
-  final GlobalKey<_SelectedGraphTextWidgetState> _key = GlobalKey();
+  final GlobalKey<_SelectedGraphTextWidgetState> _tab1Key = GlobalKey();
+  final GlobalKey<_SelectedGraphTextWidgetState> _tab2Key = GlobalKey();
+  final GlobalKey<_SelectedGraphTextWidgetState> _tab3Key = GlobalKey();
   TextEditingController newUserVehicle = TextEditingController();
 
-  List chartData = [];
+  List mileageChartData = [];
+  List distanceChartData = [];
+  List durationChartData = [];
   @override
   void initState() {
     super.initState();
@@ -155,7 +159,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
 
                 vehicleTripsData = [];
-                chartData = [];
+                mileageChartData = [];
+                distanceChartData = [];
+                durationChartData = [];
                 List<TripDetails> data = [];
                 for (var element in collectionSnapshot.data!.docs) {
                   data.add(
@@ -190,9 +196,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 vehicleTripsData
                     .sort((a, b) => a.dateTime.compareTo(b.dateTime));
                 for (var trip in vehicleTripsData) {
-                  chartData.add([
+                  mileageChartData.add([
                     DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
                     trip.mileage.floor()
+                  ]);
+                  distanceChartData.add([
+                    DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+                    trip.distance
+                  ]);
+                  durationChartData.add([
+                    DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+                    trip.duration
                   ]);
                 }
 
@@ -238,6 +252,369 @@ class _HomeScreenState extends State<HomeScreen> {
                               id: vehicleTripsData[index].id);
                         }
                       }
+
+                      List<Widget> tabs = [
+                        const Tab(
+                          icon: Icon(Icons.local_gas_station_outlined),
+                          text: "Mileage",
+                          iconMargin: EdgeInsets.only(bottom: 5),
+                        ),
+                        const Tab(
+                          icon: Icon(Icons.pin_drop_outlined),
+                          text: "Distance",
+                          iconMargin: EdgeInsets.only(bottom: 5),
+                        ),
+                        const Tab(
+                          icon: Icon(Icons.timer),
+                          text: "Duration",
+                          iconMargin: EdgeInsets.only(bottom: 5),
+                        ),
+                      ];
+
+                      List<Widget> views = [
+                        // TAB 1 - Mileage
+                        CustomMultiChildLayout(
+                          delegate: GraphLayoutDelegate(position: Offset.zero),
+                          children: [
+                            LayoutId(
+                              id: 1,
+                              child: SelectedGraphTextWidget(key: _tab1Key),
+                            ),
+                            LayoutId(
+                              id: 2,
+                              child: charts.TimeSeriesChart(
+                                [
+                                  charts.Series(
+                                    colorFn: (__, ___) =>
+                                        charts.ColorUtil.fromDartColor(
+                                            (kBrightness == Brightness.light)
+                                                ? kPurpleDarkShade
+                                                : kPurpleLightShade),
+                                    id: "Mileage",
+                                    data: mileageChartData,
+                                    domainFn: (dat, _) => dat[0],
+                                    measureFn: (dat, _) => dat[1],
+                                  )
+                                ],
+                                animate: true,
+                                defaultRenderer: charts.LineRendererConfig(
+                                    includePoints: true),
+                                selectionModels: [
+                                  charts.SelectionModelConfig(
+                                      type: charts.SelectionModelType.info,
+                                      changedListener: (model) {
+                                        TripDetails selectedPoint =
+                                            vehicleTripsData[
+                                                mileageChartData.indexOf(model
+                                                    .selectedDatum
+                                                    .first
+                                                    .datum)];
+
+                                        String dateTime =
+                                            "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
+
+                                        String mileage = selectedPoint.mileage
+                                            .toDouble()
+                                            .toString();
+
+                                        _tab1Key.currentState!.setValues(
+                                          mil: mileage,
+                                          date: dateTime,
+                                          setDistanceUnits:
+                                              vehicleTripsData[0].distanceUnits,
+                                          dist:
+                                              selectedPoint.distance.toString(),
+                                          dur:
+                                              selectedPoint.duration.toString(),
+                                          gMode: GraphMode.mileage,
+                                        );
+                                        _tab1Key.currentState!.update();
+                                      })
+                                ],
+                                behaviors: [
+                                  charts.ChartTitle(
+                                    "Trips",
+                                    titleOutsideJustification:
+                                        charts.OutsideJustification.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                    innerPadding: 24,
+                                  ),
+                                  charts.ChartTitle(
+                                    (vehicleTripsData.isNotEmpty)
+                                        ? (vehicleTripsData[0].distanceUnits ==
+                                                Units.km)
+                                            ? "km/l"
+                                            : "mpg"
+                                        : (kUnits == Units.km)
+                                            ? "km/l"
+                                            : "mpg",
+                                    behaviorPosition:
+                                        charts.BehaviorPosition.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                  )
+                                ],
+                                primaryMeasureAxis: charts.NumericAxisSpec(
+                                    renderSpec: charts.GridlineRendererSpec(
+                                  labelStyle: charts.TextStyleSpec(
+                                      fontSize: 10,
+                                      color: (kBrightness == Brightness.light)
+                                          ? charts.MaterialPalette.black
+                                          : charts.MaterialPalette.white),
+                                )),
+                                domainAxis: charts.DateTimeAxisSpec(
+                                  renderSpec: charts.GridlineRendererSpec(
+                                    labelStyle: charts.TextStyleSpec(
+                                        fontSize: 10,
+                                        color: (kBrightness == Brightness.light)
+                                            ? charts.MaterialPalette.black
+                                            : charts.MaterialPalette.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // TAB 2 - Distance
+                        CustomMultiChildLayout(
+                          delegate: GraphLayoutDelegate(position: Offset.zero),
+                          children: [
+                            LayoutId(
+                              id: 1,
+                              child: SelectedGraphTextWidget(key: _tab2Key),
+                            ),
+                            LayoutId(
+                              id: 2,
+                              child: charts.TimeSeriesChart(
+                                [
+                                  charts.Series(
+                                    colorFn: (__, ___) =>
+                                        charts.ColorUtil.fromDartColor(
+                                            (kBrightness == Brightness.light)
+                                                ? kPurpleDarkShade
+                                                : kPurpleLightShade),
+                                    id: "Distance",
+                                    data: distanceChartData,
+                                    domainFn: (dat, _) => dat[0],
+                                    measureFn: (dat, _) => dat[1],
+                                  )
+                                ],
+                                animate: true,
+                                defaultRenderer: charts.LineRendererConfig(
+                                    includePoints: true),
+                                selectionModels: [
+                                  charts.SelectionModelConfig(
+                                      type: charts.SelectionModelType.info,
+                                      changedListener: (model) {
+                                        TripDetails selectedPoint =
+                                            vehicleTripsData[
+                                                distanceChartData.indexOf(model
+                                                    .selectedDatum
+                                                    .first
+                                                    .datum)];
+
+                                        String dateTime =
+                                            "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
+
+                                        String mileage = selectedPoint.mileage
+                                            .toDouble()
+                                            .toString();
+
+                                        _tab2Key.currentState!.setValues(
+                                            mil: mileage,
+                                            date: dateTime,
+                                            setDistanceUnits:
+                                                vehicleTripsData[0]
+                                                    .distanceUnits,
+                                            dist: selectedPoint.distance
+                                                .toString(),
+                                            dur: selectedPoint.duration
+                                                .toString(),
+                                            gMode: GraphMode.distance);
+                                        _tab2Key.currentState!.update();
+                                      })
+                                ],
+                                behaviors: [
+                                  charts.ChartTitle(
+                                    "Trips",
+                                    titleOutsideJustification:
+                                        charts.OutsideJustification.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                    innerPadding: 24,
+                                  ),
+                                  charts.ChartTitle(
+                                    (vehicleTripsData.isNotEmpty)
+                                        ? (vehicleTripsData[0].distanceUnits ==
+                                                Units.km)
+                                            ? "km/l"
+                                            : "mpg"
+                                        : (kUnits == Units.km)
+                                            ? "km/l"
+                                            : "mpg",
+                                    behaviorPosition:
+                                        charts.BehaviorPosition.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                  )
+                                ],
+                                primaryMeasureAxis: charts.NumericAxisSpec(
+                                    renderSpec: charts.GridlineRendererSpec(
+                                  labelStyle: charts.TextStyleSpec(
+                                      fontSize: 10,
+                                      color: (kBrightness == Brightness.light)
+                                          ? charts.MaterialPalette.black
+                                          : charts.MaterialPalette.white),
+                                )),
+                                domainAxis: charts.DateTimeAxisSpec(
+                                  renderSpec: charts.GridlineRendererSpec(
+                                    labelStyle: charts.TextStyleSpec(
+                                        fontSize: 10,
+                                        color: (kBrightness == Brightness.light)
+                                            ? charts.MaterialPalette.black
+                                            : charts.MaterialPalette.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // TAB # - Duration
+                        CustomMultiChildLayout(
+                          delegate: GraphLayoutDelegate(position: Offset.zero),
+                          children: [
+                            LayoutId(
+                              id: 1,
+                              child: SelectedGraphTextWidget(key: _tab3Key),
+                            ),
+                            LayoutId(
+                              id: 2,
+                              child: charts.TimeSeriesChart(
+                                [
+                                  charts.Series(
+                                    colorFn: (__, ___) =>
+                                        charts.ColorUtil.fromDartColor(
+                                            (kBrightness == Brightness.light)
+                                                ? kPurpleDarkShade
+                                                : kPurpleLightShade),
+                                    id: "Duration",
+                                    data: durationChartData,
+                                    domainFn: (dat, _) => dat[0],
+                                    measureFn: (dat, _) => dat[1],
+                                  )
+                                ],
+                                animate: true,
+                                defaultRenderer: charts.LineRendererConfig(
+                                    includePoints: true),
+                                selectionModels: [
+                                  charts.SelectionModelConfig(
+                                      type: charts.SelectionModelType.info,
+                                      changedListener: (model) {
+                                        TripDetails selectedPoint =
+                                            vehicleTripsData[
+                                                durationChartData.indexOf(model
+                                                    .selectedDatum
+                                                    .first
+                                                    .datum)];
+
+                                        String dateTime =
+                                            "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
+
+                                        String mileage = selectedPoint.mileage
+                                            .toDouble()
+                                            .toString();
+
+                                        _tab3Key.currentState!.setValues(
+                                          mil: mileage,
+                                          date: dateTime,
+                                          setDistanceUnits:
+                                              vehicleTripsData[0].distanceUnits,
+                                          dist:
+                                              selectedPoint.distance.toString(),
+                                          dur:
+                                              selectedPoint.duration.toString(),
+                                          gMode: GraphMode.duration,
+                                        );
+                                        _tab3Key.currentState!.update();
+                                      })
+                                ],
+                                behaviors: [
+                                  charts.ChartTitle(
+                                    "Trips",
+                                    titleOutsideJustification:
+                                        charts.OutsideJustification.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                    innerPadding: 24,
+                                  ),
+                                  charts.ChartTitle(
+                                    (vehicleTripsData.isNotEmpty)
+                                        ? (vehicleTripsData[0].distanceUnits ==
+                                                Units.km)
+                                            ? "km/l"
+                                            : "mpg"
+                                        : (kUnits == Units.km)
+                                            ? "km/l"
+                                            : "mpg",
+                                    behaviorPosition:
+                                        charts.BehaviorPosition.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                  )
+                                ],
+                                primaryMeasureAxis: charts.NumericAxisSpec(
+                                    renderSpec: charts.GridlineRendererSpec(
+                                  labelStyle: charts.TextStyleSpec(
+                                      fontSize: 10,
+                                      color: (kBrightness == Brightness.light)
+                                          ? charts.MaterialPalette.black
+                                          : charts.MaterialPalette.white),
+                                )),
+                                domainAxis: charts.DateTimeAxisSpec(
+                                  renderSpec: charts.GridlineRendererSpec(
+                                    labelStyle: charts.TextStyleSpec(
+                                        fontSize: 10,
+                                        color: (kBrightness == Brightness.light)
+                                            ? charts.MaterialPalette.black
+                                            : charts.MaterialPalette.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ];
                       return Scaffold(
                         resizeToAvoidBottomInset: false,
                         appBar: AppBar(
@@ -402,344 +779,224 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        body: SafeArea(
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                top: 18, left: 18, right: 18),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Total distance travelled: ",
-                                            style: semiBold18(),
-                                          ),
-                                          Text(
-                                            (vehicleTripsData.isNotEmpty)
-                                                ? "Average ${(kUnits == Units.km) ? 'km/l' : 'mpg'}:"
-                                                : "Average km/l:",
-                                            style: semiBold18(),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text((vehicleTripsData.isNotEmpty)
-                                              ? "${[
-                                                  for (TripDetails trip
-                                                      in vehicleTripsData)
-                                                    trip.distance
-                                                ].sum} ${(kUnits == Units.km) ? 'km' : 'mi'}"
-                                              : "0km"),
-                                          Text((vehicleTripsData.isNotEmpty)
-                                              ? "${([
+                        body: DefaultTabController(
+                          length: views.length,
+                          child: SafeArea(
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  top: 18, left: 18, right: 18),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Row(
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Total distance travelled: ",
+                                              style: semiBold18(),
+                                            ),
+                                            Text(
+                                              (vehicleTripsData.isNotEmpty)
+                                                  ? "Average ${(kUnits == Units.km) ? 'km/l' : 'mpg'}:"
+                                                  : "Average km/l:",
+                                              style: semiBold18(),
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text((vehicleTripsData.isNotEmpty)
+                                                ? "${[
                                                     for (TripDetails trip
                                                         in vehicleTripsData)
-                                                      trip.mileage
-                                                  ].sum / vehicleTripsData.length)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
-                                              : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
-                                        ],
-                                      )
-                                    ],
+                                                      trip.distance
+                                                  ].sum} ${(kUnits == Units.km) ? 'km' : 'mi'}"
+                                                : "0km"),
+                                            Text((vehicleTripsData.isNotEmpty)
+                                                ? "${([
+                                                      for (TripDetails trip
+                                                          in vehicleTripsData)
+                                                        trip.mileage
+                                                    ].sum / vehicleTripsData.length)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                    flex: 3,
-                                    child: CustomMultiChildLayout(
-                                      delegate: GraphLayoutDelegate(
-                                          position: Offset.zero),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Column(
                                       children: [
-                                        LayoutId(
-                                          id: 1,
-                                          child: SelectedGraphTextWidget(
-                                              key: _key),
-                                        ),
-                                        LayoutId(
-                                          id: 2,
-                                          child: charts.TimeSeriesChart(
-                                            [
-                                              charts.Series(
-                                                colorFn: (__, ___) => charts
-                                                        .ColorUtil
-                                                    .fromDartColor(
-                                                        (kBrightness ==
-                                                                Brightness
-                                                                    .light)
-                                                            ? kPurpleDarkShade
-                                                            : kPurpleLightShade),
-                                                id: "Mileage",
-                                                data: chartData,
-                                                domainFn: (dat, _) => dat[0],
-                                                measureFn: (dat, _) => dat[1],
-                                              )
-                                            ],
-                                            animate: true,
-                                            defaultRenderer:
-                                                charts.LineRendererConfig(
-                                                    includePoints: true),
-                                            selectionModels: [
-                                              charts.SelectionModelConfig(
-                                                  type: charts
-                                                      .SelectionModelType.info,
-                                                  changedListener: (model) {
-                                                    TripDetails selectedPoint =
-                                                        vehicleTripsData[chartData
-                                                            .indexOf(model
-                                                                .selectedDatum
-                                                                .first
-                                                                .datum)];
-
-                                                    String dateTime =
-                                                        "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
-
-                                                    String mileage =
-                                                        selectedPoint.mileage
-                                                            .toDouble()
-                                                            .toString();
-
-                                                    _key.currentState!
-                                                        .setValues(
-                                                            mileage,
-                                                            dateTime,
-                                                            vehicleTripsData[0]
-                                                                .distanceUnits);
-                                                    _key.currentState!.update();
-                                                  })
-                                            ],
-                                            behaviors: [
-                                              charts.ChartTitle(
-                                                "Trips",
-                                                titleOutsideJustification:
-                                                    charts.OutsideJustification
-                                                        .start,
-                                                titleStyleSpec: (kBrightness ==
-                                                        Brightness.light)
-                                                    ? const charts
-                                                        .TextStyleSpec(
-                                                        color: charts
-                                                            .MaterialPalette
-                                                            .black)
-                                                    : const charts
-                                                        .TextStyleSpec(
-                                                        color: charts
-                                                            .MaterialPalette
-                                                            .white),
-                                                innerPadding: 24,
-                                              ),
-                                              charts.ChartTitle(
-                                                (vehicleTripsData.isNotEmpty)
-                                                    ? (vehicleTripsData[0]
-                                                                .distanceUnits ==
-                                                            Units.km)
-                                                        ? "km/l"
-                                                        : "mpg"
-                                                    : (kUnits == Units.km)
-                                                        ? "km/l"
-                                                        : "mpg",
-                                                behaviorPosition: charts
-                                                    .BehaviorPosition.start,
-                                                titleStyleSpec: (kBrightness ==
-                                                        Brightness.light)
-                                                    ? const charts
-                                                        .TextStyleSpec(
-                                                        color: charts
-                                                            .MaterialPalette
-                                                            .black)
-                                                    : const charts
-                                                        .TextStyleSpec(
-                                                        color: charts
-                                                            .MaterialPalette
-                                                            .white),
-                                              )
-                                            ],
-                                            primaryMeasureAxis:
-                                                charts.NumericAxisSpec(
-                                                    renderSpec: charts
-                                                        .GridlineRendererSpec(
-                                              labelStyle: charts.TextStyleSpec(
-                                                  fontSize: 10,
-                                                  color: (kBrightness ==
-                                                          Brightness.light)
-                                                      ? charts
-                                                          .MaterialPalette.black
-                                                      : charts.MaterialPalette
-                                                          .white),
-                                            )),
-                                            domainAxis: charts.DateTimeAxisSpec(
-                                              renderSpec:
-                                                  charts.GridlineRendererSpec(
-                                                labelStyle:
-                                                    charts.TextStyleSpec(
-                                                        fontSize: 10,
-                                                        color: (kBrightness ==
-                                                                Brightness
-                                                                    .light)
-                                                            ? charts
-                                                                .MaterialPalette
-                                                                .black
-                                                            : charts
-                                                                .MaterialPalette
-                                                                .white),
-                                              ),
+                                        TabBar(tabs: tabs),
+                                        Expanded(
+                                          child: ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                                minHeight:
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        4),
+                                            child: TabBarView(
+                                              children: views,
                                             ),
                                           ),
                                         ),
                                       ],
-                                    )),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Expanded(
-                                  flex: 6,
-                                  child: SizedBox(
-                                    width: double.maxFinite,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          "Recent trips",
-                                          style: TextStyle(
-                                              fontFamily: "Inter",
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Expanded(
-                                          child: ListView.builder(
-                                              itemCount:
-                                                  (vehicleTripsData.isNotEmpty)
-                                                      ? vehicleTripsData.length
-                                                      : 0,
-                                              itemBuilder:
-                                                  (bContext, position) {
-                                                return Column(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        showModalBottomSheet(
-                                                            context: context,
-                                                            isScrollControlled:
-                                                                true,
-                                                            builder:
-                                                                (buildContext) {
-                                                              return TripDialog(
-                                                                tripDialogMode:
-                                                                    TripDialogMode
-                                                                        .edit,
-                                                                id: vehicleTripsData[
-                                                                        position]
-                                                                    .id,
-                                                                initTripName:
-                                                                    vehicleTripsData[
-                                                                            position]
-                                                                        .tripTitle,
-                                                                initDist: vehicleTripsData[
-                                                                        position]
-                                                                    .distance,
-                                                                initDur: vehicleTripsData[
-                                                                        position]
-                                                                    .duration,
-                                                                initDateInMilliSeconds:
-                                                                    vehicleTripsData[
-                                                                            position]
-                                                                        .dateTime,
-                                                                initMileage:
-                                                                    vehicleTripsData[
-                                                                            position]
-                                                                        .mileage,
-                                                              );
-                                                            });
-                                                      },
-                                                      child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: (kBrightness ==
-                                                                    Brightness
-                                                                        .light)
-                                                                ? kPurpleLightShade
-                                                                : kPurpleDarkShade,
-                                                            borderRadius:
-                                                                const BorderRadius
-                                                                    .all(
-                                                              Radius.circular(
-                                                                  18),
-                                                            ),
-                                                          ),
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10),
-                                                          child: Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .all(4),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Text(
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Expanded(
+                                    flex: 6,
+                                    child: SizedBox(
+                                      width: double.maxFinite,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            "Recent trips",
+                                            style: TextStyle(
+                                                fontFamily: "Inter",
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Expanded(
+                                            child: ListView.builder(
+                                                itemCount: (vehicleTripsData
+                                                        .isNotEmpty)
+                                                    ? vehicleTripsData.length
+                                                    : 0,
+                                                itemBuilder:
+                                                    (bContext, position) {
+                                                  return Column(
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          showModalBottomSheet(
+                                                              context: context,
+                                                              isScrollControlled:
+                                                                  true,
+                                                              builder:
+                                                                  (buildContext) {
+                                                                return TripDialog(
+                                                                  tripDialogMode:
+                                                                      TripDialogMode
+                                                                          .edit,
+                                                                  id: vehicleTripsData[
+                                                                          position]
+                                                                      .id,
+                                                                  initTripName:
                                                                       vehicleTripsData[
                                                                               position]
                                                                           .tripTitle,
-                                                                    ),
-                                                                    Text(DateFormat
-                                                                            .yMMMd()
-                                                                        .format(
-                                                                            DateTime.fromMillisecondsSinceEpoch(vehicleTripsData[position].dateTime)))
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 12,
-                                                                ),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Text(
-                                                                        "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
-                                                                    Text(
-                                                                        "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}"),
-                                                                    Text(
-                                                                        "${vehicleTripsData[position].duration}hrs"),
-                                                                  ],
-                                                                ),
-                                                              ],
+                                                                  initDist: vehicleTripsData[
+                                                                          position]
+                                                                      .distance,
+                                                                  initDur: vehicleTripsData[
+                                                                          position]
+                                                                      .duration,
+                                                                  initDateInMilliSeconds:
+                                                                      vehicleTripsData[
+                                                                              position]
+                                                                          .dateTime,
+                                                                  initMileage:
+                                                                      vehicleTripsData[
+                                                                              position]
+                                                                          .mileage,
+                                                                );
+                                                              });
+                                                        },
+                                                        child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: (kBrightness ==
+                                                                      Brightness
+                                                                          .light)
+                                                                  ? kPurpleLightShade
+                                                                  : kPurpleDarkShade,
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .all(
+                                                                Radius.circular(
+                                                                    18),
+                                                              ),
                                                             ),
-                                                          )),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 18,
-                                                    )
-                                                  ],
-                                                );
-                                              }),
-                                        ),
-                                      ],
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10),
+                                                            child: Container(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .all(4),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                        vehicleTripsData[position]
+                                                                            .tripTitle,
+                                                                      ),
+                                                                      Text(DateFormat
+                                                                              .yMMMd()
+                                                                          .format(
+                                                                              DateTime.fromMillisecondsSinceEpoch(vehicleTripsData[position].dateTime)))
+                                                                    ],
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: 12,
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                          "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
+                                                                      Text(
+                                                                          "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}"),
+                                                                      Text(
+                                                                          "${vehicleTripsData[position].duration}hrs"),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 18,
+                                                      )
+                                                    ],
+                                                  );
+                                                }),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -850,12 +1107,23 @@ class SelectedGraphTextWidget extends StatefulWidget {
 }
 
 class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
-  String mileage = "", dateString = "";
+  String mileage = "", dateString = "", distance = "", duration = "";
   Units distanceUnits = Units.km;
-  setValues(mil, date, setDistanceUnits) {
+  GraphMode graphMode = GraphMode.mileage;
+  setValues({
+    required mil,
+    required String date,
+    required Units setDistanceUnits,
+    required String dist,
+    required String dur,
+    required GraphMode gMode,
+  }) {
     mileage = mil;
     dateString = date;
     distanceUnits = setDistanceUnits;
+    distance = dist;
+    duration = dur;
+    graphMode = gMode;
   }
 
   update() {
@@ -864,11 +1132,25 @@ class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      mileage != ""
-          ? "$mileage ${(distanceUnits == Units.km) ? 'km/l' : 'mpg'} on $dateString"
-          : "",
-      textAlign: TextAlign.end,
-    );
+    if (graphMode == GraphMode.mileage) {
+      return Text(
+        mileage != ""
+            ? "$mileage ${(distanceUnits == Units.km) ? 'km/l' : 'mpg'} on $dateString"
+            : "",
+        textAlign: TextAlign.end,
+      );
+    } else if (graphMode == GraphMode.distance) {
+      return Text(
+        distance != ""
+            ? "$distance ${(distanceUnits == Units.km) ? 'km' : 'mi'} on $dateString"
+            : "",
+        textAlign: TextAlign.end,
+      );
+    } else {
+      return Text(
+        duration != "" ? "$duration hrs on $dateString" : "",
+        textAlign: TextAlign.end,
+      );
+    }
   }
 }
