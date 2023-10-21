@@ -96,11 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<_SelectedGraphTextWidgetState> _tab1Key = GlobalKey();
   final GlobalKey<_SelectedGraphTextWidgetState> _tab2Key = GlobalKey();
   final GlobalKey<_SelectedGraphTextWidgetState> _tab3Key = GlobalKey();
+  final GlobalKey<_SelectedGraphTextWidgetState> _tab4Key = GlobalKey();
   TextEditingController newUserVehicle = TextEditingController();
 
   List mileageChartData = [];
   List distanceChartData = [];
   List durationChartData = [];
+  List averageSpeedChartData = [];
 
   List<TripDetails> mileageVehicleTripsData = [];
   @override
@@ -165,6 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 distanceChartData = [];
                 durationChartData = [];
                 mileageVehicleTripsData = [];
+                averageSpeedChartData = [];
                 List<TripDetails> data = [];
                 for (var element in collectionSnapshot.data!.docs) {
                   var trip = TripDetails(
@@ -219,6 +222,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   durationChartData.add([
                     DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
                     trip.duration
+                  ]);
+                  averageSpeedChartData.add([
+                    DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+                    trip.distance / trip.duration
                   ]);
                 }
 
@@ -281,6 +288,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           text: "Duration",
                           iconMargin: EdgeInsets.only(bottom: 5),
                         ),
+                        const Tab(
+                          // icon: Icon(Icons.speed),
+                          text: "Average\nSpeed",
+                          iconMargin: EdgeInsets.only(bottom: 5),
+                        )
                       ];
 
                       List<Widget> views = [
@@ -608,6 +620,112 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   charts.ChartTitle(
                                     "hours",
+                                    behaviorPosition:
+                                        charts.BehaviorPosition.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                  )
+                                ],
+                                primaryMeasureAxis: charts.NumericAxisSpec(
+                                    renderSpec: charts.GridlineRendererSpec(
+                                  labelStyle: charts.TextStyleSpec(
+                                      fontSize: 10,
+                                      color: (kBrightness == Brightness.light)
+                                          ? charts.MaterialPalette.black
+                                          : charts.MaterialPalette.white),
+                                )),
+                                domainAxis: charts.DateTimeAxisSpec(
+                                  renderSpec: charts.GridlineRendererSpec(
+                                    labelStyle: charts.TextStyleSpec(
+                                        fontSize: 10,
+                                        color: (kBrightness == Brightness.light)
+                                            ? charts.MaterialPalette.black
+                                            : charts.MaterialPalette.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Tab 4 - Average Trip Speed
+                        CustomMultiChildLayout(
+                          delegate: GraphLayoutDelegate(position: Offset.zero),
+                          children: [
+                            LayoutId(
+                              id: 1,
+                              child: SelectedGraphTextWidget(key: _tab4Key),
+                            ),
+                            LayoutId(
+                              id: 2,
+                              child: charts.TimeSeriesChart(
+                                [
+                                  charts.Series(
+                                    colorFn: (__, ___) =>
+                                        charts.ColorUtil.fromDartColor(
+                                            (kBrightness == Brightness.light)
+                                                ? kPurpleDarkShade
+                                                : kPurpleLightShade),
+                                    id: "Average Speed",
+                                    data: averageSpeedChartData,
+                                    domainFn: (dat, _) => dat[0],
+                                    measureFn: (dat, _) => dat[1],
+                                  )
+                                ],
+                                animate: true,
+                                defaultRenderer: charts.LineRendererConfig(
+                                    includePoints: true),
+                                selectionModels: [
+                                  charts.SelectionModelConfig(
+                                      type: charts.SelectionModelType.info,
+                                      changedListener: (model) {
+                                        TripDetails selectedPoint =
+                                            vehicleTripsData[
+                                                averageSpeedChartData.indexOf(
+                                                    model.selectedDatum.first
+                                                        .datum)];
+
+                                        String dateTime =
+                                            "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
+
+                                        String mileage = selectedPoint.mileage!
+                                            .toDouble()
+                                            .toString();
+
+                                        _tab4Key.currentState!.setValues(
+                                          mil: mileage,
+                                          date: dateTime,
+                                          setDistanceUnits:
+                                              vehicleTripsData[0].distanceUnits,
+                                          dist:
+                                              selectedPoint.distance.toString(),
+                                          dur:
+                                              selectedPoint.duration.toString(),
+                                          gMode: GraphMode.average_speed,
+                                        );
+                                        _tab4Key.currentState!.update();
+                                      })
+                                ],
+                                behaviors: [
+                                  charts.ChartTitle(
+                                    "Trips",
+                                    titleOutsideJustification:
+                                        charts.OutsideJustification.start,
+                                    titleStyleSpec: (kBrightness ==
+                                            Brightness.light)
+                                        ? const charts.TextStyleSpec(
+                                            color: charts.MaterialPalette.black)
+                                        : const charts.TextStyleSpec(
+                                            color:
+                                                charts.MaterialPalette.white),
+                                    innerPadding: 24,
+                                  ),
+                                  charts.ChartTitle(
+                                    "Average Speed",
                                     behaviorPosition:
                                         charts.BehaviorPosition.start,
                                     titleStyleSpec: (kBrightness ==
@@ -994,10 +1112,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         vehicleTripsData[position]
                                                                             .tripTitle,
                                                                       ),
+                                                                      Text(
+                                                                          "${vehicleTripsData[position].duration}hrs"),
                                                                       Text(DateFormat
                                                                               .yMMMd()
                                                                           .format(
-                                                                              DateTime.fromMillisecondsSinceEpoch(vehicleTripsData[position].dateTime)))
+                                                                              DateTime.fromMillisecondsSinceEpoch(vehicleTripsData[position].dateTime))),
                                                                     ],
                                                                   ),
                                                                   const SizedBox(
@@ -1010,13 +1130,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     children: [
                                                                       Text(
                                                                           "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
+                                                                      Text(
+                                                                          "${(vehicleTripsData[position].distance / vehicleTripsData[position].duration).toStringAsFixed(2)} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/h' : 'mph'}"),
                                                                       (vehicleTripsData[position].mileage !=
                                                                               0)
                                                                           ? Text(
                                                                               "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}")
                                                                           : Container(),
-                                                                      Text(
-                                                                          "${vehicleTripsData[position].duration}hrs"),
                                                                     ],
                                                                   ),
                                                                 ],
@@ -1183,6 +1303,11 @@ class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
         distance != ""
             ? "$distance ${(distanceUnits == Units.km) ? 'km' : 'mi'} on $dateString"
             : "",
+        textAlign: TextAlign.end,
+      );
+    } else if (graphMode == GraphMode.average_speed) {
+      return Text(
+        "${(double.parse(distance) / double.parse(duration)).toStringAsFixed(2)} ${(distanceUnits == Units.km) ? 'km/h' : 'mph'} on $dateString",
         textAlign: TextAlign.end,
       );
     } else {
