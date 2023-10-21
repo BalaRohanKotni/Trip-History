@@ -255,7 +255,10 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 );
               }
               return SizedBox(
-                height: MediaQuery.of(context).size.height / 3,
+                height: (MediaQuery.of(context).size.height >=
+                        MediaQuery.of(context).size.width)
+                    ? MediaQuery.of(context).size.height / 3
+                    : MediaQuery.of(context).size.width / 3,
                 child: StatefulBuilder(builder: (context, sheetSetState) {
                   return Container(
                     margin: const EdgeInsets.all(28),

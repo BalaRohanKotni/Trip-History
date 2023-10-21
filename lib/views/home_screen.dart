@@ -99,6 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<_SelectedGraphTextWidgetState> _tab4Key = GlobalKey();
   TextEditingController newUserVehicle = TextEditingController();
 
+  final _scrollController = ScrollController();
+
   List mileageChartData = [];
   List distanceChartData = [];
   List durationChartData = [];
@@ -705,7 +707,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               selectedPoint.distance.toString(),
                                           dur:
                                               selectedPoint.duration.toString(),
-                                          gMode: GraphMode.average_speed,
+                                          gMode: GraphMode.averageSpeed,
                                         );
                                         _tab4Key.currentState!.update();
                                       })
@@ -934,104 +936,140 @@ class _HomeScreenState extends State<HomeScreen> {
                         body: DefaultTabController(
                           length: views.length,
                           child: SafeArea(
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 18, left: 18, right: 18),
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                            child: Scrollbar(
+                              controller: _scrollController,
+                              child: SingleChildScrollView(
+                                controller: _scrollController,
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                      top: 18, left: 18, right: 18),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: (MediaQuery.of(context)
+                                                    .size
+                                                    .height >=
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width)
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1 /
+                                                12
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                1 /
+                                                12,
+                                        child: Row(
+                                          children: [
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Total distance travelled: ",
+                                                  style: semiBold18(),
+                                                ),
+                                                Text(
+                                                  (vehicleTripsData.isNotEmpty)
+                                                      ? "Average ${(kUnits == Units.km) ? 'km/l' : 'mpg'}:"
+                                                      : "Average km/l:",
+                                                  style: semiBold18(),
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text((vehicleTripsData
+                                                        .isNotEmpty)
+                                                    ? "${[
+                                                        for (TripDetails trip
+                                                            in vehicleTripsData)
+                                                          trip.distance
+                                                      ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
+                                                    : "0km"),
+                                                Text((vehicleTripsData
+                                                        .isNotEmpty)
+                                                    ? "${(([
+                                                          for (TripDetails trip
+                                                              in vehicleTripsData)
+                                                            (trip.mileage != 0)
+                                                                ? trip.mileage!
+                                                                : 0
+                                                        ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                    : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: (MediaQuery.of(context)
+                                                    .size
+                                                    .height >=
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width)
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                5 /
+                                                12
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                5 /
+                                                12,
+                                        child: Column(
+                                          children: [
+                                            TabBar(tabs: tabs),
+                                            Expanded(
+                                              child: ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                    minHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            4),
+                                                child: TabBarView(
+                                                  children: views,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      SizedBox(
+                                        width: double.maxFinite,
+                                        child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              "Total distance travelled: ",
-                                              style: semiBold18(),
+                                            const Text(
+                                              "Recent trips",
+                                              style: TextStyle(
+                                                  fontFamily: "Inter",
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w600),
                                             ),
-                                            Text(
-                                              (vehicleTripsData.isNotEmpty)
-                                                  ? "Average ${(kUnits == Units.km) ? 'km/l' : 'mpg'}:"
-                                                  : "Average km/l:",
-                                              style: semiBold18(),
+                                            const SizedBox(
+                                              height: 20,
                                             ),
-                                          ],
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text((vehicleTripsData.isNotEmpty)
-                                                ? "${[
-                                                    for (TripDetails trip
-                                                        in vehicleTripsData)
-                                                      trip.distance
-                                                  ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
-                                                : "0km"),
-                                            Text((vehicleTripsData.isNotEmpty)
-                                                ? "${(([
-                                                      for (TripDetails trip
-                                                          in vehicleTripsData)
-                                                        (trip.mileage != 0)
-                                                            ? trip.mileage!
-                                                            : 0
-                                                    ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
-                                                : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 5,
-                                    child: Column(
-                                      children: [
-                                        TabBar(tabs: tabs),
-                                        Expanded(
-                                          child: ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                                minHeight:
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .height /
-                                                        4),
-                                            child: TabBarView(
-                                              children: views,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Expanded(
-                                    flex: 6,
-                                    child: SizedBox(
-                                      width: double.maxFinite,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Recent trips",
-                                            style: TextStyle(
-                                                fontFamily: "Inter",
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
-                                          Expanded(
-                                            child: ListView.builder(
+                                            ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
                                                 itemCount: (vehicleTripsData
                                                         .isNotEmpty)
                                                     ? vehicleTripsData.length
@@ -1149,12 +1187,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ],
                                                   );
                                                 }),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                ],
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -1305,7 +1343,7 @@ class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
             : "",
         textAlign: TextAlign.end,
       );
-    } else if (graphMode == GraphMode.average_speed) {
+    } else if (graphMode == GraphMode.averageSpeed) {
       return Text(
         "${(double.parse(distance) / double.parse(duration)).toStringAsFixed(2)} ${(distanceUnits == Units.km) ? 'km/h' : 'mph'} on $dateString",
         textAlign: TextAlign.end,

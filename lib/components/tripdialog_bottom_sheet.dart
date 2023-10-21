@@ -35,6 +35,8 @@ class _TripDialogState extends State<TripDialog> {
   bool anyFieldEmpty = true;
   FocusNode tripDateTimeFocusNode = FocusNode();
 
+  final _scrollController = ScrollController();
+
   String dateFormat = "MMM d, y\nhh:mm a";
 
   void checkFeildsAreEmpty() {
@@ -120,234 +122,152 @@ class _TripDialogState extends State<TripDialog> {
           return Container(
             padding: MediaQuery.of(context).viewInsets,
             margin: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+            child: Scrollbar(
+              controller: _scrollController,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(
-                      flex: 6,
-                      child: TextField(
-                        controller: tripNameController,
-                        decoration: InputDecoration(
-                          hintText: "Trip Name",
-                          errorText:
-                              (anyFieldEmpty && tripNameController.text.isEmpty)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: TextField(
+                            controller: tripNameController,
+                            decoration: InputDecoration(
+                              hintText: "Trip Name",
+                              errorText: (anyFieldEmpty &&
+                                      tripNameController.text.isEmpty)
                                   ? "Required"
                                   : null,
+                            ),
+                            keyboardType: TextInputType.streetAddress,
+                            autofocus: true,
+                            textInputAction: TextInputAction.next,
+                          ),
                         ),
-                        keyboardType: TextInputType.streetAddress,
-                        autofocus: true,
-                        textInputAction: TextInputAction.next,
-                      ),
+                        Expanded(flex: 1, child: Container()),
+                        Expanded(
+                          flex: 3,
+                          child: TextField(
+                            controller: tripDateTimeController,
+                            focusNode: tripDateTimeFocusNode,
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(flex: 1, child: Container()),
-                    Expanded(
-                      flex: 3,
-                      child: TextField(
-                        controller: tripDateTimeController,
-                        focusNode: tripDateTimeFocusNode,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                      ),
+                    const SizedBox(
+                      height: 48,
                     ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 48,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: TextField(
-                        controller: distanceController,
-                        textAlign: TextAlign.center,
-                        textInputAction: TextInputAction.next,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
-                        decoration: InputDecoration(
-                          hintText: "Distance",
-                          errorText:
-                              (anyFieldEmpty && distanceController.text.isEmpty)
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: TextField(
+                            controller: distanceController,
+                            textAlign: TextAlign.center,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true, signed: true),
+                            decoration: InputDecoration(
+                              hintText: "Distance",
+                              errorText: (anyFieldEmpty &&
+                                      distanceController.text.isEmpty)
                                   ? "Required"
                                   : null,
-                          suffixText: (kUnits == Units.km) ? 'km' : 'mi',
+                              suffixText: (kUnits == Units.km) ? 'km' : 'mi',
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Expanded(flex: 1, child: Container()),
-                    Expanded(
-                      flex: 3,
-                      child: TextField(
-                        controller: durationController,
-                        textAlign: TextAlign.center,
-                        textInputAction: TextInputAction.next,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
-                        decoration: InputDecoration(
-                          hintText: "Duration",
-                          errorText:
-                              (anyFieldEmpty && durationController.text.isEmpty)
+                        Expanded(flex: 1, child: Container()),
+                        Expanded(
+                          flex: 3,
+                          child: TextField(
+                            controller: durationController,
+                            textAlign: TextAlign.center,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true, signed: true),
+                            decoration: InputDecoration(
+                              hintText: "Duration",
+                              errorText: (anyFieldEmpty &&
+                                      durationController.text.isEmpty)
                                   ? "Required"
                                   : null,
-                          suffixText: "hrs",
+                              suffixText: "hrs",
+                            ),
+                          ),
                         ),
-                      ),
+                        Expanded(flex: 1, child: Container()),
+                        Expanded(
+                          flex: 3,
+                          child: TextField(
+                            controller: mileageController,
+                            textAlign: TextAlign.center,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            decoration: InputDecoration(
+                              hintText: "Average",
+                              suffixText: (kUnits == Units.km) ? 'km/l' : 'mpg',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(flex: 1, child: Container()),
-                    Expanded(
-                      flex: 3,
-                      child: TextField(
-                        controller: mileageController,
-                        textAlign: TextAlign.center,
-                        textInputAction: TextInputAction.next,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        decoration: InputDecoration(
-                          hintText: "Average",
-                          suffixText: (kUnits == Units.km) ? 'km/l' : 'mpg',
-                        ),
-                      ),
+                    const SizedBox(
+                      height: 36,
                     ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 36,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: TextButton(
-                        onPressed: () {
-                          if (tripNameController.text == "" &&
-                              durationController.text == "" &&
-                              distanceController.text == "") {
-                            Navigator.pop(context);
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (cancelDialogContext) {
-                                  return AlertDialog(
-                                    title: const Text("Delete"),
-                                    content: const Text(
-                                        "Are you sure to delete this trip?"),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: (() =>
-                                            Navigator.pop(cancelDialogContext)),
-                                        child: const Text("Cancel"),
-                                      ),
-                                      TextButton(
-                                        child: const Text("Delete"),
-                                        onPressed: () async {
-                                          if (widget.tripDialogMode ==
-                                              TripDialogMode.create) {
-                                            Navigator.pop(cancelDialogContext);
-                                            Navigator.pop(dialogContext);
-                                          } else if (widget.tripDialogMode ==
-                                              TripDialogMode.edit) {
-                                            Navigator.pop(cancelDialogContext);
-                                            Navigator.pop(dialogContext);
-                                            await firestoreDeleteTrip(
-                                                user: FirebaseAuth
-                                                    .instance.currentUser!,
-                                                id: widget.id!);
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
-                          }
-                        },
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                              const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  side: BorderSide(color: kPurpleDarkShade))),
-                        ),
-                        child: const Text(
-                          "Delete",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Expanded(child: Container()),
-                    Expanded(
-                        flex: 4,
-                        child: TextButton(
-                            onPressed: () async {
-                              if (mileageController.text == "") {
-                                mileageController.text = "0";
-                              }
-                              if (!anyFieldEmpty) {
-                                Navigator.pop(dialogContext);
-                                if (widget.tripDialogMode ==
-                                    TripDialogMode.create) {
-                                  firestoreCreateTrip(
-                                    user: FirebaseAuth.instance.currentUser!,
-                                    tripDetailsMap: {
-                                      'dateTime':
-                                          tripDateTime.millisecondsSinceEpoch,
-                                      'mileage':
-                                          double.parse(mileageController.text),
-                                      'distance':
-                                          double.parse(distanceController.text),
-                                      'duration':
-                                          double.parse(durationController.text),
-                                      'tripTitle': tripNameController.text,
-                                      'distanceUnits': (await firestoreGetUnits(
-                                                  FirebaseAuth
-                                                      .instance.currentUser!) ==
-                                              "km")
-                                          ? "km"
-                                          : "mi",
-                                      'vehicleName': currentVehicle,
-                                    },
-                                  );
-                                } else {
-                                  firestoreUpdateTrip(
-                                    user: FirebaseAuth.instance.currentUser!,
-                                    id: widget.id!,
-                                    updatedData: {
-                                      'dateTime':
-                                          tripDateTime.millisecondsSinceEpoch,
-                                      'mileage':
-                                          double.parse(mileageController.text),
-                                      'distance':
-                                          double.parse(distanceController.text),
-                                      'duration':
-                                          double.parse(durationController.text),
-                                      'tripTitle': tripNameController.text,
-                                      'distanceUnits': (await firestoreGetUnits(
-                                                  FirebaseAuth
-                                                      .instance.currentUser!) ==
-                                              "km")
-                                          ? "km"
-                                          : "mi",
-                                      'vehicleName': currentVehicle,
-                                    },
-                                  );
-                                }
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: TextButton(
+                            onPressed: () {
+                              if (tripNameController.text == "" &&
+                                  durationController.text == "" &&
+                                  distanceController.text == "") {
+                                Navigator.pop(context);
                               } else {
                                 showDialog(
                                     context: context,
-                                    builder: (doneDialog) {
+                                    builder: (cancelDialogContext) {
                                       return AlertDialog(
-                                        title: const Text("Unable to Save"),
+                                        title: const Text("Delete"),
                                         content: const Text(
-                                            "Required fields should be filled."),
+                                            "Are you sure to delete this trip?"),
                                         actions: [
                                           TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(doneDialog);
-                                              },
-                                              child: const Text("Ok"))
+                                            onPressed: (() => Navigator.pop(
+                                                cancelDialogContext)),
+                                            child: const Text("Cancel"),
+                                          ),
+                                          TextButton(
+                                            child: const Text("Delete"),
+                                            onPressed: () async {
+                                              if (widget.tripDialogMode ==
+                                                  TripDialogMode.create) {
+                                                Navigator.pop(
+                                                    cancelDialogContext);
+                                                Navigator.pop(dialogContext);
+                                              } else if (widget
+                                                      .tripDialogMode ==
+                                                  TripDialogMode.edit) {
+                                                Navigator.pop(
+                                                    cancelDialogContext);
+                                                Navigator.pop(dialogContext);
+                                                await firestoreDeleteTrip(
+                                                    user: FirebaseAuth
+                                                        .instance.currentUser!,
+                                                    id: widget.id!);
+                                              }
+                                            },
+                                          ),
                                         ],
                                       );
                                     });
@@ -362,15 +282,111 @@ class _TripDialogState extends State<TripDialog> {
                                           BorderSide(color: kPurpleDarkShade))),
                             ),
                             child: const Text(
-                              "Save",
+                              "Delete",
                               style: TextStyle(fontWeight: FontWeight.bold),
-                            ))),
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Container()),
+                        Expanded(
+                            flex: 4,
+                            child: TextButton(
+                                onPressed: () async {
+                                  if (mileageController.text == "") {
+                                    mileageController.text = "0";
+                                  }
+                                  if (!anyFieldEmpty) {
+                                    Navigator.pop(dialogContext);
+                                    if (widget.tripDialogMode ==
+                                        TripDialogMode.create) {
+                                      firestoreCreateTrip(
+                                        user:
+                                            FirebaseAuth.instance.currentUser!,
+                                        tripDetailsMap: {
+                                          'dateTime': tripDateTime
+                                              .millisecondsSinceEpoch,
+                                          'mileage': double.parse(
+                                              mileageController.text),
+                                          'distance': double.parse(
+                                              distanceController.text),
+                                          'duration': double.parse(
+                                              durationController.text),
+                                          'tripTitle': tripNameController.text,
+                                          'distanceUnits':
+                                              (await firestoreGetUnits(
+                                                          FirebaseAuth.instance
+                                                              .currentUser!) ==
+                                                      "km")
+                                                  ? "km"
+                                                  : "mi",
+                                          'vehicleName': currentVehicle,
+                                        },
+                                      );
+                                    } else {
+                                      firestoreUpdateTrip(
+                                        user:
+                                            FirebaseAuth.instance.currentUser!,
+                                        id: widget.id!,
+                                        updatedData: {
+                                          'dateTime': tripDateTime
+                                              .millisecondsSinceEpoch,
+                                          'mileage': double.parse(
+                                              mileageController.text),
+                                          'distance': double.parse(
+                                              distanceController.text),
+                                          'duration': double.parse(
+                                              durationController.text),
+                                          'tripTitle': tripNameController.text,
+                                          'distanceUnits':
+                                              (await firestoreGetUnits(
+                                                          FirebaseAuth.instance
+                                                              .currentUser!) ==
+                                                      "km")
+                                                  ? "km"
+                                                  : "mi",
+                                          'vehicleName': currentVehicle,
+                                        },
+                                      );
+                                    }
+                                  } else {
+                                    showDialog(
+                                        context: context,
+                                        builder: (doneDialog) {
+                                          return AlertDialog(
+                                            title: const Text("Unable to Save"),
+                                            content: const Text(
+                                                "Required fields should be filled."),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(doneDialog);
+                                                  },
+                                                  child: const Text("Ok"))
+                                            ],
+                                          );
+                                        });
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all(
+                                      const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          side: BorderSide(
+                                              color: kPurpleDarkShade))),
+                                ),
+                                child: const Text(
+                                  "Save",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ))),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 48,
+                    ),
                   ],
                 ),
-                const SizedBox(
-                  height: 48,
-                ),
-              ],
+              ),
             ),
           );
         });

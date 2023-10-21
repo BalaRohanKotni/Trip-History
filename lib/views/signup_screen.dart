@@ -17,6 +17,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   TextEditingController emailController = TextEditingController(),
       passwordController = TextEditingController();
+  final _scrollController = ScrollController();
   Future signUp() async {
     bool networkStatus = await hasNetwork();
     try {
@@ -46,118 +47,133 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            color: kPurpleLightShade,
-            width: double.maxFinite,
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              margin: const EdgeInsets.only(left: 18),
-              child: Text(
-                "Create a new Account",
-                style: semiBold18().copyWith(
-                  fontSize: 38,
-                  color: kPurpleDarkShade,
+      body: Scrollbar(
+        controller: _scrollController,
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(children: [
+            SizedBox(
+              height: (MediaQuery.sizeOf(context).height >=
+                      MediaQuery.sizeOf(context).width)
+                  ? MediaQuery.sizeOf(context).height / 4
+                  : MediaQuery.sizeOf(context).width / 4,
+              child: Container(
+                color: kPurpleLightShade,
+                width: double.maxFinite,
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  margin: const EdgeInsets.only(left: 18),
+                  child: Text(
+                    "Create a new Account",
+                    style: semiBold18().copyWith(
+                      fontSize: 38,
+                      color: kPurpleDarkShade,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: SafeArea(
-            child: Container(
-              margin: const EdgeInsets.only(left: 18, right: 18),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: "Email",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (email) =>
-                        email != "" && !EmailValidator.validate(email!)
-                            ? 'Enter a valid email'
-                            : null,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: emailController,
-                  ),
-                  // const SizedBox(
-                  //   height: 32,
-                  // ),
-                  TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      style: const TextStyle(fontSize: 16),
-                      onSubmitted: (_) => signUp(),
-                      decoration: const InputDecoration(
-                          labelText: "Password", border: OutlineInputBorder())),
-                  // const SizedBox(
-                  //   height: 32,
-                  // ),
-                  SizedBox(
-                    height: 50,
-                    child: TextButton(
-                      onPressed: signUp,
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(kPurpleDarkShade),
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)))),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Sign up",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    "or",
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            SizedBox(
+              height: (MediaQuery.sizeOf(context).height >=
+                      MediaQuery.sizeOf(context).width)
+                  ? MediaQuery.sizeOf(context).height * 3 / 4
+                  : MediaQuery.sizeOf(context).width * 3 / 4,
+              child: SafeArea(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 18, right: 18),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Already have an account?",
-                        style: TextStyle(fontSize: 16),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: "Email",
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (email) =>
+                            email != "" && !EmailValidator.validate(email!)
+                                ? 'Enter a valid email'
+                                : null,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        controller: emailController,
                       ),
-                      MaterialButton(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        enableFeedback: false,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          "Sign in",
-                          style:
-                              TextStyle(color: kPurpleDarkShade, fontSize: 16),
+                      // const SizedBox(
+                      //   height: 32,
+                      // ),
+                      TextField(
+                          controller: passwordController,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          style: const TextStyle(fontSize: 16),
+                          onSubmitted: (_) => signUp(),
+                          decoration: const InputDecoration(
+                              labelText: "Password",
+                              border: OutlineInputBorder())),
+                      // const SizedBox(
+                      //   height: 32,
+                      // ),
+                      SizedBox(
+                        height: 50,
+                        child: TextButton(
+                          onPressed: signUp,
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(kPurpleDarkShade),
+                              foregroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                              shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10)))),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Sign up",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                      const Text(
+                        "or",
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Already have an account?",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          MaterialButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            enableFeedback: false,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text(
+                              "Sign in",
+                              style: TextStyle(
+                                  color: kPurpleDarkShade, fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
-                  )
-                ],
+                  ),
+                ),
               ),
             ),
-          ),
+          ]),
         ),
-      ]),
+      ),
     );
   }
 }

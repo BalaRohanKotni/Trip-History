@@ -17,7 +17,7 @@ enum Units { km, mi }
 
 enum TripDialogMode { create, edit }
 
-enum GraphMode { mileage, distance, duration, average_speed }
+enum GraphMode { mileage, distance, duration, averageSpeed }
 
 Set<dynamic> vehiclesList = {};
 
