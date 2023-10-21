@@ -41,8 +41,7 @@ class _TripDialogState extends State<TripDialog> {
     setState(() {
       if (tripNameController.text.isEmpty ||
           distanceController.text.isEmpty ||
-          durationController.text.isEmpty ||
-          mileageController.text.isEmpty) {
+          durationController.text.isEmpty) {
         anyFieldEmpty = true;
       } else {
         anyFieldEmpty = false;
@@ -56,6 +55,7 @@ class _TripDialogState extends State<TripDialog> {
 
     tripDateTimeController.text =
         DateFormat(dateFormat).format(tripDateTime).toString();
+    mileageController.text = "0";
 
     if (widget.tripDialogMode == TripDialogMode.edit) {
       tripNameController.text = widget.initTripName!;
@@ -208,10 +208,6 @@ class _TripDialogState extends State<TripDialog> {
                             decimal: true),
                         decoration: InputDecoration(
                           hintText: "Average",
-                          errorText:
-                              (anyFieldEmpty && mileageController.text.isEmpty)
-                                  ? "Required"
-                                  : null,
                           suffixText: (kUnits == Units.km) ? 'km/l' : 'mpg',
                         ),
                       ),
@@ -229,8 +225,7 @@ class _TripDialogState extends State<TripDialog> {
                         onPressed: () {
                           if (tripNameController.text == "" &&
                               durationController.text == "" &&
-                              distanceController.text == "" &&
-                              mileageController.text == "") {
+                              distanceController.text == "") {
                             Navigator.pop(context);
                           } else {
                             showDialog(
@@ -287,6 +282,9 @@ class _TripDialogState extends State<TripDialog> {
                         flex: 4,
                         child: TextButton(
                             onPressed: () async {
+                              if (mileageController.text == "") {
+                                mileageController.text = "0";
+                              }
                               if (!anyFieldEmpty) {
                                 Navigator.pop(dialogContext);
                                 if (widget.tripDialogMode ==

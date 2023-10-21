@@ -101,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List mileageChartData = [];
   List distanceChartData = [];
   List durationChartData = [];
+
+  List<TripDetails> mileageVehicleTripsData = [];
   @override
   void initState() {
     super.initState();
@@ -162,22 +164,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 mileageChartData = [];
                 distanceChartData = [];
                 durationChartData = [];
+                mileageVehicleTripsData = [];
                 List<TripDetails> data = [];
                 for (var element in collectionSnapshot.data!.docs) {
-                  data.add(
-                    TripDetails(
-                      dateTime: element['dateTime'],
-                      mileage: element['mileage'].toDouble(),
-                      distance: element['distance'].toDouble(),
-                      duration: element['duration'].toDouble(),
-                      id: element['id'],
-                      tripTitle: element['tripTitle'],
-                      distanceUnits: (element['distanceUnits'] == "km")
-                          ? Units.km
-                          : Units.mi,
-                      vehicleName: element['vehicleName'],
-                    ),
+                  var trip = TripDetails(
+                    dateTime: element['dateTime'],
+                    distance: element['distance'].toDouble(),
+                    duration: element['duration'].toDouble(),
+                    id: element['id'],
+                    tripTitle: element['tripTitle'],
+                    distanceUnits: (element['distanceUnits'] == "km")
+                        ? Units.km
+                        : Units.mi,
+                    vehicleName: element['vehicleName'],
                   );
+                  try {
+                    trip.mileage = (element['mileage'].toDouble() != null)
+                        ? element['mileage'].toDouble()
+                        : 0;
+                  } catch (e) {
+                    trip.mileage = 0;
+                  }
+                  data.add(trip);
                 }
                 for (TripDetails trip in data) {
                   vehiclesList.add(trip.vehicleName);
@@ -195,11 +203,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 vehicleTripsData
                     .sort((a, b) => a.dateTime.compareTo(b.dateTime));
+
                 for (var trip in vehicleTripsData) {
-                  mileageChartData.add([
-                    DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
-                    trip.mileage.floor()
-                  ]);
+                  if (trip.mileage != 0) {
+                    mileageVehicleTripsData.add(trip);
+                    mileageChartData.add([
+                      DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+                      trip.mileage!.floor()
+                    ]);
+                  }
                   distanceChartData.add([
                     DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
                     trip.distance
@@ -231,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 (vehicleTripsData[index].distance * 1.609)
                                     .toStringAsFixed(2));
                             vehicleTripsData[index].mileage = double.parse(
-                                (vehicleTripsData[index].mileage / 2.352)
+                                (vehicleTripsData[index].mileage! / 2.352)
                                     .toStringAsFixed(2));
                           }
 
@@ -243,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 (vehicleTripsData[index].distance / 1.609)
                                     .toStringAsFixed(2));
                             vehicleTripsData[index].mileage = double.parse(
-                                (vehicleTripsData[index].mileage * 2.352)
+                                (vehicleTripsData[index].mileage! * 2.352)
                                     .toStringAsFixed(2));
                           }
                           firestoreUpdateTrip(
@@ -273,116 +285,144 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       List<Widget> views = [
                         // TAB 1 - Mileage
-                        CustomMultiChildLayout(
-                          delegate: GraphLayoutDelegate(position: Offset.zero),
+                        Column(
                           children: [
-                            LayoutId(
-                              id: 1,
-                              child: SelectedGraphTextWidget(key: _tab1Key),
-                            ),
-                            LayoutId(
-                              id: 2,
-                              child: charts.TimeSeriesChart(
-                                [
-                                  charts.Series(
-                                    colorFn: (__, ___) =>
-                                        charts.ColorUtil.fromDartColor(
-                                            (kBrightness == Brightness.light)
-                                                ? kPurpleDarkShade
-                                                : kPurpleLightShade),
-                                    id: "Mileage",
-                                    data: mileageChartData,
-                                    domainFn: (dat, _) => dat[0],
-                                    measureFn: (dat, _) => dat[1],
-                                  )
-                                ],
-                                animate: true,
-                                defaultRenderer: charts.LineRendererConfig(
-                                    includePoints: true),
-                                selectionModels: [
-                                  charts.SelectionModelConfig(
-                                      type: charts.SelectionModelType.info,
-                                      changedListener: (model) {
-                                        TripDetails selectedPoint =
-                                            vehicleTripsData[
-                                                mileageChartData.indexOf(model
-                                                    .selectedDatum
-                                                    .first
-                                                    .datum)];
-
-                                        String dateTime =
-                                            "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
-
-                                        String mileage = selectedPoint.mileage
-                                            .toDouble()
-                                            .toString();
-
-                                        _tab1Key.currentState!.setValues(
-                                          mil: mileage,
-                                          date: dateTime,
-                                          setDistanceUnits:
-                                              vehicleTripsData[0].distanceUnits,
-                                          dist:
-                                              selectedPoint.distance.toString(),
-                                          dur:
-                                              selectedPoint.duration.toString(),
-                                          gMode: GraphMode.mileage,
-                                        );
-                                        _tab1Key.currentState!.update();
-                                      })
-                                ],
-                                behaviors: [
-                                  charts.ChartTitle(
-                                    "Trips",
-                                    titleOutsideJustification:
-                                        charts.OutsideJustification.start,
-                                    titleStyleSpec: (kBrightness ==
-                                            Brightness.light)
-                                        ? const charts.TextStyleSpec(
-                                            color: charts.MaterialPalette.black)
-                                        : const charts.TextStyleSpec(
-                                            color:
-                                                charts.MaterialPalette.white),
-                                    innerPadding: 24,
+                            Expanded(
+                              child: CustomMultiChildLayout(
+                                delegate:
+                                    GraphLayoutDelegate(position: Offset.zero),
+                                children: [
+                                  LayoutId(
+                                    id: 1,
+                                    child:
+                                        SelectedGraphTextWidget(key: _tab1Key),
                                   ),
-                                  charts.ChartTitle(
-                                    (vehicleTripsData.isNotEmpty)
-                                        ? (vehicleTripsData[0].distanceUnits ==
-                                                Units.km)
-                                            ? "km/l"
-                                            : "mpg"
-                                        : (kUnits == Units.km)
-                                            ? "km/l"
-                                            : "mpg",
-                                    behaviorPosition:
-                                        charts.BehaviorPosition.start,
-                                    titleStyleSpec: (kBrightness ==
-                                            Brightness.light)
-                                        ? const charts.TextStyleSpec(
-                                            color: charts.MaterialPalette.black)
-                                        : const charts.TextStyleSpec(
-                                            color:
-                                                charts.MaterialPalette.white),
-                                  )
-                                ],
-                                primaryMeasureAxis: charts.NumericAxisSpec(
-                                    renderSpec: charts.GridlineRendererSpec(
-                                  labelStyle: charts.TextStyleSpec(
-                                      fontSize: 10,
-                                      color: (kBrightness == Brightness.light)
-                                          ? charts.MaterialPalette.black
-                                          : charts.MaterialPalette.white),
-                                )),
-                                domainAxis: charts.DateTimeAxisSpec(
-                                  renderSpec: charts.GridlineRendererSpec(
-                                    labelStyle: charts.TextStyleSpec(
-                                        fontSize: 10,
-                                        color: (kBrightness == Brightness.light)
-                                            ? charts.MaterialPalette.black
-                                            : charts.MaterialPalette.white),
+                                  LayoutId(
+                                    id: 2,
+                                    child: charts.TimeSeriesChart(
+                                      [
+                                        charts.Series(
+                                          colorFn: (__, ___) =>
+                                              charts.ColorUtil.fromDartColor(
+                                                  (kBrightness ==
+                                                          Brightness.light)
+                                                      ? kPurpleDarkShade
+                                                      : kPurpleLightShade),
+                                          id: "Mileage",
+                                          data: mileageChartData,
+                                          domainFn: (dat, _) => dat[0],
+                                          measureFn: (dat, _) => dat[1],
+                                        )
+                                      ],
+                                      animate: true,
+                                      defaultRenderer:
+                                          charts.LineRendererConfig(
+                                              includePoints: true),
+                                      selectionModels: [
+                                        charts.SelectionModelConfig(
+                                            type:
+                                                charts.SelectionModelType.info,
+                                            changedListener: (model) {
+                                              TripDetails selectedPoint =
+                                                  mileageVehicleTripsData[
+                                                      mileageChartData.indexOf(
+                                                          model.selectedDatum
+                                                              .first.datum)];
+
+                                              String dateTime =
+                                                  "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
+
+                                              String mileage = selectedPoint
+                                                  .mileage!
+                                                  .toDouble()
+                                                  .toString();
+
+                                              _tab1Key.currentState!.setValues(
+                                                mil: mileage,
+                                                date: dateTime,
+                                                setDistanceUnits:
+                                                    vehicleTripsData[0]
+                                                        .distanceUnits,
+                                                dist: selectedPoint.distance
+                                                    .toString(),
+                                                dur: selectedPoint.duration
+                                                    .toString(),
+                                                gMode: GraphMode.mileage,
+                                              );
+                                              _tab1Key.currentState!.update();
+                                            })
+                                      ],
+                                      behaviors: [
+                                        charts.ChartTitle(
+                                          "Trips",
+                                          titleOutsideJustification:
+                                              charts.OutsideJustification.start,
+                                          titleStyleSpec:
+                                              (kBrightness == Brightness.light)
+                                                  ? const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .black)
+                                                  : const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .white),
+                                          innerPadding: 24,
+                                        ),
+                                        charts.ChartTitle(
+                                          (vehicleTripsData.isNotEmpty)
+                                              ? (vehicleTripsData[0]
+                                                          .distanceUnits ==
+                                                      Units.km)
+                                                  ? "km/l"
+                                                  : "mpg"
+                                              : (kUnits == Units.km)
+                                                  ? "km/l"
+                                                  : "mpg",
+                                          behaviorPosition:
+                                              charts.BehaviorPosition.start,
+                                          titleStyleSpec:
+                                              (kBrightness == Brightness.light)
+                                                  ? const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .black)
+                                                  : const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .white),
+                                        )
+                                      ],
+                                      primaryMeasureAxis:
+                                          charts.NumericAxisSpec(
+                                              renderSpec:
+                                                  charts.GridlineRendererSpec(
+                                        labelStyle: charts.TextStyleSpec(
+                                            fontSize: 10,
+                                            color: (kBrightness ==
+                                                    Brightness.light)
+                                                ? charts.MaterialPalette.black
+                                                : charts.MaterialPalette.white),
+                                      )),
+                                      domainAxis: charts.DateTimeAxisSpec(
+                                        renderSpec: charts.GridlineRendererSpec(
+                                          labelStyle: charts.TextStyleSpec(
+                                              fontSize: 10,
+                                              color: (kBrightness ==
+                                                      Brightness.light)
+                                                  ? charts.MaterialPalette.black
+                                                  : charts
+                                                      .MaterialPalette.white),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
+                            ),
+                            const Text(
+                              "Note: Trips without mileage will not be included in this graph*",
+                              style: TextStyle(fontSize: 11),
                             ),
                           ],
                         ),
@@ -427,7 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         String dateTime =
                                             "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
 
-                                        String mileage = selectedPoint.mileage
+                                        String mileage = selectedPoint.mileage!
                                             .toDouble()
                                             .toString();
 
@@ -541,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         String dateTime =
                                             "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
 
-                                        String mileage = selectedPoint.mileage
+                                        String mileage = selectedPoint.mileage!
                                             .toDouble()
                                             .toString();
 
@@ -719,10 +759,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         2));
                                                             vehicleTripsData[
                                                                     index]
-                                                                .mileage = double.parse((vehicleTripsData[
+                                                                .mileage = double.parse(((vehicleTripsData[index]
+                                                                            .mileage !=
+                                                                        null)
+                                                                    ? vehicleTripsData[
                                                                             index]
-                                                                        .mileage /
-                                                                    2.352)
+                                                                        .mileage
+                                                                    : 0 /
+                                                                        2.352)!
                                                                 .toStringAsFixed(
                                                                     2));
                                                           }
@@ -746,10 +790,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         2));
                                                             vehicleTripsData[
                                                                     index]
-                                                                .mileage = double.parse((vehicleTripsData[
+                                                                .mileage = double.parse(((vehicleTripsData[index]
+                                                                            .mileage !=
+                                                                        null)
+                                                                    ? vehicleTripsData[
                                                                             index]
-                                                                        .mileage *
-                                                                    2.352)
+                                                                        .mileage
+                                                                    : 0 *
+                                                                        2.352)!
                                                                 .toStringAsFixed(
                                                                     2));
                                                           }
@@ -826,8 +874,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ? "${(([
                                                       for (TripDetails trip
                                                           in vehicleTripsData)
-                                                        trip.mileage
-                                                    ].sum / vehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                        (trip.mileage != 0)
+                                                            ? trip.mileage!
+                                                            : 0
+                                                    ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
                                                 : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
                                           ],
                                         )
@@ -974,8 +1024,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     children: [
                                                                       Text(
                                                                           "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
-                                                                      Text(
-                                                                          "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}"),
+                                                                      (vehicleTripsData[position].mileage !=
+                                                                              0)
+                                                                          ? Text(
+                                                                              "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}")
+                                                                          : Container(),
                                                                       Text(
                                                                           "${vehicleTripsData[position].duration}hrs"),
                                                                     ],
