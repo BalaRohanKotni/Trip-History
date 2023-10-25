@@ -15,7 +15,8 @@ Future firestoreCreateUserCollection(User user) async {
     'units': "km",
     "vehiclesList": [],
     'newUser': true,
-    'currentVehicle': ''
+    'currentVehicle': '',
+    'isSystemTheme': true,
   });
 }
 
@@ -50,6 +51,21 @@ Future firestoreDeleteVehicle(User user, String deletionVehicle) async {
       .collection(firestoreCollection)
       .doc(user.uid)
       .update({'vehiclesList': vehicles.toList()});
+}
+
+Future firestoreSetIsSystemTheme(User user, bool isSystemTheme) async {
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({"isSystemTheme": isSystemTheme});
+}
+
+Future firestoreGetIsSystemTheme(User user) async {
+  var doc = await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .get();
+  return doc['isSystemTheme'];
 }
 
 Future firestoreSetTheme(User user, String theme) async {

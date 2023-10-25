@@ -19,6 +19,8 @@ enum TripDialogMode { create, edit }
 
 enum GraphMode { mileage, distance, duration, averageSpeed }
 
+enum AppTheme { light, dark, system }
+
 Set<dynamic> vehiclesList = {};
 
 String currentVehicle = "";

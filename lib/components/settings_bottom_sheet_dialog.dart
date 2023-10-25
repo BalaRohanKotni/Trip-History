@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:trip_history/controllers/firestore_operations.dart';
 import '../constants.dart';
 
@@ -19,6 +20,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   late String _selectedVehicle;
   String _newVehicleReplacing = vehiclesList.elementAt(0);
   bool editMode = false;
+  AppTheme _theme = AppTheme.system;
   List<DropdownMenuItem> items = [];
   Widget vehiclesWidget = Container();
 
@@ -28,7 +30,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       return {
         'units': await firestoreGetUnits(FirebaseAuth.instance.currentUser!),
         'currentVehicle': await firestoreGetCurrentVehicle(
-            user: FirebaseAuth.instance.currentUser!)
+            user: FirebaseAuth.instance.currentUser!),
       };
     }
 
@@ -269,47 +271,164 @@ class _SettingsDialogState extends State<SettingsDialog> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text("Distance Units"),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ListTile(
-                                      title: const Text("Km"),
+                            SizedBox(
+                              width: double.maxFinite,
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceAround,
+                                children: [
+                                  IntrinsicWidth(
+                                    child: ListTile(
+                                        title: const Text("Km"),
+                                        leading: Radio(
+                                            value: Units.km,
+                                            groupValue: kUnits,
+                                            onChanged: (units) {
+                                              sheetSetState(
+                                                  (() => kUnits = units!));
+                                              setState(() {
+                                                widget.onChangeDistanceUnits(
+                                                    kUnits);
+                                                firestoreSetUnits(
+                                                    FirebaseAuth
+                                                        .instance.currentUser!,
+                                                    kUnits);
+                                              });
+                                            })),
+                                  ),
+                                  IntrinsicWidth(
+                                    child: ListTile(
+                                        title: const Text("Mi"),
+                                        leading: Radio(
+                                            value: Units.mi,
+                                            groupValue: kUnits,
+                                            onChanged: (units) {
+                                              sheetSetState(
+                                                  (() => kUnits = units!));
+                                              setState(() {
+                                                widget.onChangeDistanceUnits(
+                                                    kUnits);
+                                                firestoreSetUnits(
+                                                    FirebaseAuth
+                                                        .instance.currentUser!,
+                                                    kUnits);
+                                              });
+                                            })),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 24,
+                            ),
+                            const Text("Theme"),
+                            SizedBox(
+                              width: double.maxFinite,
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceAround,
+                                children: [
+                                  IntrinsicWidth(
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      horizontalTitleGap: 14,
+                                      title: const Text("System"),
                                       leading: Radio(
-                                          value: Units.km,
-                                          groupValue: kUnits,
-                                          onChanged: (units) {
+                                          visualDensity: const VisualDensity(
+                                              horizontal:
+                                                  VisualDensity.minimumDensity,
+                                              vertical:
+                                                  VisualDensity.minimumDensity),
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: AppTheme.system,
+                                          groupValue: _theme,
+                                          onChanged: (theme) {
                                             sheetSetState(
-                                                (() => kUnits = units!));
+                                                (() => _theme = theme!));
                                             setState(() {
-                                              widget.onChangeDistanceUnits(
-                                                  kUnits);
-                                              firestoreSetUnits(
+                                              firestoreSetIsSystemTheme(
                                                   FirebaseAuth
                                                       .instance.currentUser!,
-                                                  kUnits);
-                                            });
-                                          })),
-                                ),
-                                Expanded(
-                                  child: ListTile(
-                                      title: const Text("Mi"),
-                                      leading: Radio(
-                                          value: Units.mi,
-                                          groupValue: kUnits,
-                                          onChanged: (units) {
-                                            sheetSetState(
-                                                (() => kUnits = units!));
-                                            setState(() {
-                                              widget.onChangeDistanceUnits(
-                                                  kUnits);
-                                              firestoreSetUnits(
+                                                  true);
+                                              Brightness brightness =
+                                                  SchedulerBinding
+                                                      .instance
+                                                      .platformDispatcher
+                                                      .platformBrightness;
+                                              firestoreSetTheme(
                                                   FirebaseAuth
                                                       .instance.currentUser!,
-                                                  kUnits);
+                                                  (brightness ==
+                                                          Brightness.light)
+                                                      ? "light"
+                                                      : "dark");
                                             });
-                                          })),
-                                )
-                              ],
+                                          }),
+                                    ),
+                                  ),
+                                  IntrinsicWidth(
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      horizontalTitleGap: 14,
+                                      title: const Text("Light"),
+                                      leading: Radio(
+                                          visualDensity: const VisualDensity(
+                                              horizontal:
+                                                  VisualDensity.minimumDensity,
+                                              vertical:
+                                                  VisualDensity.minimumDensity),
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: AppTheme.light,
+                                          groupValue: _theme,
+                                          onChanged: (theme) {
+                                            sheetSetState(
+                                                (() => _theme = theme!));
+                                            setState(() {
+                                              firestoreSetIsSystemTheme(
+                                                  FirebaseAuth
+                                                      .instance.currentUser!,
+                                                  false);
+                                              firestoreSetTheme(
+                                                  FirebaseAuth
+                                                      .instance.currentUser!,
+                                                  "light");
+                                            });
+                                          }),
+                                    ),
+                                  ),
+                                  IntrinsicWidth(
+                                    child: ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        horizontalTitleGap: 14,
+                                        leading: Radio(
+                                            visualDensity: const VisualDensity(
+                                                horizontal: VisualDensity
+                                                    .minimumDensity,
+                                                vertical: VisualDensity
+                                                    .minimumDensity),
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            value: AppTheme.dark,
+                                            groupValue: _theme,
+                                            onChanged: (theme) {
+                                              sheetSetState(
+                                                  (() => _theme = theme!));
+                                              setState(() {
+                                                firestoreSetIsSystemTheme(
+                                                    FirebaseAuth
+                                                        .instance.currentUser!,
+                                                    false);
+                                                firestoreSetTheme(
+                                                    FirebaseAuth
+                                                        .instance.currentUser!,
+                                                    "dark");
+                                              });
+                                            }),
+                                        title: const Text("Dark")),
+                                  ),
+                                ],
+                              ),
                             ),
                             const SizedBox(
                               height: 24,
