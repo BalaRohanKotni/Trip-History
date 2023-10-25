@@ -1233,7 +1233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(
                         height: 24,
                       ),
-                      const Text("Distance Units"),
+                      const Text("Units"),
                       SizedBox(
                         width: double.maxFinite,
                         child: Wrap(

@@ -270,7 +270,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text("Distance Units"),
+                            const Text("Units"),
                             SizedBox(
                               width: double.maxFinite,
                               child: Wrap(
