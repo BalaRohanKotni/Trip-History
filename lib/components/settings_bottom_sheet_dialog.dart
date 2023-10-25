@@ -21,6 +21,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   String _newVehicleReplacing = vehiclesList.elementAt(0);
   bool editMode = false;
   AppTheme _theme = AppTheme.system;
+  int _selectedDefaultGraphTabIndex = 0;
   List<DropdownMenuItem> items = [];
   Widget vehiclesWidget = Container();
 
@@ -31,6 +32,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
         'units': await firestoreGetUnits(FirebaseAuth.instance.currentUser!),
         'currentVehicle': await firestoreGetCurrentVehicle(
             user: FirebaseAuth.instance.currentUser!),
+        'defaultGraphTabIndex': await firestoreGetDefaultGraphTabIndex(
+            FirebaseAuth.instance.currentUser!),
       };
     }
 
@@ -41,6 +44,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               kUnits = (snapshot.data!['units'] == "km") ? Units.km : Units.mi;
+              _selectedDefaultGraphTabIndex =
+                  snapshot.data!['defaultGraphTabIndex'];
               if (editMode) {
                 _selectedVehicle = vehiclesList.elementAt(0);
                 List<Widget> items = [];
@@ -454,6 +459,59 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                 ],
                               ),
                             ),
+                            const SizedBox(
+                              height: 24,
+                            ),
+                            SizedBox(
+                              width: double.maxFinite,
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                alignment: WrapAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                      margin: const EdgeInsets.only(top: 14),
+                                      child: const Text("Default Graph Tab: ")),
+                                  DropdownButton(
+                                    value: _selectedDefaultGraphTabIndex,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedDefaultGraphTabIndex = value!;
+                                        firestoreSetDefaultGraphTabIndex(
+                                            FirebaseAuth.instance.currentUser!,
+                                            _selectedDefaultGraphTabIndex);
+                                      });
+                                    },
+                                    items: List.generate(
+                                      [
+                                        "Mileage",
+                                        "Distance",
+                                        "Duration",
+                                        "Average Speed"
+                                      ].length,
+                                      (index) {
+                                        return DropdownMenuItem(
+                                          value: index,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                [
+                                                  "Mileage",
+                                                  "Distance",
+                                                  "Duration",
+                                                  "Average Speed"
+                                                ].elementAt(index),
+                                                style: const TextStyle(
+                                                    fontSize: 18),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ]),

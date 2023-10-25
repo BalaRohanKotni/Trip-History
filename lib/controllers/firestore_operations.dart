@@ -17,7 +17,26 @@ Future firestoreCreateUserCollection(User user) async {
     'newUser': true,
     'currentVehicle': '',
     'isSystemTheme': true,
+    'defaultGraphTabIndex': 0,
   });
+}
+
+Future firestoreSetDefaultGraphTabIndex(
+    User user, int defaultGraphTabIndex) async {
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({'defaultGraphTabIndex': defaultGraphTabIndex});
+}
+
+Future firestoreGetDefaultGraphTabIndex(
+  User user,
+) async {
+  return await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .get()
+      .then((value) => value.data()!['defaultGraphTabIndex']);
 }
 
 Future firestoreUpdateNewUser(User user, bool newUser) async {

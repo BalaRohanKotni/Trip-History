@@ -178,6 +178,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
             vehiclesList = documentSnapshot.data!.get('vehiclesList').toSet();
 
+            int defaultGraphTabIndex =
+                documentSnapshot.data!.get('defaultGraphTabIndex');
+
             if (documentSnapshot.data!.get('theme') == "light") {
               kBrightness = Brightness.light;
               isLightThemeModeStreamController.add(true);
@@ -873,6 +876,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         body: DefaultTabController(
+                          initialIndex: defaultGraphTabIndex,
                           length: views.length,
                           child: SafeArea(
                             child: Scrollbar(
