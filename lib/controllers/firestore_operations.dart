@@ -161,19 +161,6 @@ Future firestoreCreateTrip({
   });
 }
 
-Future<Map<String, dynamic>> firestoreReadTrip({
-  required User user,
-  required String id,
-}) async {
-  return await FirebaseFirestore.instance
-      .collection(firestoreCollection)
-      .doc(user.uid)
-      .collection("Trips")
-      .doc(id)
-      .get()
-      .then((value) => value.data()!);
-}
-
 Future firestoreUpdateTrip({
   required User user,
   required Map<String, dynamic> updatedData,
