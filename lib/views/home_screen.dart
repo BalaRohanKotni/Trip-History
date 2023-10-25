@@ -965,73 +965,68 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     .width *
                                                 1 /
                                                 12,
-                                        child: Row(
+                                        child: Wrap(
                                           children: [
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Total distance travelled: ",
-                                                  style: semiBold18(),
-                                                ),
-                                                Text(
-                                                  (vehicleTripsData.isNotEmpty)
-                                                      ? "Average ${(kUnits == Units.km) ? 'km/l' : 'mpg'}:"
-                                                      : "Average km/l:",
-                                                  style: semiBold18(),
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Text((vehicleTripsData
-                                                        .isNotEmpty)
-                                                    ? "${[
-                                                        for (TripDetails trip
-                                                            in vehicleTripsData)
-                                                          trip.distance
-                                                      ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
-                                                    : "0km"),
-                                                Text((vehicleTripsData
-                                                        .isNotEmpty)
-                                                    ? "${(([
+                                            SizedBox(
+                                              width: double.maxFinite,
+                                              child: Wrap(
+                                                spacing: 8,
+                                                alignment: WrapAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Total distance travelled: ",
+                                                    style: semiBold18(),
+                                                  ),
+                                                  Text((vehicleTripsData
+                                                          .isNotEmpty)
+                                                      ? "${[
                                                           for (TripDetails trip
                                                               in vehicleTripsData)
-                                                            (trip.mileage != 0)
-                                                                ? trip.mileage!
-                                                                : 0
-                                                        ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
-                                                    : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
-                                              ],
+                                                            trip.distance
+                                                        ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
+                                                      : "0km"),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: double.maxFinite,
+                                              child: Wrap(
+                                                spacing: 8,
+                                                alignment: WrapAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    (vehicleTripsData
+                                                            .isNotEmpty)
+                                                        ? "Average ${(kUnits == Units.km) ? 'km/l' : 'mpg'}:"
+                                                        : "Average km/l:",
+                                                    style: semiBold18(),
+                                                  ),
+                                                  Text((vehicleTripsData
+                                                          .isNotEmpty)
+                                                      ? "${(([
+                                                            for (TripDetails trip
+                                                                in vehicleTripsData)
+                                                              (trip.mileage !=
+                                                                      0)
+                                                                  ? trip
+                                                                      .mileage!
+                                                                  : 0
+                                                          ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                      : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
+                                                ],
+                                              ),
                                             )
                                           ],
                                         ),
                                       ),
                                       SizedBox(
-                                        height: (MediaQuery.of(context)
-                                                    .size
-                                                    .height >=
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width)
-                                            ? MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                5 /
-                                                12
-                                            : MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                        height:
+                                            MediaQuery.of(context).size.height *
                                                 5 /
                                                 12,
                                         child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             TabBar(tabs: tabs),
                                             Expanded(
@@ -1081,108 +1076,114 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     (bContext, position) {
                                                   return Column(
                                                     children: [
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          showModalBottomSheet(
-                                                              context: context,
-                                                              isScrollControlled:
-                                                                  true,
-                                                              builder:
-                                                                  (buildContext) {
-                                                                return TripDialog(
-                                                                  tripDialogMode:
-                                                                      TripDialogMode
-                                                                          .edit,
-                                                                  id: vehicleTripsData[
-                                                                          position]
-                                                                      .id,
-                                                                  initTripName:
-                                                                      vehicleTripsData[
-                                                                              position]
-                                                                          .tripTitle,
-                                                                  initDist: vehicleTripsData[
-                                                                          position]
-                                                                      .distance,
-                                                                  initDur: vehicleTripsData[
-                                                                          position]
-                                                                      .duration,
-                                                                  initDateInMilliSeconds:
-                                                                      vehicleTripsData[
-                                                                              position]
-                                                                          .dateTime,
-                                                                  initMileage:
-                                                                      vehicleTripsData[
-                                                                              position]
-                                                                          .mileage,
-                                                                );
-                                                              });
-                                                        },
-                                                        child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: (kBrightness ==
-                                                                      Brightness
-                                                                          .light)
-                                                                  ? kPurpleLightShade
-                                                                  : kPurpleDarkShade,
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .all(
-                                                                Radius.circular(
-                                                                    18),
-                                                              ),
-                                                            ),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(10),
-                                                            child: Container(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .all(4),
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Text(
+                                                      SizedBox(
+                                                        width: double.maxFinite,
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            showModalBottomSheet(
+                                                                context:
+                                                                    context,
+                                                                isScrollControlled:
+                                                                    true,
+                                                                builder:
+                                                                    (buildContext) {
+                                                                  return TripDialog(
+                                                                    tripDialogMode:
+                                                                        TripDialogMode
+                                                                            .edit,
+                                                                    id: vehicleTripsData[
+                                                                            position]
+                                                                        .id,
+                                                                    initTripName:
                                                                         vehicleTripsData[position]
                                                                             .tripTitle,
-                                                                      ),
-                                                                      Text(
-                                                                          "${vehicleTripsData[position].duration}hrs"),
-                                                                      Text(DateFormat
-                                                                              .yMMMd()
-                                                                          .format(
-                                                                              DateTime.fromMillisecondsSinceEpoch(vehicleTripsData[position].dateTime))),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 12,
-                                                                  ),
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                          "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
-                                                                      Text(
-                                                                          "${(vehicleTripsData[position].distance / vehicleTripsData[position].duration).toStringAsFixed(2)} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/h' : 'mph'}"),
-                                                                      (vehicleTripsData[position].mileage !=
-                                                                              0)
-                                                                          ? Text(
-                                                                              "${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}")
-                                                                          : Container(),
-                                                                    ],
-                                                                  ),
-                                                                ],
+                                                                    initDist: vehicleTripsData[
+                                                                            position]
+                                                                        .distance,
+                                                                    initDur: vehicleTripsData[
+                                                                            position]
+                                                                        .duration,
+                                                                    initDateInMilliSeconds:
+                                                                        vehicleTripsData[position]
+                                                                            .dateTime,
+                                                                    initMileage:
+                                                                        vehicleTripsData[position]
+                                                                            .mileage,
+                                                                  );
+                                                                });
+                                                          },
+                                                          child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: (kBrightness ==
+                                                                        Brightness
+                                                                            .light)
+                                                                    ? kPurpleLightShade
+                                                                    : kPurpleDarkShade,
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          18),
+                                                                ),
                                                               ),
-                                                            )),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(10),
+                                                              child: Container(
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                        .all(4),
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: double
+                                                                          .maxFinite,
+                                                                      child:
+                                                                          Wrap(
+                                                                        alignment:
+                                                                            WrapAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Text(vehicleTripsData[position].tripTitle.length > 16
+                                                                              ? "${vehicleTripsData[position].tripTitle.substring(0, 13)}..."
+                                                                              : vehicleTripsData[position].tripTitle),
+                                                                          Text(
+                                                                              "${vehicleTripsData[position].duration}hrs"),
+                                                                          Text(DateFormat.yMMMd()
+                                                                              .format(DateTime.fromMillisecondsSinceEpoch(vehicleTripsData[position].dateTime))),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          12,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: double
+                                                                          .maxFinite,
+                                                                      child:
+                                                                          Wrap(
+                                                                        alignment:
+                                                                            WrapAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Text(
+                                                                              "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
+                                                                          Text(
+                                                                              "${(vehicleTripsData[position].distance / vehicleTripsData[position].duration).toStringAsFixed(2)} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/h' : 'mph'}"),
+                                                                          (vehicleTripsData[position].mileage != 0)
+                                                                              ? Text("${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}")
+                                                                              : Container(),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              )),
+                                                        ),
                                                       ),
                                                       const SizedBox(
                                                         height: 18,
