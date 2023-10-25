@@ -126,6 +126,42 @@ class _HomeScreenState extends State<HomeScreen> {
     };
   }
 
+  void onChangeDistanceUnits(Units distanceUnits) {
+    setState(() {
+      for (int index = 0; index < vehicleTripsData.length; index++) {
+        Units prevDistanceUnits = vehicleTripsData[index].distanceUnits;
+        vehicleTripsData[index].distanceUnits = distanceUnits;
+
+        if (distanceUnits == Units.km && distanceUnits != prevDistanceUnits) {
+          vehicleTripsData[index].distanceUnits = Units.km;
+          vehicleTripsData[index].distance = double.parse(
+              (vehicleTripsData[index].distance * 1.609).toStringAsFixed(2));
+          vehicleTripsData[index].mileage = double.parse(
+              ((vehicleTripsData[index].mileage != null)
+                      ? vehicleTripsData[index].mileage! / 2.352
+                      : 0 / 2.352)
+                  .toStringAsFixed(2));
+        }
+
+        if (distanceUnits == Units.mi && distanceUnits != prevDistanceUnits) {
+          vehicleTripsData[index].distanceUnits = Units.mi;
+
+          vehicleTripsData[index].distance = double.parse(
+              (vehicleTripsData[index].distance / 1.609).toStringAsFixed(2));
+          vehicleTripsData[index].mileage = double.parse(
+              ((vehicleTripsData[index].mileage != null)
+                      ? vehicleTripsData[index].mileage! * 2.352
+                      : 0 * 2.352)
+                  .toStringAsFixed(2));
+        }
+        firestoreUpdateTrip(
+            user: FirebaseAuth.instance.currentUser!,
+            updatedData: vehicleTripsData[index].toMap(),
+            id: vehicleTripsData[index].id);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -832,92 +868,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         }
                                                       });
                                                     },
-                                                    onChangeDistanceUnits:
-                                                        (Units distanceUnits) {
-                                                      setState(() {
-                                                        for (int index = 0;
-                                                            index <
-                                                                vehicleTripsData
-                                                                    .length;
-                                                            index++) {
-                                                          Units
-                                                              prevDistanceUnits =
-                                                              vehicleTripsData[
-                                                                      index]
-                                                                  .distanceUnits;
-                                                          vehicleTripsData[
-                                                                      index]
-                                                                  .distanceUnits =
-                                                              distanceUnits;
-
-                                                          if (distanceUnits ==
-                                                                  Units.km &&
-                                                              distanceUnits !=
-                                                                  prevDistanceUnits) {
-                                                            vehicleTripsData[
-                                                                        index]
-                                                                    .distanceUnits =
-                                                                Units.km;
-                                                            vehicleTripsData[
-                                                                        index]
-                                                                    .distance =
-                                                                double.parse((vehicleTripsData[index]
-                                                                            .distance *
-                                                                        1.609)
-                                                                    .toStringAsFixed(
-                                                                        2));
-                                                            vehicleTripsData[
-                                                                    index]
-                                                                .mileage = double.parse(((vehicleTripsData[index].mileage != null)
-                                                                    ? vehicleTripsData[index]
-                                                                            .mileage! /
-                                                                        2.352
-                                                                    : 0 / 2.352)
-                                                                .toStringAsFixed(
-                                                                    2));
-                                                          }
-
-                                                          if (distanceUnits ==
-                                                                  Units.mi &&
-                                                              distanceUnits !=
-                                                                  prevDistanceUnits) {
-                                                            vehicleTripsData[
-                                                                        index]
-                                                                    .distanceUnits =
-                                                                Units.mi;
-
-                                                            vehicleTripsData[
-                                                                        index]
-                                                                    .distance =
-                                                                double.parse((vehicleTripsData[index]
-                                                                            .distance /
-                                                                        1.609)
-                                                                    .toStringAsFixed(
-                                                                        2));
-                                                            vehicleTripsData[
-                                                                    index]
-                                                                .mileage = double.parse(((vehicleTripsData[index].mileage != null)
-                                                                    ? vehicleTripsData[index]
-                                                                            .mileage! *
-                                                                        2.352
-                                                                    : 0 * 2.352)
-                                                                .toStringAsFixed(
-                                                                    2));
-                                                          }
-                                                          firestoreUpdateTrip(
-                                                              user: FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser!,
-                                                              updatedData:
-                                                                  vehicleTripsData[
-                                                                          index]
-                                                                      .toMap(),
-                                                              id: vehicleTripsData[
-                                                                      index]
-                                                                  .id);
-                                                        }
-                                                      });
-                                                    },
+                                                    onChangeDistanceUnits: (Units
+                                                            distanceUnits) =>
+                                                        onChangeDistanceUnits(
+                                                            distanceUnits),
                                                   ));
                                         } else if (choice == "Logout") {
                                           FirebaseAuth.instance.signOut();
@@ -1253,23 +1207,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         margin: const EdgeInsets.symmetric(
                             vertical: 0, horizontal: 24),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: TextField(
-                              controller: newUserVehicle,
-                              decoration: InputDecoration(
-                                  labelText: "Vehicle Name",
-                                  errorText: newUserVehicle.text.isEmpty
-                                      ? ("Required")
-                                      : null,
-                                  suffix: IconButton(
-                                      onPressed: () {
-                                        createNewVehicle(newUserVehicle.text);
-                                      },
-                                      icon: const Icon(Icons.check))),
-                            ))
-                          ],
+                        child: TextField(
+                          controller: newUserVehicle,
+                          decoration: InputDecoration(
+                              labelText: "Vehicle Name",
+                              errorText: newUserVehicle.text.isEmpty
+                                  ? ("Required")
+                                  : null,
+                              suffix: IconButton(
+                                  onPressed: () {
+                                    createNewVehicle(newUserVehicle.text);
+                                  },
+                                  icon: const Icon(Icons.check))),
                         ),
                       ),
                       const SizedBox(
@@ -1280,7 +1229,53 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           fontSize: 14,
                         ),
-                      )
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      const Text("Distance Units"),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceAround,
+                          children: [
+                            IntrinsicWidth(
+                              child: ListTile(
+                                  title: const Text("Km"),
+                                  leading: Radio(
+                                      value: Units.km,
+                                      groupValue: kUnits,
+                                      onChanged: (units) {
+                                        setState(() {
+                                          kUnits = units!;
+                                          onChangeDistanceUnits(kUnits);
+                                          firestoreSetUnits(
+                                              FirebaseAuth
+                                                  .instance.currentUser!,
+                                              kUnits);
+                                        });
+                                      })),
+                            ),
+                            IntrinsicWidth(
+                              child: ListTile(
+                                  title: const Text("Mi"),
+                                  leading: Radio(
+                                      value: Units.mi,
+                                      groupValue: kUnits,
+                                      onChanged: (units) {
+                                        setState(() {
+                                          kUnits = units!;
+                                          onChangeDistanceUnits(kUnits);
+                                          firestoreSetUnits(
+                                              FirebaseAuth
+                                                  .instance.currentUser!,
+                                              kUnits);
+                                        });
+                                      })),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
