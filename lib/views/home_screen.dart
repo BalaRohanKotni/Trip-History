@@ -126,14 +126,14 @@ class _HomeScreenState extends State<HomeScreen> {
     };
   }
 
-  void onChangeDistanceUnits(Units distanceUnits) {
+  void onChangeUnits(Units units) {
     setState(() {
       for (int index = 0; index < vehicleTripsData.length; index++) {
-        Units prevDistanceUnits = vehicleTripsData[index].distanceUnits;
-        vehicleTripsData[index].distanceUnits = distanceUnits;
+        Units prevUnits = vehicleTripsData[index].units;
+        vehicleTripsData[index].units = units;
 
-        if (distanceUnits == Units.km && distanceUnits != prevDistanceUnits) {
-          vehicleTripsData[index].distanceUnits = Units.km;
+        if (units == Units.km && units != prevUnits) {
+          vehicleTripsData[index].units = Units.km;
           vehicleTripsData[index].distance = double.parse(
               (vehicleTripsData[index].distance * 1.609).toStringAsFixed(2));
           vehicleTripsData[index].mileage = double.parse(
@@ -143,8 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   .toStringAsFixed(2));
         }
 
-        if (distanceUnits == Units.mi && distanceUnits != prevDistanceUnits) {
-          vehicleTripsData[index].distanceUnits = Units.mi;
+        if (units == Units.mi && units != prevUnits) {
+          vehicleTripsData[index].units = Units.mi;
 
           vehicleTripsData[index].distance = double.parse(
               (vehicleTripsData[index].distance / 1.609).toStringAsFixed(2));
@@ -217,9 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     duration: element['duration'].toDouble(),
                     id: element['id'],
                     tripTitle: element['tripTitle'],
-                    distanceUnits: (element['distanceUnits'] == "km")
-                        ? Units.km
-                        : Units.mi,
+                    units: (element['units'] == "km") ? Units.km : Units.mi,
                     vehicleName: element['vehicleName'],
                   );
                   try {
@@ -276,17 +274,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       kUnits = (snapshot.data == "km") ? Units.km : Units.mi;
                       if (vehicleTripsData.isNotEmpty &&
-                          vehicleTripsData[0].distanceUnits != kUnits) {
+                          vehicleTripsData[0].units != kUnits) {
                         for (int index = 0;
                             index < vehicleTripsData.length;
                             index++) {
-                          Units prevDistanceUnits =
-                              vehicleTripsData[index].distanceUnits;
-                          vehicleTripsData[index].distanceUnits = kUnits;
+                          Units prevUnits = vehicleTripsData[index].units;
+                          vehicleTripsData[index].units = kUnits;
 
-                          if (kUnits == Units.km &&
-                              kUnits != prevDistanceUnits) {
-                            vehicleTripsData[index].distanceUnits = Units.km;
+                          if (kUnits == Units.km && kUnits != prevUnits) {
+                            vehicleTripsData[index].units = Units.km;
                             vehicleTripsData[index].distance = double.parse(
                                 (vehicleTripsData[index].distance * 1.609)
                                     .toStringAsFixed(2));
@@ -295,9 +291,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     .toStringAsFixed(2));
                           }
 
-                          if (kUnits == Units.mi &&
-                              kUnits != prevDistanceUnits) {
-                            vehicleTripsData[index].distanceUnits = Units.mi;
+                          if (kUnits == Units.mi && kUnits != prevUnits) {
+                            vehicleTripsData[index].units = Units.mi;
 
                             vehicleTripsData[index].distance = double.parse(
                                 (vehicleTripsData[index].distance / 1.609)
@@ -393,9 +388,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               _tab1Key.currentState!.setValues(
                                                 mil: mileage,
                                                 date: dateTime,
-                                                setDistanceUnits:
-                                                    vehicleTripsData[0]
-                                                        .distanceUnits,
+                                                setUnits:
+                                                    vehicleTripsData[0].units,
                                                 dist: selectedPoint.distance
                                                     .toString(),
                                                 dur: selectedPoint.duration
@@ -424,8 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         charts.ChartTitle(
                                           (vehicleTripsData.isNotEmpty)
-                                              ? (vehicleTripsData[0]
-                                                          .distanceUnits ==
+                                              ? (vehicleTripsData[0].units ==
                                                       Units.km)
                                                   ? "km/l"
                                                   : "mpg"
@@ -527,9 +520,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         _tab2Key.currentState!.setValues(
                                             mil: mileage,
                                             date: dateTime,
-                                            setDistanceUnits:
-                                                vehicleTripsData[0]
-                                                    .distanceUnits,
+                                            setUnits: vehicleTripsData[0].units,
                                             dist: selectedPoint.distance
                                                 .toString(),
                                             dur: selectedPoint.duration
@@ -634,8 +625,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         _tab3Key.currentState!.setValues(
                                           mil: mileage,
                                           date: dateTime,
-                                          setDistanceUnits:
-                                              vehicleTripsData[0].distanceUnits,
+                                          setUnits: vehicleTripsData[0].units,
                                           dist:
                                               selectedPoint.distance.toString(),
                                           dur:
@@ -740,8 +730,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         _tab4Key.currentState!.setValues(
                                           mil: mileage,
                                           date: dateTime,
-                                          setDistanceUnits:
-                                              vehicleTripsData[0].distanceUnits,
+                                          setUnits: vehicleTripsData[0].units,
                                           dist:
                                               selectedPoint.distance.toString(),
                                           dur:
@@ -868,10 +857,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         }
                                                       });
                                                     },
-                                                    onChangeDistanceUnits: (Units
-                                                            distanceUnits) =>
-                                                        onChangeDistanceUnits(
-                                                            distanceUnits),
+                                                    onChangeUnits: (Units
+                                                            units) =>
+                                                        onChangeUnits(units),
                                                   ));
                                         } else if (choice == "Logout") {
                                           FirebaseAuth.instance.signOut();
@@ -1119,11 +1107,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                             WrapAlignment.spaceBetween,
                                                                         children: [
                                                                           Text(
-                                                                              "${vehicleTripsData[position].distance}${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km' : 'mi'}"),
+                                                                              "${vehicleTripsData[position].distance}${(vehicleTripsData[position].units == Units.km) ? 'km' : 'mi'}"),
                                                                           Text(
-                                                                              "${(vehicleTripsData[position].distance / vehicleTripsData[position].duration).toStringAsFixed(2)} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/h' : 'mph'}"),
+                                                                              "${(vehicleTripsData[position].distance / vehicleTripsData[position].duration).toStringAsFixed(2)} ${(vehicleTripsData[position].units == Units.km) ? 'km/h' : 'mph'}"),
                                                                           (vehicleTripsData[position].mileage != 0)
-                                                                              ? Text("${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].distanceUnits == Units.km) ? 'km/l' : 'mpg'}")
+                                                                              ? Text("${vehicleTripsData[position].mileage} ${(vehicleTripsData[position].units == Units.km) ? 'km/l' : 'mpg'}")
                                                                               : Container(),
                                                                         ],
                                                                       ),
@@ -1248,7 +1236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onChanged: (units) {
                                         setState(() {
                                           kUnits = units!;
-                                          onChangeDistanceUnits(kUnits);
+                                          onChangeUnits(kUnits);
                                           firestoreSetUnits(
                                               FirebaseAuth
                                                   .instance.currentUser!,
@@ -1265,7 +1253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onChanged: (units) {
                                         setState(() {
                                           kUnits = units!;
-                                          onChangeDistanceUnits(kUnits);
+                                          onChangeUnits(kUnits);
                                           firestoreSetUnits(
                                               FirebaseAuth
                                                   .instance.currentUser!,
@@ -1298,19 +1286,19 @@ class SelectedGraphTextWidget extends StatefulWidget {
 
 class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
   String mileage = "", dateString = "", distance = "", duration = "";
-  Units distanceUnits = Units.km;
+  Units units = Units.km;
   GraphMode graphMode = GraphMode.mileage;
   setValues({
     required mil,
     required String date,
-    required Units setDistanceUnits,
+    required Units setUnits,
     required String dist,
     required String dur,
     required GraphMode gMode,
   }) {
     mileage = mil;
     dateString = date;
-    distanceUnits = setDistanceUnits;
+    units = setUnits;
     distance = dist;
     duration = dur;
     graphMode = gMode;
@@ -1325,20 +1313,20 @@ class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
     if (graphMode == GraphMode.mileage) {
       return Text(
         mileage != ""
-            ? "$mileage ${(distanceUnits == Units.km) ? 'km/l' : 'mpg'} on $dateString"
+            ? "$mileage ${(units == Units.km) ? 'km/l' : 'mpg'} on $dateString"
             : "",
         textAlign: TextAlign.end,
       );
     } else if (graphMode == GraphMode.distance) {
       return Text(
         distance != ""
-            ? "$distance ${(distanceUnits == Units.km) ? 'km' : 'mi'} on $dateString"
+            ? "$distance ${(units == Units.km) ? 'km' : 'mi'} on $dateString"
             : "",
         textAlign: TextAlign.end,
       );
     } else if (graphMode == GraphMode.averageSpeed) {
       return Text(
-        "${(double.parse(distance) / double.parse(duration)).toStringAsFixed(2)} ${(distanceUnits == Units.km) ? 'km/h' : 'mph'} on $dateString",
+        "${(double.parse(distance) / double.parse(duration)).toStringAsFixed(2)} ${(units == Units.km) ? 'km/h' : 'mph'} on $dateString",
         textAlign: TextAlign.end,
       );
     } else {

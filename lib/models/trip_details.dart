@@ -5,7 +5,7 @@ class TripDetails {
   double? mileage;
   double distance, duration;
   final String tripTitle, id;
-  Units distanceUnits;
+  Units units;
   String vehicleName;
   TripDetails({
     required this.dateTime,
@@ -14,7 +14,7 @@ class TripDetails {
     required this.duration,
     required this.id,
     required this.tripTitle,
-    required this.distanceUnits,
+    required this.units,
     required this.vehicleName,
   });
 
@@ -26,7 +26,7 @@ class TripDetails {
       'duration': duration,
       'id': id,
       'tripTitle': tripTitle,
-      'distanceUnits': (distanceUnits == Units.km) ? "km" : "mi",
+      'units': (units == Units.km) ? "km" : "mi",
       'vehicleName': vehicleName
     };
   }

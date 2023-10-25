@@ -312,13 +312,12 @@ class _TripDialogState extends State<TripDialog> {
                                           'duration': double.parse(
                                               durationController.text),
                                           'tripTitle': tripNameController.text,
-                                          'distanceUnits':
-                                              (await firestoreGetUnits(
-                                                          FirebaseAuth.instance
-                                                              .currentUser!) ==
-                                                      "km")
-                                                  ? "km"
-                                                  : "mi",
+                                          'units': (await firestoreGetUnits(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!) ==
+                                                  "km")
+                                              ? "km"
+                                              : "mi",
                                           'vehicleName': currentVehicle,
                                         },
                                       );
@@ -337,13 +336,12 @@ class _TripDialogState extends State<TripDialog> {
                                           'duration': double.parse(
                                               durationController.text),
                                           'tripTitle': tripNameController.text,
-                                          'distanceUnits':
-                                              (await firestoreGetUnits(
-                                                          FirebaseAuth.instance
-                                                              .currentUser!) ==
-                                                      "km")
-                                                  ? "km"
-                                                  : "mi",
+                                          'units': (await firestoreGetUnits(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!) ==
+                                                  "km")
+                                              ? "km"
+                                              : "mi",
                                           'vehicleName': currentVehicle,
                                         },
                                       );

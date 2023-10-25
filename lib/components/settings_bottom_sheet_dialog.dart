@@ -5,10 +5,10 @@ import 'package:trip_history/controllers/firestore_operations.dart';
 import '../constants.dart';
 
 class SettingsDialog extends StatefulWidget {
-  final Function onChangeDistanceUnits, onDeleteOfVehicle;
+  final Function onChangeUnits, onDeleteOfVehicle;
   const SettingsDialog({
     super.key,
-    required this.onChangeDistanceUnits,
+    required this.onChangeUnits,
     required this.onDeleteOfVehicle,
   });
 
@@ -286,8 +286,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                               sheetSetState(
                                                   (() => kUnits = units!));
                                               setState(() {
-                                                widget.onChangeDistanceUnits(
-                                                    kUnits);
+                                                widget.onChangeUnits(kUnits);
                                                 firestoreSetUnits(
                                                     FirebaseAuth
                                                         .instance.currentUser!,
@@ -305,8 +304,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                               sheetSetState(
                                                   (() => kUnits = units!));
                                               setState(() {
-                                                widget.onChangeDistanceUnits(
-                                                    kUnits);
+                                                widget.onChangeUnits(kUnits);
                                                 firestoreSetUnits(
                                                     FirebaseAuth
                                                         .instance.currentUser!,
