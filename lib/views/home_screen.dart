@@ -868,14 +868,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         2));
                                                             vehicleTripsData[
                                                                     index]
-                                                                .mileage = double.parse(((vehicleTripsData[index]
-                                                                            .mileage !=
-                                                                        null)
-                                                                    ? vehicleTripsData[
-                                                                            index]
-                                                                        .mileage
-                                                                    : 0 /
-                                                                        2.352)!
+                                                                .mileage = double.parse(((vehicleTripsData[index].mileage != null)
+                                                                    ? vehicleTripsData[index]
+                                                                            .mileage! /
+                                                                        2.352
+                                                                    : 0 / 2.352)
                                                                 .toStringAsFixed(
                                                                     2));
                                                           }
@@ -899,14 +896,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         2));
                                                             vehicleTripsData[
                                                                     index]
-                                                                .mileage = double.parse(((vehicleTripsData[index]
-                                                                            .mileage !=
-                                                                        null)
-                                                                    ? vehicleTripsData[
-                                                                            index]
-                                                                        .mileage
-                                                                    : 0 *
-                                                                        2.352)!
+                                                                .mileage = double.parse(((vehicleTripsData[index].mileage != null)
+                                                                    ? vehicleTripsData[index]
+                                                                            .mileage! *
+                                                                        2.352
+                                                                    : 0 * 2.352)
                                                                 .toStringAsFixed(
                                                                     2));
                                                           }
