@@ -118,17 +118,23 @@ class _SigninScreenState extends State<SigninScreen> {
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                "Sign in",
-                                style: TextStyle(fontSize: 18),
+                              Expanded(
+                                child: Text(
+                                  "Sign in",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      Wrap(
+                        alignment: WrapAlignment.end,
                         children: [
+                          Container(),
                           MaterialButton(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
@@ -155,32 +161,37 @@ class _SigninScreenState extends State<SigninScreen> {
                           fontSize: 18,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "New?",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          MaterialButton(
-                            padding: const EdgeInsets.only(left: 8),
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            enableFeedback: false,
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignupScreen()));
-                            },
-                            child: const Text(
-                              "Create an account",
-                              style: TextStyle(
-                                  color: kPurpleDarkShade, fontSize: 16),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Wrap(
+                          spacing: 4,
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            const Text(
+                              "New?",
+                              style: TextStyle(fontSize: 16),
                             ),
-                          )
-                        ],
+                            MaterialButton(
+                              padding: const EdgeInsets.only(left: 8),
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              enableFeedback: false,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SignupScreen()));
+                              },
+                              child: const Text(
+                                "Create an account",
+                                style: TextStyle(
+                                    color: kPurpleDarkShade, fontSize: 16),
+                              ),
+                            )
+                          ],
+                        ),
                       )
                     ],
                   ),

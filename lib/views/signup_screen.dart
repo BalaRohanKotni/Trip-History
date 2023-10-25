@@ -130,9 +130,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                "Sign up",
-                                style: TextStyle(fontSize: 18),
+                              Expanded(
+                                child: Text(
+                                  "Sign up",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             ],
                           ),
@@ -144,27 +147,32 @@ class _SignupScreenState extends State<SignupScreen> {
                           fontSize: 18,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Already have an account?",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          MaterialButton(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            enableFeedback: false,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              "Sign in",
-                              style: TextStyle(
-                                  color: kPurpleDarkShade, fontSize: 16),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Wrap(
+                          spacing: 4,
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            const Text(
+                              "Already have an account?",
+                              style: TextStyle(fontSize: 16),
                             ),
-                          ),
-                        ],
+                            MaterialButton(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              enableFeedback: false,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                "Sign in",
+                                style: TextStyle(
+                                    color: kPurpleDarkShade, fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),

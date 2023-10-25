@@ -59,9 +59,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   alignment: Alignment.bottomLeft,
                   child: Container(
                     margin: const EdgeInsets.only(left: 18),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      direction: Axis.vertical,
                       children: [
                         Text(
                           "Rest Password",
@@ -121,43 +121,49 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  "Reset password",
-                                  style: TextStyle(fontSize: 18),
+                                Expanded(
+                                  child: Text(
+                                    "Reset password",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "Sign in",
-                                style: semiBold18()
-                                    .copyWith(fontWeight: FontWeight.normal),
+                        SizedBox(
+                          width: double.maxFinite,
+                          child: Wrap(
+                            alignment: WrapAlignment.spaceEvenly,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "Sign in",
+                                  style: semiBold18()
+                                      .copyWith(fontWeight: FontWeight.normal),
+                                ),
                               ),
-                            ),
-                            const Text("or"),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const SignupScreen()));
-                              },
-                              child: Text(
-                                "Sign up",
-                                style: semiBold18()
-                                    .copyWith(fontWeight: FontWeight.normal),
+                              const Text("or"),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SignupScreen()));
+                                },
+                                child: Text(
+                                  "Sign up",
+                                  style: semiBold18()
+                                      .copyWith(fontWeight: FontWeight.normal),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
