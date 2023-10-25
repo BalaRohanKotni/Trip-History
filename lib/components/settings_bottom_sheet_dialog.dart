@@ -433,25 +433,28 @@ class _SettingsDialogState extends State<SettingsDialog> {
                             const SizedBox(
                               height: 24,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    margin: const EdgeInsets.only(top: 14),
-                                    child: const Text("Vehicle: ")),
-                                vehiclesWidget,
-                                TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      (!editMode)
-                                          ? editMode = true
-                                          : editMode = false;
-                                    });
-                                  },
-                                  child: Text((!editMode) ? "Edit" : "Done"),
-                                )
-                              ],
+                            SizedBox(
+                              width: double.maxFinite,
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                children: [
+                                  Container(
+                                      margin: const EdgeInsets.only(top: 14),
+                                      child: const Text("Vehicle: ")),
+                                  vehiclesWidget,
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        (!editMode)
+                                            ? editMode = true
+                                            : editMode = false;
+                                      });
+                                    },
+                                    child: Text((!editMode) ? "Edit" : "Done"),
+                                  )
+                                ],
+                              ),
                             ),
                           ],
                         ),
