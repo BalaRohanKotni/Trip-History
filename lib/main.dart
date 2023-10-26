@@ -10,8 +10,8 @@ import 'firebase_options.dart';
 
 void main() async {
   // TODO: Uncomment the following during release to hide red screen of errors
-  // RenderErrorBox.backgroundColor = Colors.transparent;
-  // RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
+  RenderErrorBox.backgroundColor = Colors.transparent;
+  RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
