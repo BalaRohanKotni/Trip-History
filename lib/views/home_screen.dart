@@ -801,7 +801,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: const Icon(Icons.menu),
                               onSelected: (st) {},
                               itemBuilder: (BuildContext context) {
-                                return {'Logout', 'Settings'}
+                                return {'Settings', 'Logout'}
                                     .map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
