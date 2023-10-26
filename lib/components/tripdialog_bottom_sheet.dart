@@ -209,7 +209,6 @@ class _TripDialogState extends State<TripDialog> {
                           child: TextField(
                             controller: mileageController,
                             textAlign: TextAlign.center,
-                            textInputAction: TextInputAction.next,
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
                             decoration: InputDecoration(
