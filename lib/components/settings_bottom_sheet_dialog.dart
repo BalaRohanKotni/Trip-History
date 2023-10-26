@@ -340,7 +340,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                                                         ),
                                                                       ],
                                                                       content:
-                                                                          Row(
+                                                                          Wrap(
+                                                                        direction:
+                                                                            Axis.horizontal,
+                                                                        spacing:
+                                                                            4,
                                                                         children: [
                                                                           Expanded(
                                                                             child:
