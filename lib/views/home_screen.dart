@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     vehiclesList: vehiclesList.toList());
 
                 vehicleTripsData
-                    .sort((a, b) => a.dateTime.compareTo(b.dateTime));
+                    .sort((b, a) => a.dateTime.compareTo(b.dateTime));
 
                 for (var trip in vehicleTripsData) {
                   if (trip.mileage != 0) {
