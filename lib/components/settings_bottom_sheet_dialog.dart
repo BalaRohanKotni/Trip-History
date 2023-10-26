@@ -24,6 +24,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   int _selectedDefaultGraphTabIndex = 0;
   List<DropdownMenuItem> items = [];
   Widget vehiclesWidget = Container();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -270,8 +271,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   return Container(
                     margin: const EdgeInsets.all(28),
                     child: Scrollbar(
+                      controller: _scrollController,
                       thumbVisibility: true,
-                      child: ListView(children: [
+                      child: ListView(controller: _scrollController, children: [
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
