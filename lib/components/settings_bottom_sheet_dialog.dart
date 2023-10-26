@@ -19,7 +19,6 @@ class SettingsDialog extends StatefulWidget {
 class _SettingsDialogState extends State<SettingsDialog> {
   late String _selectedVehicle;
   String _newVehicleReplacing = vehiclesList.elementAt(0);
-  bool editMode = false;
   AppTheme _theme = AppTheme.system;
   int _selectedDefaultGraphTabIndex = 0;
   List<DropdownMenuItem> items = [];
@@ -35,6 +34,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
             user: FirebaseAuth.instance.currentUser!),
         'defaultGraphTabIndex': await firestoreGetDefaultGraphTabIndex(
             FirebaseAuth.instance.currentUser!),
+        'vehiclesList': await firestoreGetVehiclesList(
+            user: FirebaseAuth.instance.currentUser!),
       };
     }
 
@@ -47,221 +48,36 @@ class _SettingsDialogState extends State<SettingsDialog> {
               kUnits = (snapshot.data!['units'] == "km") ? Units.km : Units.mi;
               _selectedDefaultGraphTabIndex =
                   snapshot.data!['defaultGraphTabIndex'];
-              if (editMode) {
-                _selectedVehicle = vehiclesList.elementAt(0);
-                List<Widget> items = [];
-                items.add(
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    child: TextButton(
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "New Vehicle",
-                            style: semiBold18()
-                                .copyWith(fontWeight: FontWeight.normal),
-                          )),
-                      onPressed: () {
-                        TextEditingController newVehicleController =
-                            TextEditingController();
 
-                        showDialog(
-                            context: context,
-                            builder: (dialogContext) {
-                              return AlertDialog(
-                                title: const Text("New Vehicle"),
-                                content: TextField(
-                                  controller: newVehicleController,
-                                  decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                          onPressed: () {
-                                            currentVehicle =
-                                                newVehicleController.text;
-                                            firestoreCreateNewVehicle(
-                                                FirebaseAuth
-                                                    .instance.currentUser!,
-                                                newVehicleController.text);
-                                            firestoreSetCurrentVehicle(
-                                                user: FirebaseAuth
-                                                    .instance.currentUser!,
-                                                currentVehicle:
-                                                    newVehicleController.text);
-                                            Navigator.pop(context);
-                                          },
-                                          icon: const Icon(Icons.done)),
-                                      hintText: "Add"),
-                                  onSubmitted: (value) => setState(() {
-                                    currentVehicle = newVehicleController.text;
-                                    firestoreCreateNewVehicle(
-                                        FirebaseAuth.instance.currentUser!,
-                                        newVehicleController.text);
-                                    firestoreSetCurrentVehicle(
-                                        user:
-                                            FirebaseAuth.instance.currentUser!,
-                                        currentVehicle:
-                                            newVehicleController.text);
-                                    Navigator.pop(context);
-                                  }),
-                                ),
-                              );
-                            });
-                      },
-                    ),
-                  ),
-                );
-
-                for (int index = 0; index < vehiclesList.length; index++) {
-                  items.add(ListTile(
-                    title: Text(vehiclesList.elementAt(index)),
-                    trailing: IconButton(
-                      onPressed: () {
-                        if (vehiclesList.length > 1) {
-                          showDialog(
-                              context: context,
-                              builder: (bContext) {
-                                Set newVehiclesList = Set.from(vehiclesList);
-                                newVehiclesList
-                                    .remove(vehiclesList.elementAt(index));
-                                _newVehicleReplacing = newVehiclesList.first;
-                                var statefulBuilder = StatefulBuilder(
-                                  builder: (bc, setStateDialog) {
-                                    return AlertDialog(
-                                      title: Text(
-                                          "Delete ${vehiclesList.elementAt(index)}"),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text("Cancel"),
-                                          onPressed: () {
-                                            Navigator.pop(bContext);
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text(
-                                            "Done",
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(bc);
-                                            setState(() {
-                                              firestoreDeleteVehicle(
-                                                  FirebaseAuth
-                                                      .instance.currentUser!,
-                                                  vehiclesList
-                                                      .elementAt(index));
-                                              widget.onDeleteOfVehicle(
-                                                  vehiclesList.elementAt(index),
-                                                  _newVehicleReplacing);
-                                              firestoreSetCurrentVehicle(
-                                                  user: FirebaseAuth
-                                                      .instance.currentUser!,
-                                                  currentVehicle:
-                                                      _newVehicleReplacing);
-                                              _selectedVehicle = currentVehicle;
-                                              vehiclesList.remove(vehiclesList
-                                                  .elementAt(index));
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                      content: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                                "Select a vehicle to replace for trips made on ${vehiclesList.elementAt(index)}"),
-                                          ),
-                                          DropdownButton(
-                                            value: _newVehicleReplacing,
-                                            onChanged: (value) {
-                                              setStateDialog(() {
-                                                _newVehicleReplacing =
-                                                    value.toString();
-                                              });
-                                            },
-                                            items: List.generate(
-                                              newVehiclesList.length,
-                                              (index) {
-                                                return DropdownMenuItem(
-                                                  value: newVehiclesList
-                                                      .elementAt(index),
-                                                  child: Text(
-                                                    newVehiclesList
-                                                        .elementAt(index),
-                                                    style: const TextStyle(
-                                                        fontSize: 18),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                                return statefulBuilder;
-                              });
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (bcontext) {
-                                return AlertDialog(
-                                  title: const Text(
-                                      "Atleast one vehicle is needed"),
-                                  content: Text(
-                                      "Atleast one vehicle is required. If you wish to delete ${vehiclesList.elementAt(index)}, create a new vehicle and then delete ${vehiclesList.elementAt(index)}."),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(bcontext);
-                                      },
-                                      child: const Text("Close"),
-                                    )
-                                  ],
-                                );
-                              });
-                        }
-                      },
-                      icon: const Icon(Icons.clear),
-                    ),
-                  ));
-                }
-
-                vehiclesWidget = Expanded(
-                    child: ListView(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  children: items,
-                ));
-              } else {
-                _selectedVehicle = snapshot.data!['currentVehicle'];
-                vehiclesWidget = DropdownButton(
-                  value: _selectedVehicle,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedVehicle = value.toString();
-                      firestoreSetCurrentVehicle(
-                          user: FirebaseAuth.instance.currentUser!,
-                          currentVehicle: _selectedVehicle);
-                    });
+              _selectedVehicle = snapshot.data!['currentVehicle'];
+              vehiclesWidget = DropdownButton(
+                value: _selectedVehicle,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedVehicle = value.toString();
+                    firestoreSetCurrentVehicle(
+                        user: FirebaseAuth.instance.currentUser!,
+                        currentVehicle: _selectedVehicle);
+                  });
+                },
+                items: List.generate(
+                  snapshot.data!['vehiclesList'].length,
+                  (index) {
+                    return DropdownMenuItem(
+                      value: snapshot.data!['vehiclesList'].elementAt(index),
+                      child: Row(
+                        children: [
+                          Text(
+                            snapshot.data!['vehiclesList'].elementAt(index),
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    );
                   },
-                  items: List.generate(
-                    vehiclesList.length,
-                    (index) {
-                      return DropdownMenuItem(
-                        value: vehiclesList.elementAt(index),
-                        child: Row(
-                          children: [
-                            Text(
-                              vehiclesList.elementAt(index),
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                );
-              }
+                ),
+              );
+
               return SizedBox(
                 height: (MediaQuery.of(context).size.height >=
                         MediaQuery.of(context).size.width)
@@ -450,13 +266,233 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                   vehiclesWidget,
                                   TextButton(
                                     onPressed: () {
-                                      setState(() {
-                                        (!editMode)
-                                            ? editMode = true
-                                            : editMode = false;
-                                      });
+                                      showDialog(
+                                          context: context,
+                                          builder: (editVehiclesContext) {
+                                            return StatefulBuilder(
+                                              builder:
+                                                  (statefulEditVehiclesContext,
+                                                      editDialogSetState) {
+                                                List<Widget> items = [];
+
+                                                for (int index = 0;
+                                                    index < vehiclesList.length;
+                                                    index++) {
+                                                  items.add(ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
+                                                    title: Text(vehiclesList
+                                                        .elementAt(index)),
+                                                    trailing: IconButton(
+                                                      onPressed: () {
+                                                        if (vehiclesList
+                                                                .length >
+                                                            1) {
+                                                          showDialog(
+                                                              context:
+                                                                  editVehiclesContext,
+                                                              builder:
+                                                                  (bContext) {
+                                                                Set newVehiclesList =
+                                                                    Set.from(
+                                                                        vehiclesList);
+                                                                newVehiclesList.remove(
+                                                                    vehiclesList
+                                                                        .elementAt(
+                                                                            index));
+                                                                _newVehicleReplacing =
+                                                                    newVehiclesList
+                                                                        .first;
+                                                                var statefulBuilder =
+                                                                    StatefulBuilder(
+                                                                  builder: (bc,
+                                                                      setStateDialog) {
+                                                                    return AlertDialog(
+                                                                      title: Text(
+                                                                          "Delete ${vehiclesList.elementAt(index)}"),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          child:
+                                                                              const Text("Cancel"),
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.pop(bContext);
+                                                                          },
+                                                                        ),
+                                                                        TextButton(
+                                                                          child:
+                                                                              const Text(
+                                                                            "Done",
+                                                                          ),
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.pop(bc);
+                                                                            editDialogSetState(() {
+                                                                              setState(() {
+                                                                                firestoreDeleteVehicle(FirebaseAuth.instance.currentUser!, vehiclesList.elementAt(index));
+                                                                                widget.onDeleteOfVehicle(vehiclesList.elementAt(index), _newVehicleReplacing);
+                                                                                firestoreSetCurrentVehicle(user: FirebaseAuth.instance.currentUser!, currentVehicle: _newVehicleReplacing);
+                                                                                _selectedVehicle = currentVehicle;
+                                                                                vehiclesList.remove(vehiclesList.elementAt(index));
+                                                                              });
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                      content:
+                                                                          Row(
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child:
+                                                                                Text("Select a vehicle to replace for trips made on ${vehiclesList.elementAt(index)}"),
+                                                                          ),
+                                                                          DropdownButton(
+                                                                            value:
+                                                                                _newVehicleReplacing,
+                                                                            onChanged:
+                                                                                (value) {
+                                                                              editDialogSetState(
+                                                                                () {
+                                                                                  setStateDialog(() {
+                                                                                    _newVehicleReplacing = value.toString();
+                                                                                  });
+                                                                                },
+                                                                              );
+                                                                            },
+                                                                            items:
+                                                                                List.generate(
+                                                                              newVehiclesList.length,
+                                                                              (index) {
+                                                                                return DropdownMenuItem(
+                                                                                  value: newVehiclesList.elementAt(index),
+                                                                                  child: Text(
+                                                                                    newVehiclesList.elementAt(index),
+                                                                                    style: const TextStyle(fontSize: 18),
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                                return statefulBuilder;
+                                                              });
+                                                        } else {
+                                                          showDialog(
+                                                              context:
+                                                                  editVehiclesContext,
+                                                              builder:
+                                                                  (bcontext) {
+                                                                return AlertDialog(
+                                                                  title: const Text(
+                                                                      "Atleast one vehicle is needed"),
+                                                                  content: Text(
+                                                                      "Atleast one vehicle is required. If you wish to delete ${vehiclesList.elementAt(index)}, create a new vehicle and then delete ${vehiclesList.elementAt(index)}."),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            bcontext);
+                                                                      },
+                                                                      child: const Text(
+                                                                          "Close"),
+                                                                    )
+                                                                  ],
+                                                                );
+                                                              });
+                                                        }
+                                                      },
+                                                      icon: const Icon(
+                                                          Icons.delete),
+                                                    ),
+                                                  ));
+                                                }
+                                                TextEditingController
+                                                    newVehicleController =
+                                                    TextEditingController();
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      "Edit Vehicles List"),
+                                                  content: Scrollbar(
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          TextField(
+                                                            controller:
+                                                                newVehicleController,
+                                                            decoration: InputDecoration(
+                                                                suffixIcon: IconButton(
+                                                                    onPressed: () {
+                                                                      currentVehicle =
+                                                                          newVehicleController
+                                                                              .text;
+                                                                      firestoreCreateNewVehicle(
+                                                                          FirebaseAuth
+                                                                              .instance
+                                                                              .currentUser!,
+                                                                          newVehicleController
+                                                                              .text);
+                                                                      firestoreSetCurrentVehicle(
+                                                                          user: FirebaseAuth
+                                                                              .instance
+                                                                              .currentUser!,
+                                                                          currentVehicle:
+                                                                              newVehicleController.text);
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    icon: const Icon(Icons.done)),
+                                                                hintText: "New Vehicle"),
+                                                            onSubmitted: (value) =>
+                                                                editDialogSetState(
+                                                                    () {
+                                                              setState(() {
+                                                                firestoreCreateNewVehicle(
+                                                                    FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser!,
+                                                                    newVehicleController
+                                                                        .text);
+                                                                firestoreSetCurrentVehicle(
+                                                                    user: FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser!,
+                                                                    currentVehicle:
+                                                                        newVehicleController
+                                                                            .text);
+                                                                currentVehicle =
+                                                                    newVehicleController
+                                                                        .text;
+                                                              });
+                                                            }),
+                                                          ),
+                                                          ...items
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(
+                                                            statefulEditVehiclesContext);
+                                                      },
+                                                      child: const Text("Done"),
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          });
                                     },
-                                    child: Text((!editMode) ? "Edit" : "Done"),
+                                    child: const Text("Edit"),
                                   )
                                 ],
                               ),

@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'dart:ui' as ui;
 import 'package:trip_history/constants.dart';
 import 'package:trip_history/views/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +9,9 @@ import 'package:trip_history/views/signin_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  // TODO: Uncomment the following during release to hide red screen of errors
+  // RenderErrorBox.backgroundColor = Colors.transparent;
+  // RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
