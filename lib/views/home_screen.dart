@@ -937,8 +937,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   Text(
                                                     (vehicleTripsData
                                                             .isNotEmpty)
-                                                        ? "Average ${(kUnits == Units.km) ? 'km/l' : 'mpg'}:"
-                                                        : "Average km/l:",
+                                                        ? "Average mileage"
+                                                        : "Average mileage:",
                                                     style: semiBold18(),
                                                   ),
                                                   Text((vehicleTripsData
