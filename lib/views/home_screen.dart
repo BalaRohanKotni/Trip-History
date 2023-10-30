@@ -1067,6 +1067,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       .circular(
                                                                           18),
                                                                 ),
+                                                                border: Border.all(
+                                                                    width: 1,
+                                                                    color:
+                                                                        kPurpleDarkShade),
                                                               ),
                                                               padding:
                                                                   const EdgeInsets
