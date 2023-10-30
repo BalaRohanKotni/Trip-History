@@ -420,14 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           innerPadding: 24,
                                         ),
                                         charts.ChartTitle(
-                                          (vehicleTripsData.isNotEmpty)
-                                              ? (vehicleTripsData[0].units ==
-                                                      Units.km)
-                                                  ? "km/l"
-                                                  : "mpg"
-                                              : (kUnits == Units.km)
-                                                  ? "km/l"
-                                                  : "mpg",
+                                          "Mileage",
                                           behaviorPosition:
                                               charts.BehaviorPosition.start,
                                           titleStyleSpec:
@@ -547,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     innerPadding: 24,
                                   ),
                                   charts.ChartTitle(
-                                    "distance",
+                                    "Distance",
                                     behaviorPosition:
                                         charts.BehaviorPosition.start,
                                     titleStyleSpec: (kBrightness ==
@@ -653,7 +646,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     innerPadding: 24,
                                   ),
                                   charts.ChartTitle(
-                                    "hours",
+                                    "Hours",
                                     behaviorPosition:
                                         charts.BehaviorPosition.start,
                                     titleStyleSpec: (kBrightness ==
