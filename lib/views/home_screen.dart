@@ -988,7 +988,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             const Text(
-                                              "Recent trips",
+                                              "Recent Trips",
                                               style: TextStyle(
                                                   fontFamily: "Inter",
                                                   fontSize: 24,
