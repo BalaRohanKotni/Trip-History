@@ -273,7 +273,7 @@ class _TripDialogState extends State<TripDialog> {
                               }
                             },
                             style: ButtonStyle(
-                              shape: MaterialStateProperty.all(
+                              shape: WidgetStateProperty.all(
                                   const RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(10)),
@@ -365,7 +365,7 @@ class _TripDialogState extends State<TripDialog> {
                                   }
                                 },
                                 style: ButtonStyle(
-                                  shape: MaterialStateProperty.all(
+                                  shape: WidgetStateProperty.all(
                                       const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10)),

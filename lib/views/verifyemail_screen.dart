@@ -107,15 +107,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         canResendEmail ? sendVerificationEmail() : null;
                       },
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
+                          backgroundColor: WidgetStateProperty.all(
                               (canResendEmail)
                                   ? kPurpleDarkShade
                                   : Colors.grey),
                           foregroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)))),
+                              WidgetStateProperty.all(Colors.white),
+                          shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)))),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -136,12 +135,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       },
                       style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.transparent),
+                              WidgetStateProperty.all(Colors.transparent),
                           foregroundColor:
-                              MaterialStateProperty.all(kPurpleDarkShade),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)))),
+                              WidgetStateProperty.all(kPurpleDarkShade),
+                          shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)))),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

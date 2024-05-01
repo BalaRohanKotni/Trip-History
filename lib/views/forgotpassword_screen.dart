@@ -111,10 +111,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             onPressed: resetPassword,
                             style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(kPurpleDarkShade),
+                                    WidgetStateProperty.all(kPurpleDarkShade),
                                 foregroundColor:
-                                    MaterialStateProperty.all(Colors.white),
-                                shape: MaterialStateProperty.all(
+                                    WidgetStateProperty.all(Colors.white),
+                                shape: WidgetStateProperty.all(
                                     RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)))),

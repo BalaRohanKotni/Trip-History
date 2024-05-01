@@ -108,10 +108,10 @@ class _SigninScreenState extends State<SigninScreen> {
                           onPressed: signIn,
                           style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all(kPurpleDarkShade),
+                                  WidgetStateProperty.all(kPurpleDarkShade),
                               foregroundColor:
-                                  MaterialStateProperty.all(Colors.white),
-                              shape: MaterialStateProperty.all(
+                                  WidgetStateProperty.all(Colors.white),
+                              shape: WidgetStateProperty.all(
                                   RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(10)))),
