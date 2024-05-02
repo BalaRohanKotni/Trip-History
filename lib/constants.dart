@@ -13,6 +13,8 @@ Brightness kBrightness = Brightness.light;
 
 Units kUnits = Units.km;
 
+double kPricePerUnitOfFuel = 0.0;
+
 StreamController<bool> isLightThemeModeStreamController = StreamController();
 
 enum Units { km, mi }

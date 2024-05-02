@@ -18,7 +18,24 @@ Future firestoreCreateUserCollection(User user) async {
     'currentVehicle': '',
     'isSystemTheme': true,
     'defaultGraphTabIndex': 0,
+    'pricePerUnitOfFuel': 0.0,
   });
+}
+
+Future firestoreSetPricePerUnitOfFuel(
+    User user, double pricePerUnitOfFuel) async {
+  await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .update({'pricePerUnitOfFuel': pricePerUnitOfFuel});
+}
+
+Future firestoreGetPricePerUnitOfFuel(User user) async {
+  return await FirebaseFirestore.instance
+      .collection(firestoreCollection)
+      .doc(user.uid)
+      .get()
+      .then((value) => value.data()!['pricePerUnitOfFuel']);
 }
 
 Future firestoreSetDefaultGraphTabIndex(

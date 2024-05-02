@@ -1165,6 +1165,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             );
           } else {
+            TextEditingController pricePerUnitOfFuel = TextEditingController();
             void createNewVehicle(String vehicle) async {
               if (vehicle != "") {
                 await firestoreSetCurrentVehicle(
@@ -1172,9 +1173,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     currentVehicle: vehicle);
                 await firestoreCreateNewVehicle(
                     FirebaseAuth.instance.currentUser!, vehicle);
-                await firestoreUpdateNewUser(
-                    FirebaseAuth.instance.currentUser!, false);
               }
+              await firestoreUpdateNewUser(
+                  FirebaseAuth.instance.currentUser!, false);
             }
 
             newUserVehicle.addListener(
@@ -1183,92 +1184,139 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             );
             return Scaffold(
-              body: Container(
-                margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Welcome",
-                        style: TextStyle(fontSize: 27, color: kPurpleDarkShade),
-                      ),
-                      const SizedBox(
-                        height: 36,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 24),
-                        child: TextField(
-                          controller: newUserVehicle,
-                          decoration: InputDecoration(
+              body: SafeArea(
+                child: Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: MediaQuery.of(context).size.height / 24,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Welcome",
+                          style:
+                              TextStyle(fontSize: 27, color: kPurpleDarkShade),
+                        ),
+                        const SizedBox(height: 36),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 24),
+                          child: TextField(
+                            controller: newUserVehicle,
+                            decoration: InputDecoration(
                               labelText: "Vehicle Name",
                               errorText: newUserVehicle.text.isEmpty
                                   ? ("Required")
                                   : null,
-                              suffix: IconButton(
-                                  onPressed: () {
-                                    createNewVehicle(newUserVehicle.text);
-                                  },
-                                  icon: const Icon(Icons.check))),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 36,
-                      ),
-                      const Text(
-                        "More vehicles can be added later in settings.",
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      const Text("Units"),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: Wrap(
-                          alignment: WrapAlignment.spaceAround,
-                          children: [
-                            IntrinsicWidth(
-                              child: ListTile(
-                                  title: const Text("Km"),
-                                  leading: Radio(
-                                      value: Units.km,
-                                      groupValue: kUnits,
-                                      onChanged: (units) {
-                                        setState(() {
-                                          kUnits = units!;
-                                          onChangeUnits(kUnits);
-                                          firestoreSetUnits(
-                                              FirebaseAuth
-                                                  .instance.currentUser!,
-                                              kUnits);
-                                        });
-                                      })),
                             ),
-                            IntrinsicWidth(
-                              child: ListTile(
-                                  title: const Text("Mi"),
-                                  leading: Radio(
-                                      value: Units.mi,
-                                      groupValue: kUnits,
-                                      onChanged: (units) {
-                                        setState(() {
-                                          kUnits = units!;
-                                          onChangeUnits(kUnits);
-                                          firestoreSetUnits(
-                                              FirebaseAuth
-                                                  .instance.currentUser!,
-                                              kUnits);
-                                        });
-                                      })),
-                            )
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Column(
+                          children: [
+                            const Text("Units"),
+                            SizedBox(
+                              width: double.maxFinite,
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceAround,
+                                children: [
+                                  IntrinsicWidth(
+                                    child: ListTile(
+                                        title: const Text("Km"),
+                                        leading: Radio(
+                                            value: Units.km,
+                                            groupValue: kUnits,
+                                            onChanged: (units) {
+                                              setState(() {
+                                                kUnits = units!;
+                                                onChangeUnits(kUnits);
+                                                firestoreSetUnits(
+                                                    FirebaseAuth
+                                                        .instance.currentUser!,
+                                                    kUnits);
+                                              });
+                                            })),
+                                  ),
+                                  IntrinsicWidth(
+                                    child: ListTile(
+                                        title: const Text("Mi"),
+                                        leading: Radio(
+                                            value: Units.mi,
+                                            groupValue: kUnits,
+                                            onChanged: (units) {
+                                              setState(() {
+                                                kUnits = units!;
+                                                onChangeUnits(kUnits);
+                                                firestoreSetUnits(
+                                                    FirebaseAuth
+                                                        .instance.currentUser!,
+                                                    kUnits);
+                                              });
+                                            })),
+                                  )
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                    ],
+                        Row(
+                          children: [
+                            Text(
+                                "Price per ${kUnits == Units.km ? "litre" : "gallon"} of fuel:"),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            Expanded(
+                                child: TextField(
+                              controller: pricePerUnitOfFuel,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(),
+                            )),
+                          ],
+                        ),
+                        const SizedBox(height: 36),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: kPurpleLightShade,
+                            backgroundColor: kPurpleDarkShade,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16))),
+                          ),
+                          onPressed: () {
+                            createNewVehicle(newUserVehicle.text);
+                            kPricePerUnitOfFuel =
+                                double.parse(pricePerUnitOfFuel.text);
+                            firestoreSetPricePerUnitOfFuel(
+                              FirebaseAuth.instance.currentUser!,
+                              kPricePerUnitOfFuel,
+                            );
+                          },
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width / 4,
+                            child: const Center(
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          "This information can be changed in settings.\nMore vehicles can be added in settings.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
