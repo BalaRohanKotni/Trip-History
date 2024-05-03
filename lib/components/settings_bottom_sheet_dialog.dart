@@ -24,6 +24,13 @@ class _SettingsDialogState extends State<SettingsDialog> {
   List<DropdownMenuItem> items = [];
   Widget vehiclesWidget = Container();
   final ScrollController _scrollController = ScrollController();
+  TextEditingController pricePerUnitOfFuel = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    pricePerUnitOfFuel.text = kPricePerUnitOfFuel.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +88,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
               return SizedBox(
                 height: (MediaQuery.of(context).size.height >=
                         MediaQuery.of(context).size.width)
-                    ? MediaQuery.of(context).size.height / 3
-                    : MediaQuery.of(context).size.width / 3,
+                    ? MediaQuery.of(context).size.height / 2
+                    : MediaQuery.of(context).size.width / 2,
                 child: StatefulBuilder(builder: (context, sheetSetState) {
                   return Container(
                     margin: const EdgeInsets.all(28),
@@ -553,7 +560,68 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                   )
                                 ],
                               ),
-                            )
+                            ),
+                            const SizedBox(
+                              height: 24,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Text(
+                                      "Price per ${kUnits == Units.km ? "litre" : "gallon"} of fuel:"),
+                                  const SizedBox(
+                                    width: 12,
+                                  ),
+                                  Text(kPricePerUnitOfFuel.toString()),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (editPricePerUnitOfFuel) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  "Edit Price Per Unit Of Fuel"),
+                                              content: TextField(
+                                                controller: pricePerUnitOfFuel,
+                                                decoration: InputDecoration(
+                                                  suffix: IconButton(
+                                                      onPressed: () {
+                                                        kPricePerUnitOfFuel =
+                                                            double.parse(
+                                                                pricePerUnitOfFuel
+                                                                    .text
+                                                                    .toString());
+                                                        firestoreSetPricePerUnitOfFuel(
+                                                          FirebaseAuth.instance
+                                                              .currentUser!,
+                                                          kPricePerUnitOfFuel,
+                                                        );
+                                                        Navigator.pop(
+                                                            editPricePerUnitOfFuel);
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.check,
+                                                        color: kPurpleDarkShade,
+                                                      )),
+                                                ),
+                                                keyboardType:
+                                                    const TextInputType
+                                                        .numberWithOptions(),
+                                              ),
+                                            );
+                                          });
+                                    },
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: kPurpleDarkShade,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ]),
