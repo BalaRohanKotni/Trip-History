@@ -881,76 +881,83 @@ class _HomeScreenState extends State<HomeScreen> {
                                       top: 18, left: 18, right: 18),
                                   child: Column(
                                     children: [
-                                      SizedBox(
-                                        height: (MediaQuery.of(context)
-                                                    .size
-                                                    .height >=
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width)
-                                            ? MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                1 /
-                                                12
-                                            : MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                1 /
-                                                12,
-                                        child: Wrap(
-                                          children: [
-                                            SizedBox(
-                                              width: double.maxFinite,
-                                              child: Wrap(
-                                                spacing: 8,
-                                                alignment: WrapAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Total distance travelled: ",
-                                                    style: semiBold18(),
+                                      // Stats Column:
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                            height: (MediaQuery.of(context)
+                                                        .size
+                                                        .height >=
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width)
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    1 /
+                                                    12
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    1 /
+                                                    12,
+                                            child: Wrap(
+                                              children: [
+                                                SizedBox(
+                                                  width: double.maxFinite,
+                                                  child: Wrap(
+                                                    spacing: 8,
+                                                    alignment: WrapAlignment
+                                                        .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "Total distance travelled: ",
+                                                        style: semiBold18(),
+                                                      ),
+                                                      Text((vehicleTripsData
+                                                              .isNotEmpty)
+                                                          ? "${[
+                                                              for (TripDetails trip
+                                                                  in vehicleTripsData)
+                                                                trip.distance
+                                                            ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
+                                                          : "0km"),
+                                                    ],
                                                   ),
-                                                  Text((vehicleTripsData
-                                                          .isNotEmpty)
-                                                      ? "${[
-                                                          for (TripDetails trip
-                                                              in vehicleTripsData)
-                                                            trip.distance
-                                                        ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
-                                                      : "0km"),
-                                                ],
-                                              ),
+                                                ),
+                                                SizedBox(
+                                                  width: double.maxFinite,
+                                                  child: Wrap(
+                                                    spacing: 8,
+                                                    alignment: WrapAlignment
+                                                        .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        (vehicleTripsData
+                                                                .isNotEmpty)
+                                                            ? "Average mileage:"
+                                                            : "Average mileage:",
+                                                        style: semiBold18(),
+                                                      ),
+                                                      Text((vehicleTripsData
+                                                              .isNotEmpty)
+                                                          ? "${(([
+                                                                for (TripDetails trip
+                                                                    in vehicleTripsData)
+                                                                  (trip.mileage !=
+                                                                          0)
+                                                                      ? trip
+                                                                          .mileage!
+                                                                      : 0
+                                                              ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                          : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                            SizedBox(
-                                              width: double.maxFinite,
-                                              child: Wrap(
-                                                spacing: 8,
-                                                alignment: WrapAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    (vehicleTripsData
-                                                            .isNotEmpty)
-                                                        ? "Average mileage"
-                                                        : "Average mileage:",
-                                                    style: semiBold18(),
-                                                  ),
-                                                  Text((vehicleTripsData
-                                                          .isNotEmpty)
-                                                      ? "${(([
-                                                            for (TripDetails trip
-                                                                in vehicleTripsData)
-                                                              (trip.mileage !=
-                                                                      0)
-                                                                  ? trip
-                                                                      .mileage!
-                                                                  : 0
-                                                          ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
-                                                      : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(
                                         height:
