@@ -578,6 +578,17 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                   Text(kPricePerUnitOfFuel.toString()),
                                   IconButton(
                                     onPressed: () {
+                                      void saveFuelPrice(
+                                          editPricePerUnitOfFuel) {
+                                        kPricePerUnitOfFuel = double.parse(
+                                            pricePerUnitOfFuel.text.toString());
+                                        firestoreSetPricePerUnitOfFuel(
+                                          FirebaseAuth.instance.currentUser!,
+                                          kPricePerUnitOfFuel,
+                                        );
+                                        Navigator.pop(editPricePerUnitOfFuel);
+                                      }
+
                                       showDialog(
                                           context: context,
                                           builder: (editPricePerUnitOfFuel) {
@@ -586,20 +597,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                                   "Edit Price Per Unit Of Fuel"),
                                               content: TextField(
                                                 controller: pricePerUnitOfFuel,
+                                                onSubmitted: (_) {
+                                                  saveFuelPrice(
+                                                      editPricePerUnitOfFuel);
+                                                },
                                                 decoration: InputDecoration(
                                                   suffix: IconButton(
                                                       onPressed: () {
-                                                        kPricePerUnitOfFuel =
-                                                            double.parse(
-                                                                pricePerUnitOfFuel
-                                                                    .text
-                                                                    .toString());
-                                                        firestoreSetPricePerUnitOfFuel(
-                                                          FirebaseAuth.instance
-                                                              .currentUser!,
-                                                          kPricePerUnitOfFuel,
-                                                        );
-                                                        Navigator.pop(
+                                                        saveFuelPrice(
                                                             editPricePerUnitOfFuel);
                                                       },
                                                       icon: const Icon(
