@@ -99,6 +99,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<_SelectedGraphTextWidgetState> _tab4Key = GlobalKey();
   TextEditingController newUserVehicle = TextEditingController();
 
+  int dropDownMenuItemIndex = 3;
+  List<String> dropDownItems = [
+    "last week",
+    "last month",
+    "last year",
+    "all time",
+  ];
+  double moneySpent = 0;
+
   final _scrollController = ScrollController();
 
   List mileageChartData = [];
@@ -110,6 +119,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    firestoreGetPricePerUnitOfFuel(FirebaseAuth.instance.currentUser!)
+        .then((_) {
+      setState(() {
+        kPricePerUnitOfFuel = _;
+      });
+    });
 
     SchedulerBinding.instance.platformDispatcher.onPlatformBrightnessChanged =
         () async {
@@ -785,6 +801,71 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ];
+                      double distanceTravelled = 0, avgMileage = 0;
+                      DateTime today = DateTime.now();
+                      if (dropDownMenuItemIndex == 0) {
+                        distanceTravelled = [
+                          for (TripDetails trip in vehicleTripsData)
+                            if (trip.dateTime >=
+                                today
+                                    .subtract(const Duration(days: 7))
+                                    .millisecondsSinceEpoch)
+                              trip.distance
+                        ].sum;
+                        avgMileage = [
+                          for (TripDetails trip in vehicleTripsData)
+                            if (trip.dateTime >=
+                                today
+                                    .subtract(const Duration(days: 7))
+                                    .millisecondsSinceEpoch)
+                              trip.mileage!
+                        ].average;
+                      } else if (dropDownMenuItemIndex == 1) {
+                        distanceTravelled = [
+                          for (TripDetails trip in vehicleTripsData)
+                            if (trip.dateTime >=
+                                today
+                                    .subtract(const Duration(days: 30))
+                                    .millisecondsSinceEpoch)
+                              trip.distance
+                        ].sum;
+                        avgMileage = [
+                          for (TripDetails trip in vehicleTripsData)
+                            if (trip.dateTime >=
+                                today
+                                    .subtract(const Duration(days: 30))
+                                    .millisecondsSinceEpoch)
+                              trip.mileage!
+                        ].average;
+                      } else if (dropDownMenuItemIndex == 2) {
+                        distanceTravelled = [
+                          for (TripDetails trip in vehicleTripsData)
+                            if (trip.dateTime >=
+                                today
+                                    .subtract(const Duration(days: 365))
+                                    .millisecondsSinceEpoch)
+                              trip.distance
+                        ].sum;
+                        avgMileage = [
+                          for (TripDetails trip in vehicleTripsData)
+                            if (trip.dateTime >=
+                                today
+                                    .subtract(const Duration(days: 365))
+                                    .millisecondsSinceEpoch)
+                              trip.mileage!
+                        ].average;
+                      } else {
+                        distanceTravelled = [
+                          for (TripDetails trip in vehicleTripsData)
+                            trip.distance
+                        ].sum;
+                        avgMileage = [
+                          for (TripDetails trip in vehicleTripsData)
+                            trip.mileage!
+                        ].average;
+                      }
+                      double fuelConsumed = distanceTravelled / avgMileage;
+                      moneySpent = fuelConsumed * kPricePerUnitOfFuel;
                       return Scaffold(
                         resizeToAvoidBottomInset: false,
                         appBar: AppBar(
@@ -895,13 +976,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .size
                                                         .height *
                                                     1 /
-                                                    12
+                                                    6
                                                 : MediaQuery.of(context)
                                                         .size
                                                         .width *
                                                     1 /
-                                                    12,
+                                                    6,
                                             child: Wrap(
+                                              spacing: 16,
                                               children: [
                                                 SizedBox(
                                                   width: double.maxFinite,
@@ -953,12 +1035,122 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
                                                     ],
                                                   ),
+                                                ),
+                                                SizedBox(
+                                                  width: double.maxFinite,
+                                                  child: Wrap(
+                                                      spacing: 8,
+                                                      alignment: WrapAlignment
+                                                          .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                            "Total money spent during",
+                                                            style:
+                                                                semiBold18()),
+                                                        SizedBox(
+                                                          width:
+                                                              double.maxFinite,
+                                                          child: Wrap(
+                                                            crossAxisAlignment:
+                                                                WrapCrossAlignment
+                                                                    .center,
+                                                            alignment:
+                                                                WrapAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              DropdownButton(
+                                                                  value: dropDownItems[
+                                                                      dropDownMenuItemIndex],
+                                                                  items: dropDownItems
+                                                                      .map(
+                                                                          (value) {
+                                                                    return DropdownMenuItem(
+                                                                      value:
+                                                                          value,
+                                                                      child: Text(
+                                                                          value),
+                                                                    );
+                                                                  }).toList(),
+                                                                  onChanged:
+                                                                      (_) {
+                                                                    setState(
+                                                                        () {
+                                                                      dropDownMenuItemIndex =
+                                                                          dropDownItems
+                                                                              .indexOf(_!);
+                                                                    });
+                                                                  }),
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Text(NumberFormat(
+                                                                          "#,###.##")
+                                                                      .format(
+                                                                          moneySpent)),
+                                                                  IconButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (editPricePerUnitOfFuel) {
+                                                                              var pricePerUnitOfFuel = TextEditingController();
+                                                                              void saveFuelPrice() {
+                                                                                kPricePerUnitOfFuel = double.parse(pricePerUnitOfFuel.text.toString());
+                                                                                firestoreSetPricePerUnitOfFuel(
+                                                                                  FirebaseAuth.instance.currentUser!,
+                                                                                  kPricePerUnitOfFuel,
+                                                                                );
+                                                                                Navigator.pop(editPricePerUnitOfFuel);
+                                                                              }
+
+                                                                              pricePerUnitOfFuel.text = kPricePerUnitOfFuel.toString();
+                                                                              return AlertDialog(
+                                                                                title: const Text("Edit Price Per Unit Of Fuel"),
+                                                                                content: TextField(
+                                                                                  controller: pricePerUnitOfFuel,
+                                                                                  onSubmitted: (_) {
+                                                                                    saveFuelPrice();
+                                                                                  },
+                                                                                  decoration: InputDecoration(
+                                                                                    suffix: IconButton(
+                                                                                        onPressed: () {
+                                                                                          saveFuelPrice();
+                                                                                        },
+                                                                                        icon: const Icon(
+                                                                                          Icons.check,
+                                                                                          color: kPurpleDarkShade,
+                                                                                        )),
+                                                                                  ),
+                                                                                  keyboardType: const TextInputType.numberWithOptions(),
+                                                                                ),
+                                                                              );
+                                                                            });
+                                                                      },
+                                                                      icon: const Icon(
+                                                                          Icons
+                                                                              .edit))
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ]),
                                                 )
                                               ],
                                             ),
                                           ),
                                         ],
                                       ),
+                                      // const SizedBox(
+                                      //   height: 24,
+                                      // ),
                                       SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *
