@@ -43,6 +43,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
             FirebaseAuth.instance.currentUser!),
         'vehiclesList': await firestoreGetVehiclesList(
             user: FirebaseAuth.instance.currentUser!),
+        'theme': await firestoreGetTheme(FirebaseAuth.instance.currentUser!),
+        'isSystemTheme':
+            await firestoreGetIsSystemTheme(FirebaseAuth.instance.currentUser!),
       };
     }
 
@@ -53,6 +56,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               kUnits = (snapshot.data!['units'] == "km") ? Units.km : Units.mi;
+              if (snapshot.data!['theme'] == "light" &&
+                  snapshot.data!['isSystemTheme'] == false) {
+                _theme = AppTheme.light;
+              } else if (snapshot.data!['theme'] == "dark") {
+                _theme = AppTheme.dark;
+              } else {
+                _theme = AppTheme.system;
+              }
               _selectedDefaultGraphTabIndex =
                   snapshot.data!['defaultGraphTabIndex'];
 
