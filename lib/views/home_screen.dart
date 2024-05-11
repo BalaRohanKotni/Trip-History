@@ -1316,6 +1316,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         ],
                                                                       ),
                                                                     ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          12,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: double
+                                                                          .maxFinite,
+                                                                      child:
+                                                                          Wrap(
+                                                                        alignment:
+                                                                            WrapAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Text(
+                                                                              "Approx Fuel expenditure:  ${NumberFormat("#,###.##").format(vehicleTripsData[position].distance / vehicleTripsData[position].mileage! * kPricePerUnitOfFuel)}")
+                                                                        ],
+                                                                      ),
+                                                                    )
                                                                   ],
                                                                 ),
                                                               )),
