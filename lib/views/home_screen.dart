@@ -97,6 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<_SelectedGraphTextWidgetState> _tab2Key = GlobalKey();
   final GlobalKey<_SelectedGraphTextWidgetState> _tab3Key = GlobalKey();
   final GlobalKey<_SelectedGraphTextWidgetState> _tab4Key = GlobalKey();
+  final GlobalKey<_SelectedGraphTextWidgetState> _tab5Key = GlobalKey();
+  final GlobalKey<_SelectedGraphTextWidgetState> _tab6Key = GlobalKey();
   TextEditingController newUserVehicle = TextEditingController();
 
   int dropDownMenuItemIndex = 3;
@@ -114,6 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List distanceChartData = [];
   List durationChartData = [];
   List averageSpeedChartData = [];
+  List fuelConsumptionChartData = [];
+  List fuelExpenditureChartData = [];
 
   List<TripDetails> mileageVehicleTripsData = [];
   @override
@@ -228,6 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 durationChartData = [];
                 mileageVehicleTripsData = [];
                 averageSpeedChartData = [];
+                fuelConsumptionChartData = [];
+                fuelExpenditureChartData = [];
                 List<TripDetails> data = [];
                 for (var element in collectionSnapshot.data!.docs) {
                   var trip = TripDetails(
@@ -271,6 +277,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     mileageChartData.add([
                       DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
                       trip.mileage!.floor()
+                    ]);
+                    fuelConsumptionChartData.add([
+                      DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+                      trip.distance / trip.mileage!.floor(),
+                    ]);
+                    fuelExpenditureChartData.add([
+                      DateTime.fromMillisecondsSinceEpoch(trip.dateTime),
+                      trip.distance /
+                          trip.mileage! *
+                          kPricePerUnitOfFuel.floor()
                     ]);
                   }
                   distanceChartData.add([
@@ -329,25 +345,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       List<Widget> tabs = [
                         const Tab(
-                          // icon: Icon(Icons.local_gas_station_outlined),
+                          icon: Icon(Icons.local_gas_station_outlined),
                           text: "Mileage",
                           iconMargin: EdgeInsets.only(bottom: 5),
                         ),
                         const Tab(
-                          // icon: Icon(Icons.pin_drop_outlined),
+                          icon: Icon(Icons.pin_drop_outlined),
                           text: "Distance",
                           iconMargin: EdgeInsets.only(bottom: 5),
                         ),
                         const Tab(
-                          // icon: Icon(Icons.timer),
+                          icon: Icon(Icons.timer_outlined),
                           text: "Duration",
                           iconMargin: EdgeInsets.only(bottom: 5),
                         ),
                         const Tab(
-                          // icon: Icon(Icons.speed),
-                          text: "Average\nSpeed",
+                          icon: Icon(Icons.speed),
+                          text: "Average Speed",
                           iconMargin: EdgeInsets.only(bottom: 5),
-                        )
+                        ),
+                        const Tab(
+                          icon: Icon(Icons.propane_tank_outlined),
+                          text: "Fuel Consumption",
+                          iconMargin: EdgeInsets.only(bottom: 5),
+                        ),
+                        const Tab(
+                          icon: Icon(Icons.money_outlined),
+                          text: "Fuel Expenditure",
+                          iconMargin: EdgeInsets.only(bottom: 5),
+                        ),
                       ];
 
                       List<Widget> views = [
@@ -479,7 +505,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             const Text(
-                              "Note: Trips without mileage will not be included in this graph*",
+                              "*Trips without mileage will not be included in this graph",
                               style: TextStyle(fontSize: 11),
                             ),
                           ],
@@ -797,6 +823,282 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
+                            ),
+                          ],
+                        ),
+                        // TAB 5 - Fuel Consumption
+                        Column(
+                          children: [
+                            Expanded(
+                              child: CustomMultiChildLayout(
+                                delegate:
+                                    GraphLayoutDelegate(position: Offset.zero),
+                                children: [
+                                  LayoutId(
+                                    id: 1,
+                                    child:
+                                        SelectedGraphTextWidget(key: _tab5Key),
+                                  ),
+                                  LayoutId(
+                                    id: 2,
+                                    child: charts.TimeSeriesChart(
+                                      [
+                                        charts.Series(
+                                          colorFn: (__, ___) =>
+                                              charts.ColorUtil.fromDartColor(
+                                                  (kBrightness ==
+                                                          Brightness.light)
+                                                      ? kPurpleDarkShade
+                                                      : kPurpleLightShade),
+                                          id: "FuelConsumption",
+                                          data: fuelConsumptionChartData,
+                                          domainFn: (dat, _) => dat[0],
+                                          measureFn: (dat, _) => dat[1],
+                                        )
+                                      ],
+                                      animate: true,
+                                      defaultRenderer:
+                                          charts.LineRendererConfig(
+                                              includePoints: true),
+                                      selectionModels: [
+                                        charts.SelectionModelConfig(
+                                            type:
+                                                charts.SelectionModelType.info,
+                                            changedListener: (model) {
+                                              TripDetails selectedPoint =
+                                                  mileageVehicleTripsData[
+                                                      fuelConsumptionChartData
+                                                          .indexOf(model
+                                                              .selectedDatum
+                                                              .first
+                                                              .datum)];
+
+                                              String dateTime =
+                                                  "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
+
+                                              // String fuelConsumption =
+                                              //     (selectedPoint.distance /
+                                              //             selectedPoint.mileage!)
+                                              //         .toStringAsFixed(2);
+                                              // .toDouble()
+                                              // .toString();
+
+                                              _tab5Key.currentState!.setValues(
+                                                  mil: selectedPoint.mileage!
+                                                      .toString(),
+                                                  date: dateTime,
+                                                  setUnits:
+                                                      vehicleTripsData[0].units,
+                                                  dist: selectedPoint.distance
+                                                      .toString(),
+                                                  dur: selectedPoint.duration
+                                                      .toString(),
+                                                  gMode: GraphMode
+                                                      .fuelConsumption);
+                                              _tab5Key.currentState!.update();
+                                            })
+                                      ],
+                                      behaviors: [
+                                        charts.ChartTitle(
+                                          "Trips",
+                                          titleOutsideJustification:
+                                              charts.OutsideJustification.start,
+                                          titleStyleSpec:
+                                              (kBrightness == Brightness.light)
+                                                  ? const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .black)
+                                                  : const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .white),
+                                          innerPadding: 24,
+                                        ),
+                                        charts.ChartTitle(
+                                          "Fuel Consumption",
+                                          behaviorPosition:
+                                              charts.BehaviorPosition.start,
+                                          titleStyleSpec:
+                                              (kBrightness == Brightness.light)
+                                                  ? const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .black)
+                                                  : const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .white),
+                                        )
+                                      ],
+                                      primaryMeasureAxis:
+                                          charts.NumericAxisSpec(
+                                              renderSpec:
+                                                  charts.GridlineRendererSpec(
+                                        labelStyle: charts.TextStyleSpec(
+                                            fontSize: 10,
+                                            color: (kBrightness ==
+                                                    Brightness.light)
+                                                ? charts.MaterialPalette.black
+                                                : charts.MaterialPalette.white),
+                                      )),
+                                      domainAxis: charts.DateTimeAxisSpec(
+                                        renderSpec: charts.GridlineRendererSpec(
+                                          labelStyle: charts.TextStyleSpec(
+                                              fontSize: 10,
+                                              color: (kBrightness ==
+                                                      Brightness.light)
+                                                  ? charts.MaterialPalette.black
+                                                  : charts
+                                                      .MaterialPalette.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Text(
+                              "*Trips without mileage will not be included in this graph",
+                              style: TextStyle(fontSize: 11),
+                            ),
+                          ],
+                        ),
+                        // TAB 6 - Fuel Expenditure
+                        Column(
+                          children: [
+                            Expanded(
+                              child: CustomMultiChildLayout(
+                                delegate:
+                                    GraphLayoutDelegate(position: Offset.zero),
+                                children: [
+                                  LayoutId(
+                                    id: 1,
+                                    child:
+                                        SelectedGraphTextWidget(key: _tab6Key),
+                                  ),
+                                  LayoutId(
+                                    id: 2,
+                                    child: charts.TimeSeriesChart(
+                                      [
+                                        charts.Series(
+                                          colorFn: (__, ___) =>
+                                              charts.ColorUtil.fromDartColor(
+                                                  (kBrightness ==
+                                                          Brightness.light)
+                                                      ? kPurpleDarkShade
+                                                      : kPurpleLightShade),
+                                          id: "FuelExpenditure",
+                                          data: fuelExpenditureChartData,
+                                          domainFn: (dat, _) => dat[0],
+                                          measureFn: (dat, _) => dat[1],
+                                        )
+                                      ],
+                                      animate: true,
+                                      defaultRenderer:
+                                          charts.LineRendererConfig(
+                                              includePoints: true),
+                                      selectionModels: [
+                                        charts.SelectionModelConfig(
+                                            type:
+                                                charts.SelectionModelType.info,
+                                            changedListener: (model) {
+                                              TripDetails selectedPoint =
+                                                  mileageVehicleTripsData[
+                                                      fuelExpenditureChartData
+                                                          .indexOf(model
+                                                              .selectedDatum
+                                                              .first
+                                                              .datum)];
+
+                                              String dateTime =
+                                                  "${DateFormat.yMMMd().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))} \n${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(selectedPoint.dateTime))}";
+
+                                              // String fuelConsumption =
+                                              //     (selectedPoint.distance /
+                                              //             selectedPoint.mileage!)
+                                              //         .toStringAsFixed(2);
+                                              // .toDouble()
+                                              // .toString();
+
+                                              _tab6Key.currentState!.setValues(
+                                                  mil: selectedPoint.mileage!
+                                                      .toString(),
+                                                  date: dateTime,
+                                                  setUnits:
+                                                      vehicleTripsData[0].units,
+                                                  dist: selectedPoint.distance
+                                                      .toString(),
+                                                  dur: selectedPoint.duration
+                                                      .toString(),
+                                                  gMode: GraphMode
+                                                      .fuelExpenditure);
+                                              _tab6Key.currentState!.update();
+                                            })
+                                      ],
+                                      behaviors: [
+                                        charts.ChartTitle(
+                                          "Trips",
+                                          titleOutsideJustification:
+                                              charts.OutsideJustification.start,
+                                          titleStyleSpec:
+                                              (kBrightness == Brightness.light)
+                                                  ? const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .black)
+                                                  : const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .white),
+                                          innerPadding: 24,
+                                        ),
+                                        charts.ChartTitle(
+                                          "Fuel Expenditure",
+                                          behaviorPosition:
+                                              charts.BehaviorPosition.start,
+                                          titleStyleSpec:
+                                              (kBrightness == Brightness.light)
+                                                  ? const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .black)
+                                                  : const charts.TextStyleSpec(
+                                                      color: charts
+                                                          .MaterialPalette
+                                                          .white),
+                                        )
+                                      ],
+                                      primaryMeasureAxis:
+                                          charts.NumericAxisSpec(
+                                              renderSpec:
+                                                  charts.GridlineRendererSpec(
+                                        labelStyle: charts.TextStyleSpec(
+                                            fontSize: 10,
+                                            color: (kBrightness ==
+                                                    Brightness.light)
+                                                ? charts.MaterialPalette.black
+                                                : charts.MaterialPalette.white),
+                                      )),
+                                      domainAxis: charts.DateTimeAxisSpec(
+                                        renderSpec: charts.GridlineRendererSpec(
+                                          labelStyle: charts.TextStyleSpec(
+                                              fontSize: 10,
+                                              color: (kBrightness ==
+                                                      Brightness.light)
+                                                  ? charts.MaterialPalette.black
+                                                  : charts
+                                                      .MaterialPalette.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Text(
+                              "*Trips without mileage will not be included in this graph",
+                              style: TextStyle(fontSize: 11),
                             ),
                           ],
                         ),
@@ -1160,7 +1462,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            TabBar(tabs: tabs),
+                                            TabBar(
+                                              tabs: tabs,
+                                              isScrollable: true,
+                                              tabAlignment: TabAlignment.center,
+                                            ),
                                             Expanded(
                                               child: ConstrainedBox(
                                                 constraints: BoxConstraints(
@@ -1595,6 +1901,16 @@ class _SelectedGraphTextWidgetState extends State<SelectedGraphTextWidget> {
     } else if (graphMode == GraphMode.averageSpeed) {
       return Text(
         "${(double.parse(distance) / double.parse(duration)).toStringAsFixed(2)} ${(units == Units.km) ? 'km/h' : 'mph'} on $dateString",
+        textAlign: TextAlign.end,
+      );
+    } else if (graphMode == GraphMode.fuelConsumption) {
+      return Text(
+        "${(double.parse(distance) / double.parse(mileage)).toStringAsFixed(2)} ${(units == Units.km) ? 'lit' : 'gal'} on $dateString",
+        textAlign: TextAlign.end,
+      );
+    } else if (graphMode == GraphMode.fuelExpenditure) {
+      return Text(
+        "${(double.parse(distance) / double.parse(mileage) * kPricePerUnitOfFuel).toStringAsFixed(2)} on $dateString",
         textAlign: TextAlign.end,
       );
     } else {

@@ -546,7 +546,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                         "Mileage",
                                         "Distance",
                                         "Duration",
-                                        "Average Speed"
+                                        "Average Speed",
+                                        "Fuel Consumption",
+                                        "Fuel Expenditure",
                                       ].length,
                                       (index) {
                                         return DropdownMenuItem(
@@ -558,7 +560,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
                                                   "Mileage",
                                                   "Distance",
                                                   "Duration",
-                                                  "Average Speed"
+                                                  "Average Speed",
+                                                  "Fuel Consumption",
+                                                  "Fuel Expenditure",
                                                 ].elementAt(index),
                                                 style: const TextStyle(
                                                     fontSize: 18),

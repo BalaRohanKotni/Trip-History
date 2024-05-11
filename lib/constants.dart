@@ -21,7 +21,14 @@ enum Units { km, mi }
 
 enum TripDialogMode { create, edit }
 
-enum GraphMode { mileage, distance, duration, averageSpeed }
+enum GraphMode {
+  mileage,
+  distance,
+  duration,
+  averageSpeed,
+  fuelConsumption,
+  fuelExpenditure
+}
 
 enum AppTheme { light, dark, system }
 
