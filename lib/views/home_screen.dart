@@ -1267,186 +1267,167 @@ class _HomeScreenState extends State<HomeScreen> {
                                       // Stats Column:
                                       Column(
                                         children: [
-                                          SizedBox(
-                                            height: (MediaQuery.of(context)
-                                                        .size
-                                                        .height >=
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width)
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    1 /
-                                                    6
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    1 /
-                                                    6,
-                                            child: Wrap(
-                                              spacing: 16,
-                                              children: [
-                                                SizedBox(
-                                                  width: double.maxFinite,
-                                                  child: Wrap(
-                                                    spacing: 8,
-                                                    alignment: WrapAlignment
-                                                        .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "Total distance travelled: ",
-                                                        style: semiBold18(),
-                                                      ),
-                                                      Text((vehicleTripsData
+                                          Wrap(
+                                            spacing: 16,
+                                            children: [
+                                              SizedBox(
+                                                width: double.maxFinite,
+                                                child: Wrap(
+                                                  spacing: 8,
+                                                  alignment: WrapAlignment
+                                                      .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Total distance travelled: ",
+                                                      style: semiBold18(),
+                                                    ),
+                                                    Text((vehicleTripsData
+                                                            .isNotEmpty)
+                                                        ? "${[
+                                                            for (TripDetails trip
+                                                                in vehicleTripsData)
+                                                              trip.distance
+                                                          ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
+                                                        : "0km"),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: double.maxFinite,
+                                                child: Wrap(
+                                                  spacing: 8,
+                                                  alignment: WrapAlignment
+                                                      .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      (vehicleTripsData
                                                               .isNotEmpty)
-                                                          ? "${[
+                                                          ? "Average mileage:"
+                                                          : "Average mileage:",
+                                                      style: semiBold18(),
+                                                    ),
+                                                    Text((vehicleTripsData
+                                                            .isNotEmpty)
+                                                        ? "${(([
                                                               for (TripDetails trip
                                                                   in vehicleTripsData)
-                                                                trip.distance
-                                                            ].sum.toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km' : 'mi'}"
-                                                          : "0km"),
-                                                    ],
-                                                  ),
+                                                                (trip.mileage !=
+                                                                        0)
+                                                                    ? trip
+                                                                        .mileage!
+                                                                    : 0
+                                                            ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
+                                                        : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
+                                                  ],
                                                 ),
-                                                SizedBox(
-                                                  width: double.maxFinite,
-                                                  child: Wrap(
+                                              ),
+                                              SizedBox(
+                                                width: double.maxFinite,
+                                                child: Wrap(
                                                     spacing: 8,
                                                     alignment: WrapAlignment
                                                         .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        (vehicleTripsData
-                                                                .isNotEmpty)
-                                                            ? "Average mileage:"
-                                                            : "Average mileage:",
-                                                        style: semiBold18(),
-                                                      ),
-                                                      Text((vehicleTripsData
-                                                              .isNotEmpty)
-                                                          ? "${(([
-                                                                for (TripDetails trip
-                                                                    in vehicleTripsData)
-                                                                  (trip.mileage !=
-                                                                          0)
-                                                                      ? trip
-                                                                          .mileage!
-                                                                      : 0
-                                                              ].sum / mileageVehicleTripsData.length)).toStringAsFixed(2)} ${(kUnits == Units.km) ? 'km/l' : 'mpg'}"
-                                                          : "0${(kUnits == Units.km) ? 'km/l' : 'mpg'}"),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: double.maxFinite,
-                                                  child: Wrap(
-                                                      spacing: 8,
-                                                      alignment: WrapAlignment
-                                                          .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                            "Total money spent during",
-                                                            style:
-                                                                semiBold18()),
-                                                        SizedBox(
-                                                          width:
-                                                              double.maxFinite,
-                                                          child: Wrap(
-                                                            crossAxisAlignment:
-                                                                WrapCrossAlignment
-                                                                    .center,
-                                                            alignment:
-                                                                WrapAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              DropdownButton(
-                                                                  value: dropDownItems[
-                                                                      dropDownMenuItemIndex],
-                                                                  items: dropDownItems
-                                                                      .map(
-                                                                          (value) {
-                                                                    return DropdownMenuItem(
-                                                                      value:
-                                                                          value,
-                                                                      child: Text(
-                                                                          value),
-                                                                    );
-                                                                  }).toList(),
-                                                                  onChanged:
-                                                                      (_) {
-                                                                    setState(
+                                                          "Total money spent during",
+                                                          style: semiBold18()),
+                                                      SizedBox(
+                                                        width: double.maxFinite,
+                                                        child: Wrap(
+                                                          crossAxisAlignment:
+                                                              WrapCrossAlignment
+                                                                  .center,
+                                                          alignment:
+                                                              WrapAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            DropdownButton(
+                                                                value: dropDownItems[
+                                                                    dropDownMenuItemIndex],
+                                                                items: dropDownItems
+                                                                    .map(
+                                                                        (value) {
+                                                                  return DropdownMenuItem(
+                                                                    value:
+                                                                        value,
+                                                                    child: Text(
+                                                                        value),
+                                                                  );
+                                                                }).toList(),
+                                                                onChanged: (_) {
+                                                                  setState(() {
+                                                                    dropDownMenuItemIndex =
+                                                                        dropDownItems
+                                                                            .indexOf(_!);
+                                                                  });
+                                                                }),
+                                                            Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Text(NumberFormat(
+                                                                        "#,###.##")
+                                                                    .format(
+                                                                        moneySpent)),
+                                                                IconButton(
+                                                                    onPressed:
                                                                         () {
-                                                                      dropDownMenuItemIndex =
-                                                                          dropDownItems
-                                                                              .indexOf(_!);
-                                                                    });
-                                                                  }),
-                                                              Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(NumberFormat(
-                                                                          "#,###.##")
-                                                                      .format(
-                                                                          moneySpent)),
-                                                                  IconButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (editPricePerUnitOfFuel) {
-                                                                              var pricePerUnitOfFuel = TextEditingController();
-                                                                              void saveFuelPrice() {
-                                                                                kPricePerUnitOfFuel = double.parse(pricePerUnitOfFuel.text.toString());
-                                                                                firestoreSetPricePerUnitOfFuel(
-                                                                                  FirebaseAuth.instance.currentUser!,
-                                                                                  kPricePerUnitOfFuel,
-                                                                                );
-                                                                                Navigator.pop(editPricePerUnitOfFuel);
-                                                                              }
-
-                                                                              pricePerUnitOfFuel.text = kPricePerUnitOfFuel.toString();
-                                                                              return AlertDialog(
-                                                                                title: const Text("Edit Price Per Unit Of Fuel"),
-                                                                                content: TextField(
-                                                                                  controller: pricePerUnitOfFuel,
-                                                                                  onSubmitted: (_) {
-                                                                                    saveFuelPrice();
-                                                                                  },
-                                                                                  decoration: InputDecoration(
-                                                                                    suffix: IconButton(
-                                                                                        onPressed: () {
-                                                                                          saveFuelPrice();
-                                                                                        },
-                                                                                        icon: const Icon(
-                                                                                          Icons.check,
-                                                                                          color: kPurpleDarkShade,
-                                                                                        )),
-                                                                                  ),
-                                                                                  keyboardType: const TextInputType.numberWithOptions(),
-                                                                                ),
+                                                                      showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder:
+                                                                              (editPricePerUnitOfFuel) {
+                                                                            var pricePerUnitOfFuel =
+                                                                                TextEditingController();
+                                                                            void
+                                                                                saveFuelPrice() {
+                                                                              kPricePerUnitOfFuel = double.parse(pricePerUnitOfFuel.text.toString());
+                                                                              firestoreSetPricePerUnitOfFuel(
+                                                                                FirebaseAuth.instance.currentUser!,
+                                                                                kPricePerUnitOfFuel,
                                                                               );
-                                                                            });
-                                                                      },
-                                                                      icon: const Icon(
-                                                                          Icons
-                                                                              .edit))
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
+                                                                              Navigator.pop(editPricePerUnitOfFuel);
+                                                                            }
+
+                                                                            pricePerUnitOfFuel.text =
+                                                                                kPricePerUnitOfFuel.toString();
+                                                                            return AlertDialog(
+                                                                              title: const Text("Edit Price Per Unit Of Fuel"),
+                                                                              content: TextField(
+                                                                                controller: pricePerUnitOfFuel,
+                                                                                onSubmitted: (_) {
+                                                                                  saveFuelPrice();
+                                                                                },
+                                                                                decoration: InputDecoration(
+                                                                                  suffix: IconButton(
+                                                                                      onPressed: () {
+                                                                                        saveFuelPrice();
+                                                                                      },
+                                                                                      icon: const Icon(
+                                                                                        Icons.check,
+                                                                                        color: kPurpleDarkShade,
+                                                                                      )),
+                                                                                ),
+                                                                                keyboardType: const TextInputType.numberWithOptions(),
+                                                                              ),
+                                                                            );
+                                                                          });
+                                                                    },
+                                                                    icon: const Icon(
+                                                                        Icons
+                                                                            .edit))
+                                                              ],
+                                                            )
+                                                          ],
                                                         ),
-                                                      ]),
-                                                )
-                                              ],
-                                            ),
+                                                      ),
+                                                    ]),
+                                              )
+                                            ],
                                           ),
                                         ],
                                       ),
@@ -1454,10 +1435,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       //   height: 24,
                                       // ),
                                       SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                5 /
-                                                12,
+                                        height: 300,
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
